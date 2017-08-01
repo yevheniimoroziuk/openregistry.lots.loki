@@ -21,7 +21,7 @@ patch_lot_validators = (validate_patch_lot_data, validate_lot_status_update_in_t
                   path='/lots/{lot_id}',
                   lotType='basic',
                   description="Open Contracting compatible data exchange format.")
-class AssetResource(APIResource):
+class LotResource(APIResource):
 
     @json_view(permission='view_lot')
     def get(self):
