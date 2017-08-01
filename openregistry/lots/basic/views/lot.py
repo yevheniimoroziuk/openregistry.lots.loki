@@ -5,35 +5,39 @@ from openregistry.api.utils import (
     APIResource
 )
 
-from openregistry.assets.core.utils import (
-    save_asset, opassetsresource, apply_patch
+from openregistry.lots.core.utils import (
+    save_lot, oplotsresource, apply_patch
 )
 
-from openregistry.assets.core.validation import (
-    validate_patch_asset_data,
-    validate_asset_status_update_in_terminated_status
+from openregistry.lots.core.validation import (
+    validate_patch_lot_data,
+    validate_lot_status_update_in_terminated_status,
 )
 
 
-patch_asset_validators = (validate_patch_asset_data, validate_asset_status_update_in_terminated_status, )
+patch_lot_validators = (
+    validate_patch_lot_data,
+    validate_lot_status_update_in_terminated_status,
+)
 
-@opassetsresource(name='basic:Asset',
-                  path='/assets/{asset_id}',
-                  assetType='basic',
-                  description="Open Contracting compatible data exchange format.")
-class AssetResource(APIResource):
+
+@oplotsresource(name='basic:Lot',
+                path='/lots/{lot_id}',
+                lotType='basic',
+                description="Open Contracting compatible data exchange format.")
+class LotResource(APIResource):
 
     @json_view(permission='view_asset')
     def get(self):
         asset_data = self.context.serialize(self.context.status)
         return {'data': asset_data}
 
-    @json_view(content_type="application/json", validators=patch_asset_validators, permission='edit_asset')
+    @json_view(content_type="application/json", validators=patch_lot_validators, permission='edit_lot')
     def patch(self):
-        asset = self.context
-        apply_patch(self.request, src=self.request.validated['asset_src'])
+        lot = self.context
+        apply_patch(self.request, src=self.request.validated['lot_src'])
         self.LOGGER.info(
-            'Updated asset {}'.format(asset.id),
-            extra=context_unpack(self.request, {'MESSAGE_ID': 'asset_patch'})
+            'Updated lot {}'.format(lot.id),
+            extra=context_unpack(self.request, {'MESSAGE_ID': 'lot_patch'})
         )
-        return {'data': asset.serialize(asset.status)}
+        return {'data': lot.serialize(lot.status)}
