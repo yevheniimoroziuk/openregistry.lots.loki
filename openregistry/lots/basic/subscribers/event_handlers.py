@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 from pyramid.events import subscriber
-from openregistry.assets.core.events import AssetInitializeEvent
+from openregistry.lots.core.events import lotInitializeEvent
 from openregistry.api.utils import get_now
 
 
-@subscriber(AssetInitializeEvent, assetType="basic")
+@subscriber(lotInitializeEvent, lotType="basic")
 def tender_init_handler(event):
-    """ initialization handler for basic assets """
-    event.asset.date = get_now()
-
+    """ initialization handler for basic lots """
+    event.lot.date = get_now()
