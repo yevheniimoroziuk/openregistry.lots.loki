@@ -20,7 +20,6 @@ from openregistry.lots.basic.tests.lot_blanks import (
 )
 
 
-
 class LotTest(BaseWebTest):
     initial_data = test_lot_data
     relative_to = os.path.dirname(__file__)
@@ -39,6 +38,7 @@ class LotResourceTest(BaseLotWebTest):
     test_dateModified_lot = snitch(dateModified_lot)
     test_listing_draft = snitch(listing_draft)
     test_listing_changes = snitch(listing_changes)
+
 
 
 def suite():

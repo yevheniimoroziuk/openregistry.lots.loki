@@ -11,16 +11,21 @@ from openregistry.lots.core.utils import (
 
 from openregistry.lots.core.validation import (
     validate_patch_lot_data,
-    validate_lot_status_update_in_terminated_status
+    validate_lot_status_update_in_terminated_status,
 )
 
 
-patch_lot_validators = (validate_patch_lot_data, validate_lot_status_update_in_terminated_status, )
+patch_lot_validators = (
+    validate_patch_lot_data,
+    validate_lot_status_update_in_terminated_status,
+)
+
 
 @oplotsresource(name='basic:Lot',
-                  path='/lots/{lot_id}',
-                  lotType='basic',
-                  description="Open Contracting compatible data exchange format.")
+                path='/lots/{lot_id}',
+                lotType='basic',
+                description="Open Contracting compatible data exchange format.")
+
 class LotResource(APIResource):
 
     @json_view(permission='view_lot')
