@@ -8,7 +8,6 @@ from openregistry.lots.basic.tests.base import (
     test_lot_data, BaseLotWebTest
 )
 from openregistry.lots.basic.tests.lot_blanks import (
-
     listing,
     get_lot,
     lot_not_found,
@@ -25,7 +24,6 @@ from openregistry.lots.basic.tests.lot_blanks import (
 class LotTest(BaseWebTest):
     initial_data = test_lot_data
     relative_to = os.path.dirname(__file__)
-
     test_simple_add_lot = snitch(simple_add_lot)
 
 
