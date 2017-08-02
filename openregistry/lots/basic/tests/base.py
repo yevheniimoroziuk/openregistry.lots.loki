@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-from openregistry.assets.core.tests.base import (
-    BaseAssetWebTest as BaseAWT
+from openregistry.lots.core.tests.base import (
+    BaseLotWebTest as BaseLWT
 )
+
 
 test_organization = {
     "name": u"Державне управління справами",
@@ -23,44 +24,24 @@ test_organization = {
     }
 }
 
-test_assetCustodian = test_organization.copy()
+test_lotCustodian = test_organization.copy()
 
-test_asset_data = {
-    "title": u"Земля для космодрому",
-    "assetType": "basic",
-    "assetCustodian": test_assetCustodian,
-    "classification": {
-        "scheme": u"CPV",
-        "id": u"37452200-3",
-        "description": u"Земельні ділянки"
-    },
-    "unit": {
-        "name": u"item",
-        "code": u"44617100-9"
-    },
-    "quantity": 5,
-    "address": {
-        "countryName": u"Україна",
-        "postalCode": "79000",
-        "region": u"м. Київ",
-        "locality": u"м. Київ",
-        "streetAddress": u"вул. Банкова 1"
-    },
-    "value": {
-        "amount": 100,
-        "currency": u"UAH"
-    },
+test_lot_data = {
+    "title": u"Тестовий лот",
+    "description": u"Щось там тестове",
+    "lotType": "basic",
+    "lotCustodian": test_lotCustodian,
 }
 
 
-class BaseAssetWebTest(BaseAWT):
-    initial_data = BaseAWT
+class BaseLotWebTest(BaseLWT):
+    initial_data = test_lot_data
     initial_auth = ('Basic', ('broker', ''))
 
 
-class AssetContentWebTest(BaseAssetWebTest):
-    initial_data = test_asset_data
+class LotContentWebTest(BaseLotWebTest):
+    initial_data = test_lot_data
 
     def setUp(self):
-        super(AssetContentWebTest, self).setUp()
-        self.create_asset()
+        super(LotContentWebTest, self).setUp()
+        self.create_lot()
