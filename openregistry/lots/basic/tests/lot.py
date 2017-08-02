@@ -11,7 +11,7 @@ from openregistry.lots.basic.tests.lot_blanks import (
     # TenderResourceTest
     # listing,
     # get_lot,
-    # lot_not_found,
+    lot_not_found,
     # dateModified_lot,
     # listing_draft,
     # listing_changes,
@@ -27,6 +27,7 @@ class LotTest(BaseWebTest):
     relative_to = os.path.dirname(__file__)
 
     test_simple_add_lot = snitch(simple_add_lot)
+    test_lot_not_found = snitch(lot_not_found)
 
 
 class LotResourceTest(BaseLotWebTest):

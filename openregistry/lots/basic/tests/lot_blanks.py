@@ -364,32 +364,32 @@ def create_lot(self):
 #     self.assertEqual(response.json['data']['dateModified'], dateModified)
 #
 #
-# def asset_not_found(self):
-#     response = self.app.get('/assets')
-#     self.assertEqual(response.status, '200 OK')
-#     self.assertEqual(len(response.json['data']), 0)
-#
-#     response = self.app.get('/assets/some_id', status=404)
-#     self.assertEqual(response.status, '404 Not Found')
-#     self.assertEqual(response.content_type, 'application/json')
-#     self.assertEqual(response.json['status'], 'error')
-#     self.assertEqual(response.json['errors'], [
-#         {u'description': u'Not Found', u'location': u'url', u'name': u'asset_id'}
-#     ])
-#
-#     response = self.app.patch_json(
-#         '/assets/some_id', {'data': {}}, status=404)
-#     self.assertEqual(response.status, '404 Not Found')
-#     self.assertEqual(response.content_type, 'application/json')
-#     self.assertEqual(response.json['status'], 'error')
-#     self.assertEqual(response.json['errors'], [
-#         {u'description': u'Not Found', u'location': u'url', u'name': u'asset_id'}
-#     ])
-#
-#     # put custom document object into database to check asset construction on non-Asset data
-#     data = {'contract': 'test', '_id': uuid4().hex}
-#     self.db.save(data)
-#
-#     response = self.app.get('/assets/{}'.format(data['_id']), status=404)
-#     self.assertEqual(response.status, '404 Not Found')
-#
+def lot_not_found(self):
+    response = self.app.get('/lots')
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(len(response.json['data']), 0)
+
+    response = self.app.get('/lots/some_id', status=404)
+    self.assertEqual(response.status, '404 Not Found')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+    self.assertEqual(response.json['errors'], [
+        {u'description': u'Not Found', u'location': u'url', u'name': u'lot_id'}
+    ])
+
+    response = self.app.patch_json(
+        '/lots/some_id', {'data': {}}, status=404)
+    self.assertEqual(response.status, '404 Not Found')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+    self.assertEqual(response.json['errors'], [
+        {u'description': u'Not Found', u'location': u'url', u'name': u'lot_id'}
+    ])
+
+    # put custom document object into database to check asset construction on non-Asset data
+    data = {'contract': 'test', '_id': uuid4().hex}
+    self.db.save(data)
+
+    response = self.app.get('/lots/{}'.format(data['_id']), status=404)
+    self.assertEqual(response.status, '404 Not Found')
+
