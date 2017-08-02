@@ -251,39 +251,42 @@ def simple_add_lot(self):
 #     self.assertEqual(set([i['id'] for i in response.json['data']]), set([i['id'] for i in assets]))
 #     self.assertEqual(set([i['dateModified'] for i in response.json['data']]), set([i['dateModified'] for i in assets]))
 #     self.assertEqual([i['dateModified'] for i in response.json['data']], sorted([i['dateModified'] for i in assets]))
-#
-#
-# def create_asset(self):
-#     response = self.app.get('/assets')
-#     self.assertEqual(response.status, '200 OK')
-#     self.assertEqual(len(response.json['data']), 0)
-#
-#     response = self.app.post_json('/assets', {"data": self.initial_data})
-#     self.assertEqual(response.status, '201 Created')
-#     self.assertEqual(response.content_type, 'application/json')
-#     asset = response.json['data']
-#
-#     response = self.app.get('/assets/{}'.format(asset['id']))
-#     self.assertEqual(response.status, '200 OK')
-#     self.assertEqual(response.content_type, 'application/json')
-#     self.assertEqual(set(response.json['data']), set(asset))
-#     self.assertEqual(response.json['data'], asset)
-#
-#     response = self.app.post_json('/assets?opt_jsonp=callback', {"data": self.initial_data})
-#     self.assertEqual(response.status, '201 Created')
-#     self.assertEqual(response.content_type, 'application/javascript')
-#     self.assertIn('callback({"', response.body)
-#
-#     response = self.app.post_json('/assets?opt_pretty=1', {"data": self.initial_data})
-#     self.assertEqual(response.status, '201 Created')
-#     self.assertEqual(response.content_type, 'application/json')
-#     self.assertIn('{\n    "', response.body)
-#
-#     response = self.app.post_json('/assets', {"data": self.initial_data, "options": {"pretty": True}})
-#     self.assertEqual(response.status, '201 Created')
-#     self.assertEqual(response.content_type, 'application/json')
-#     self.assertIn('{\n    "', response.body)
-#
+
+
+def create_lot(self):
+    response = self.app.get('/lots')
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(len(response.json['data']), 0)
+
+    response = self.app.post_json('/lots', {"data": self.initial_data})
+    self.assertEqual(response.status, '201 Created')
+    self.assertEqual(response.content_type, 'application/json')
+    lot = response.json['data']
+
+    response = self.app.get('/lots/{}'.format(lot['id']))
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(set(response.json['data']), set(lot))
+    self.assertEqual(response.json['data'], lot)
+
+    response = self.app.post_json('/lots?opt_jsonp=callback',
+                                  {"data": self.initial_data})
+    self.assertEqual(response.status, '201 Created')
+    self.assertEqual(response.content_type, 'application/javascript')
+    self.assertIn('callback({"', response.body)
+
+    response = self.app.post_json('/lots?opt_pretty=1',
+                                  {"data": self.initial_data})
+    self.assertEqual(response.status, '201 Created')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertIn('{\n    "', response.body)
+
+    response = self.app.post_json('/lots', {"data": self.initial_data,
+                                            "options": {"pretty": True}})
+    self.assertEqual(response.status, '201 Created')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertIn('{\n    "', response.body)
+
 #
 # def get_asset(self):
 #     response = self.app.get('/assets')

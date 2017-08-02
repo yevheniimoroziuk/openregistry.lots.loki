@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from uuid import uuid4
+
 from openregistry.lots.core.tests.base import (
     BaseLotWebTest as BaseLWT
 )
@@ -31,6 +33,7 @@ test_lot_data = {
     "description": u"Щось там тестове",
     "lotType": "basic",
     "lotCustodian": test_lotCustodian,
+    "assets": [uuid4().hex]
 }
 
 
