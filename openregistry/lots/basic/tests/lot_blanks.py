@@ -313,25 +313,25 @@ def create_lot(self):
 #     self.assertIn('{\n    "data": {\n        "', response.body)
 #
 #
-# def patch_asset(self):
-#     data = self.initial_data.copy()
-#     response = self.app.get('/assets')
-#     self.assertEqual(response.status, '200 OK')
-#     self.assertEqual(len(response.json['data']), 0)
-#
-#     response = self.app.post_json('/assets', {'data': data})
-#     self.assertEqual(response.status, '201 Created')
-#     asset = response.json['data']
-#     owner_token = response.json['access']['token']
-#     dateModified = asset.pop('dateModified')
-#
-#     response = self.app.patch_json('/assets/{}?acc_token={}'.format(
-#         asset['id'], owner_token), {'data': {'title': ' PATCHED' }})
-#     self.assertEqual(response.status, '200 OK')
-#     self.assertEqual(response.content_type, 'application/json')
-#     self.assertNotEqual(response.json['data']['dateModified'], dateModified)
-#
-#
+def patch_lot(self):
+    data = self.initial_data.copy()
+    response = self.app.get('/lots')
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(len(response.json['data']), 0)
+
+    response = self.app.post_json('/lots', {'data': data})
+    self.assertEqual(response.status, '201 Created')
+    lot = response.json['data']
+    owner_token = response.json['access']['token']
+    dateModified = lot.pop('dateModified')
+
+    response = self.app.patch_json('/lots/{}?acc_token={}'.format(
+        lot['id'], owner_token), {'data': {'title': ' PATCHED' }})
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertNotEqual(response.json['data']['dateModified'], dateModified)
+
+
 # def dateModified_asset(self):
 #     response = self.app.get('/assets')
 #     self.assertEqual(response.status, '200 OK')

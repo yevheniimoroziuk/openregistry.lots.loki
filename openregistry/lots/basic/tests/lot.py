@@ -16,7 +16,7 @@ from openregistry.lots.basic.tests.lot_blanks import (
     # listing_draft,
     # listing_changes,
     create_lot,
-    # patch_lot,
+    patch_lot,
     # TenderTest
     simple_add_lot,
 )
@@ -34,6 +34,7 @@ class LotResourceTest(BaseLotWebTest):
     initial_auth = ('Basic', ('broker', ''))
     relative_to = os.path.dirname(__file__)
     test_create_lot = snitch(create_lot)
+    test_patch_lot = snitch(patch_lot)
 
 
 def suite():
