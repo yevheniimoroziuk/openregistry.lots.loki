@@ -26,11 +26,11 @@ def simple_add_lot(self):
 
     fromdb = self.db.get(u.id)
 
+
     assert u.lotID == fromdb['lotID']
     assert u.doc_type == "Lot"
 
     u.delete_instance(self.db)
-
 
 # def listing(self):
 #     response = self.app.get('/assets')

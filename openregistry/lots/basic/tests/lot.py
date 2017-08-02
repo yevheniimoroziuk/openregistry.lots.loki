@@ -44,7 +44,6 @@ class TenderTest(BaseWebTest):
 #     initial_auth = ('Basic', ('broker', ''))
 #     relative_to = os.path.dirname(__file__)
 
-
 def suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(TenderResourceTest))

@@ -25,6 +25,7 @@ patch_lot_validators = (
                 path='/lots/{lot_id}',
                 lotType='basic',
                 description="Open Contracting compatible data exchange format.")
+
 class LotResource(APIResource):
 
     @json_view(permission='view_lot')
