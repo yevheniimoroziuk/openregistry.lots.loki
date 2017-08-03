@@ -6,6 +6,9 @@ version = '0.1.dev0'
 entry_points = {
     'openregistry.lots.core.plugins': [
         'lots.basic = openregistry.lots.basic.includeme:includeme'
+    ],
+    'openregistry.tests': [
+        'lots.basic = openregistry.lots.basic.tests.main:suite'
     ]
 }
 
