@@ -261,13 +261,13 @@ def create_lot(self):
     response = self.app.post_json('/lots', {"data": self.initial_data})
     self.assertEqual(response.status, '201 Created')
     self.assertEqual(response.content_type, 'application/json')
-    lots = response.json['data']
+    lot = response.json['data']
 
-    response = self.app.get('/lots/{}'.format(lots['id']))
+    response = self.app.get('/lots/{}'.format(lot['id']))
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(response.content_type, 'application/json')
-    self.assertEqual(set(response.json['data']), set(lots))
-    self.assertEqual(response.json['data'], lots)
+    self.assertEqual(set(response.json['data']), set(lot))
+    self.assertEqual(response.json['data'], lot)
 
     response = self.app.post_json('/lots?opt_jsonp=callback', {"data": self.initial_data})
     self.assertEqual(response.status, '201 Created')
