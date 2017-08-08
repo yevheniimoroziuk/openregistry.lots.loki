@@ -14,7 +14,7 @@ entry_points = {
 
 requires = [
     'setuptools',
-    'openprocurement.api',
+    'openregistry.api',
     'openregistry.lots.core'
 ]
 
