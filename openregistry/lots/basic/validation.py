@@ -10,10 +10,10 @@ def validate_change_lot_status(request, error_handler, **kwargs):
 
     current_status = request.context.status
     new_status = validate_json_data(request).get('status')
-    if not new_status:
-        return
-
     auth_role = request.authenticated_role
+
+    if not new_status or auth_role == 'Administrator':
+        return
 
     if new_status in STATUS_CHANGES[current_status] and \
        auth_role == STATUS_CHANGES[current_status][new_status]:
@@ -22,5 +22,5 @@ def validate_change_lot_status(request, error_handler, **kwargs):
         raise_operation_error(
             request,
             error_handler,
-            'Can\'t update asset in current ({}) status'.format(current_status)
+            'Can\'t update lot in current ({}) status'.format(current_status)
         )
