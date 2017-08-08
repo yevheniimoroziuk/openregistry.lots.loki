@@ -324,6 +324,11 @@ def check_lot_assets(self):
     # self.initial_data["assets"] = [id_ex, id_ex]
     # response = self.app.post_json('/lots', {"data": self.initial_data})
     
+    ####################################################################
+    # TODO: fix the problem with no-assets-lot and different-assets-lot#
+    # - they should return 403 or something, not raise erorrs.         #
+    ####################################################################
+    
 
 def get_lot(self):
     response = self.app.get('/lots')
