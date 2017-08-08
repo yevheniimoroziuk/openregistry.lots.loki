@@ -14,10 +14,15 @@ from openregistry.lots.core.validation import (
     validate_lot_status_update_in_terminated_status,
 )
 
+from openregistry.lots.basic.validation import (
+    validate_change_lot_status,
+)
+
 
 patch_lot_validators = (
     validate_patch_lot_data,
     validate_lot_status_update_in_terminated_status,
+    validate_change_lot_status,
 )
 
 
