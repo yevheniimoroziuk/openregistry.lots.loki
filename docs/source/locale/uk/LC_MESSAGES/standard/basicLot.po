@@ -86,6 +86,10 @@ msgstr "``decription_ru`` (Russian) - опис російською"
 msgid "|ocdsDescription| All related documents and attachments."
 msgstr "|ocdsDescription| Пов’язані з лотом документи та додатки."
 
+msgid ":ref:`Organization`, required"
+msgstr ":ref:`Organization`, обов'язково"
+
+
 msgid "An entity managing the lot."
 msgstr "Розпорядник лоту."
 

@@ -77,7 +77,7 @@ Schema
     All related documents and attachments.
     
 :lotCustodian:
-   string, required
+   :ref:`Organization`, required
 
    An entity managing the lot.
 
