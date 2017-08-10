@@ -1,7 +1,7 @@
 .. . Kicking page rebuild 2014-10-30 17:00:08
 .. include:: defs.hrst
 
-.. index:: basicLot
+.. index:: basicLot 
 
 .. _lot:
 
@@ -38,6 +38,11 @@ Schema
     
     The lot status within the Registry.
     
+:value:
+    :ref:`Value`, required 
+    
+    Estimated lot value.
+
 :assets:
     string, optional
     
@@ -85,3 +90,27 @@ Schema
     optional
     
     The additional parameter with a value ``test``.
+    
+    
+.. _value:
+
+Value
+===============
+
+Schema
+------
+
+:amount:    
+    float, required
+
+    Should be positive.
+    
+:currency:
+    string, required
+    
+    |ocdsDescription|
+    The currency in 3-letter ISO 4217 format.
+    
+:valueAddedTaxIncluded:
+    bool, required
+

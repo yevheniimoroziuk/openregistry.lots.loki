@@ -89,7 +89,6 @@ msgstr "|ocdsDescription| Пов’язані з лотом документи �
 msgid ":ref:`Organization`, required"
 msgstr ":ref:`Organization`, обов'язково"
 
-
 msgid "An entity managing the lot."
 msgstr "Розпорядник лоту."
 
@@ -98,3 +97,75 @@ msgstr "не обов’язково"
 
 msgid "The additional parameter with a value ``test``."
 msgstr "Додатковий параметр, що вказує на тестовий режим."
+
+msgid "id"
+msgstr "id"
+
+msgid "lotID"
+msgstr "lotID"
+
+msgid "date"
+msgstr "date"
+
+msgid "dateModified"
+msgstr "dateModified"
+
+msgid "status"
+msgstr "status"
+
+msgid "value"
+msgstr "value"
+
+msgid ":ref:`Value`, required"
+msgstr ":ref:`Value`, обов'язково"
+
+msgid "Estimated lot value."
+msgstr "Оціночна вартість."
+
+msgid "assets"
+msgstr "assets"
+
+msgid "lotType"
+msgstr "lotType"
+
+msgid "lotType"
+msgstr "lotType"
+
+msgid "description"
+msgstr "description"
+
+msgid "documents"
+msgstr "documents"
+
+msgid "lotCustodian"
+msgstr "lotCustodian"
+
+msgid "mode"
+msgstr "mode"
+
+msgid "Value"
+msgstr "Value"
+
+msgid "amount"
+msgstr "amount"
+
+msgid "float, required"
+msgstr "float, обов'язково"
+
+msgid "|ocdsDescription| Amount as a number."
+msgstr "|ocdsDescription|Кількість як число."
+
+msgid "Should be positive."
+msgstr "Повинно бути додатним."
+
+msgid "currency"
+msgstr "currency"
+
+msgid "|ocdsDescription| The currency in 3-letter ISO 4217 format."
+msgstr "|ocdsDescription| Валюта у трибуквенному форматі ISO 4217."
+
+msgid "valueAddedTaxIncluded"
+msgstr "valueAddedTaxIncluded"
+
+msgid "bool, required"
+msgstr "булеве значення, обов’язково"
