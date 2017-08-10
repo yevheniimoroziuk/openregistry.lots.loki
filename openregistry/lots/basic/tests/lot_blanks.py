@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from copy import deepcopy
 from uuid import uuid4
 
 from openregistry.api.utils import get_now
@@ -404,6 +405,455 @@ def dateModified_lot(self):
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(response.json['data'], asset)
     self.assertEqual(response.json['data']['dateModified'], dateModified)
+
+
+def change_draft_lot(self):
+    response = self.app.get('/lots')
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(len(response.json['data']), 0)
+
+    self.app.authorization = ('Basic', ('broker', ''))
+
+    # Create lot in 'draft' status
+    draft_lot = deepcopy(self.initial_data)
+    draft_lot['status'] = 'draft'
+    response = self.app.post_json('/lots', {'data': draft_lot})
+    self.assertEqual(response.status, '201 Created')
+    lot = response.json['data']
+    token = response.json['access']['token']
+    self.assertEqual(lot.get('status', ''), 'draft')
+
+    response = self.app.get('/lots/{}'.format(lot['id']))
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['data'], lot)
+
+    # Move from 'draft' to 'deleted' status
+    response = self.app.patch_json(
+        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        {'data': {'status': 'deleted'}}
+    )
+    self.assertEqual(response.status, '200 OK')
+
+    # Move from 'deleted' to 'draft' status
+    response = self.app.patch_json(
+        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        {'data': {'status': 'draft'}},
+        status=403,
+    )
+    self.assertEqual(response.status, '403 Forbidden')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+
+    # Create new lot in 'draft' status
+    draft_lot = deepcopy(draft_lot)
+    draft_lot['assets'] = [uuid4().hex]
+    response = self.app.post_json('/lots', {'data': draft_lot})
+    self.assertEqual(response.status, '201 Created')
+    lot = response.json['data']
+    token = response.json['access']['token']
+    self.assertEqual(lot.get('status', ''), 'draft')
+
+    # Move from 'draft' to 'waiting' status
+    response = self.app.patch_json(
+        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        {'data': {'status': 'waiting'}}
+    )
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(response.content_type, 'application/json')
+
+    # Move from 'waiting' to 'draft'
+    response = self.app.patch_json(
+        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        {'data': {'status': 'draft'}},
+        status=403,
+    )
+    self.assertEqual(response.status, '403 Forbidden')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+
+    self.app.authorization = ('Basic', ('bot1', ''))
+
+    # Create lot in 'draft' status
+    draft_lot = deepcopy(self.initial_data)
+    draft_lot['status'] = 'draft'
+    response = self.app.post_json('/lots', {'data': draft_lot}, status=403)
+    self.assertEqual(response.status, '403 Forbidden')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+
+    # Move last 'draft' lot to 'deleted' status
+    response = self.app.patch_json(
+        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        {'data': {'status': 'deleted'}},
+        status=403,
+    )
+    self.assertEqual(response.status, '403 Forbidden')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+
+    # Move from 'draft' to 'waiting' status
+    response = self.app.patch_json(
+        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        {'data': {'status': 'waiting'}},
+        status=403,
+    )
+    self.assertEqual(response.status, '403 Forbidden')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+
+
+def change_waiting_lot(self):
+    response = self.app.get('/lots')
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(len(response.json['data']), 0)
+
+
+    self.app.authorization = ('Basic', ('bot1', ''))
+
+    # Create new lot in 'draft' status
+    draft_lot = deepcopy(self.initial_data)
+    draft_lot['assets'] = [uuid4().hex]
+    draft_lot['status'] = 'draft'
+    response = self.app.post_json('/lots', {'data': draft_lot}, status=403)
+    self.assertEqual(response.status, '403 Forbidden')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+
+
+    self.app.authorization = ('Basic', ('broker', ''))
+
+    # Create new lot in 'draft' status
+    response = self.app.post_json('/lots', {'data': draft_lot})
+    self.assertEqual(response.status, '201 Created')
+    lot = response.json['data']
+    token = response.json['access']['token']
+    self.assertEqual(lot.get('status', ''), 'draft')
+
+    response = self.app.get('/lots/{}'.format(lot['id']))
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['data'], lot)
+
+    # Move from 'draft' to 'waiting' status
+    response = self.app.patch_json(
+        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        {'data': {'status': 'waiting'}}
+    )
+    self.assertEqual(response.status, '200 OK')
+
+
+    self.app.authorization = ('Basic', ('bot1', ''))
+
+    # Move from 'waiting' to 'invalid' status
+    response = self.app.patch_json(
+        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        {'data': {'status': 'invalid'}}
+    )
+    self.assertEqual(response.status, '200 OK')
+
+    # Move from 'invalid' to 'waiting' status
+    response = self.app.patch_json(
+        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        {'data': {'status': 'waiting'}},
+        status=403,
+    )
+    self.assertEqual(response.status, '403 Forbidden')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+
+    # Move from 'invalid' to 'active.pending' status
+    response = self.app.patch_json(
+        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        {'data': {'status': 'active.pending'}},
+        status=403,
+    )
+    self.assertEqual(response.status, '403 Forbidden')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+
+
+    self.app.authorization = ('Basic', ('broker', ''))
+
+    # Create new lot in 'draft' status
+    response = self.app.post_json('/lots', {'data': draft_lot})
+    self.assertEqual(response.status, '201 Created')
+    lot = response.json['data']
+    token = response.json['access']['token']
+    self.assertEqual(lot.get('status', ''), 'draft')
+
+    response = self.app.get('/lots/{}'.format(lot['id']))
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['data'], lot)
+
+    # Move from 'draft' to 'waiting' status
+    response = self.app.patch_json(
+        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        {'data': {'status': 'waiting'}}
+    )
+    self.assertEqual(response.status, '200 OK')
+
+
+    self.app.authorization = ('Basic', ('bot1', ''))
+
+    # Move from 'waiting' to 'active.pending' status
+    response = self.app.patch_json(
+        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        {'data': {'status': 'active.pending'}}
+    )
+    self.assertEqual(response.status, '200 OK')
+
+    # Move from 'active.pending' to 'waiting' status
+    response = self.app.patch_json(
+        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        {'data': {'status': 'waiting'}},
+        status=403,
+    )
+    self.assertEqual(response.status, '403 Forbidden')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+
+    # Move from 'active.pending' to 'sold' status
+    response = self.app.patch_json(
+        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        {'data': {'status': 'sold'}},
+        status=403,
+    )
+    self.assertEqual(response.status, '403 Forbidden')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+
+
+    self.app.authorization = ('Basic', ('broker', ''))
+
+    # Create new lot in 'waiting' status
+    waiting_lot = deepcopy(self.initial_data)
+    waiting_lot['status'] = 'waiting'
+    waiting_lot['assets'] = [uuid4().hex]
+    response = self.app.post_json('/lots', {'data': waiting_lot})
+    self.assertEqual(response.status, '201 Created')
+    token = response.json['access']['token']
+
+    # Move from 'waiting' to 'invalid' status
+    response = self.app.patch_json(
+        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        {'data': {'status': 'invalid'}},
+        status=403,
+    )
+    self.assertEqual(response.status, '403 Forbidden')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+
+    # Move from 'waiting' to 'active.pending' status
+    response = self.app.patch_json(
+        '/lots/{}'.format(lot['id']),
+        {'data': {'status': 'active.pending'}},
+        status=403,
+    )
+    self.assertEqual(response.status, '403 Forbidden')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+
+    # Move from 'waiting' to 'sold' status
+    response = self.app.patch_json(
+        '/lots/{}'.format(lot['id']),
+        {'data': {'status': 'sold'}},
+        status=403,
+    )
+    self.assertEqual(response.status, '403 Forbidden')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+
+
+def change_dissolved_lot(self):
+    response = self.app.get('/lots')
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(len(response.json['data']), 0)
+
+    self.app.authorization = ('Basic', ('broker', ''))
+
+    # Create lot in 'active.pending' status
+    pending_lot = deepcopy(self.initial_data)
+    pending_lot['status'] = 'active.pending'
+    response = self.app.post_json('/lots', {'data': pending_lot}, status=403)
+    self.assertEqual(response.status, '403 Forbidden')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+
+    # Create new lot in 'draft' status
+    draft_lot = deepcopy(self.initial_data)
+    draft_lot['assets'] = [uuid4().hex]
+    draft_lot['status'] = 'draft'
+    response = self.app.post_json('/lots', {'data': draft_lot})
+    self.assertEqual(response.status, '201 Created')
+    lot = response.json['data']
+    token = response.json['access']['token']
+    self.assertEqual(lot.get('status', ''), 'draft')
+
+    response = self.app.get('/lots/{}'.format(lot['id']))
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['data'], lot)
+
+    # Move from 'draft' to 'waiting' status
+    response = self.app.patch_json(
+        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        {'data': {'status': 'waiting'}}
+    )
+    self.assertEqual(response.status, '200 OK')
+
+    # Move from 'waiting' to 'active.pending' status
+    response = self.app.patch_json(
+        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        {'data': {'status': 'active.pending'}},
+        status=403,
+    )
+    self.assertEqual(response.status, '403 Forbidden')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+
+
+    self.app.authorization = ('Basic', ('bot1', ''))
+
+    # Move from 'waiting' to 'active.pending' status
+    response = self.app.patch_json(
+        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        {'data': {'status': 'active.pending'}}
+    )
+    self.assertEqual(response.status, '200 OK')
+
+
+    self.app.authorization = ('Basic', ('broker', ''))
+
+    # Move from 'active.pending' to 'dissolved' status
+    response = self.app.patch_json(
+        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        {'data': {'status': 'dissolved'}}
+    )
+    self.assertEqual(response.status, '200 OK')
+
+    # Move from 'dissolved' to 'active.pending' status
+    response = self.app.patch_json(
+        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        {'data': {'status': 'active.pending'}},
+        status=403,
+    )
+    self.assertEqual(response.status, '403 Forbidden')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+
+    # Move from 'dissolved' to 'invalid' status
+    response = self.app.patch_json(
+        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        {'data': {'status': 'invalid'}},
+        status=403,
+    )
+    self.assertEqual(response.status, '403 Forbidden')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+
+    # Move from 'dissolved' to 'deleted' status
+    response = self.app.patch_json(
+        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        {'data': {'status': 'deleted'}},
+        status=403,
+    )
+    self.assertEqual(response.status, '403 Forbidden')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+
+    # Move from 'dissolved' to 'sold' status
+    response = self.app.patch_json(
+        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        {'data': {'status': 'sold'}},
+        status=403,
+    )
+    self.assertEqual(response.status, '403 Forbidden')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+
+
+    # Create new lot in 'draft' status for bot
+    draft_lot = deepcopy(self.initial_data)
+    draft_lot['assets'] = [uuid4().hex]
+    draft_lot['status'] = 'draft'
+    response = self.app.post_json('/lots', {'data': draft_lot})
+    self.assertEqual(response.status, '201 Created')
+    lot = response.json['data']
+    token = response.json['access']['token']
+    self.assertEqual(lot.get('status', ''), 'draft')
+
+    response = self.app.get('/lots/{}'.format(lot['id']))
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['data'], lot)
+
+    # Move from 'draft' to 'waiting' status
+    response = self.app.patch_json(
+        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        {'data': {'status': 'waiting'}}
+    )
+    self.assertEqual(response.status, '200 OK')
+
+
+    self.app.authorization = ('Basic', ('bot1', ''))
+
+    # Create lot in 'active.pending' status
+    pending_lot = deepcopy(self.initial_data)
+    pending_lot['status'] = 'active.pending'
+    response = self.app.post_json('/lots', {'data': pending_lot}, status=403)
+    self.assertEqual(response.status, '403 Forbidden')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+
+    # Move from 'waiting' to 'active.pending' status
+    response = self.app.patch_json(
+        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        {'data': {'status': 'active.pending'}}
+    )
+    self.assertEqual(response.status, '200 OK')
+
+    # Move from 'active.pending' to 'dissolved' status
+    response = self.app.patch_json(
+        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        {'data': {'status': 'dissolved'}},
+        status=403,
+    )
+    self.assertEqual(response.status, '403 Forbidden')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+
+    self.app.authorization = ('Basic', ('broker', ''))
+
+    # Move from 'active.pending' to 'dissolved' status
+    response = self.app.patch_json(
+        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        {'data': {'status': 'dissolved'}}
+    )
+    self.assertEqual(response.status, '200 OK')
+
+    self.app.authorization = ('Basic', ('bot1', ''))
+
+    # Move from 'dissolved' to 'deleted' status
+    response = self.app.patch_json(
+        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        {'data': {'status': 'deleted'}},
+        status=403,
+    )
+    self.assertEqual(response.status, '403 Forbidden')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+
+    # Move from 'dissolved' to 'sold' status
+    response = self.app.patch_json(
+        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        {'data': {'status': 'sold'}},
+        status=403,
+    )
+    self.assertEqual(response.status, '403 Forbidden')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
 
 
 def lot_not_found(self):

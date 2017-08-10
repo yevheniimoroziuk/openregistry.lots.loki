@@ -12,6 +12,9 @@ from openregistry.lots.basic.tests.lot_blanks import (
     get_lot,
     lot_not_found,
     dateModified_lot,
+    change_draft_lot,
+    change_waiting_lot,
+    change_dissolved_lot,
     listing_draft,
     listing_changes,
     create_lot,
@@ -37,10 +40,12 @@ class LotResourceTest(BaseLotWebTest):
     test_listing = snitch(listing)
     test_get_lot = snitch(get_lot)
     test_dateModified_lot = snitch(dateModified_lot)
+    test_change_draft_lot = snitch(change_draft_lot)
+    test_change_waiting_lot = snitch(change_waiting_lot)
+    test_change_dissolved_lot = snitch(change_dissolved_lot)
     test_listing_draft = snitch(listing_draft)
     test_listing_changes = snitch(listing_changes)
     test_check_lot_assets = snitch(check_lot_assets)
-
 
 
 def suite():
