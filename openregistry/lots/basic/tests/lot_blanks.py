@@ -472,7 +472,7 @@ def change_draft_lot(self):
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(response.json['status'], 'error')
 
-    self.app.authorization = ('Basic', ('bot1', ''))
+    self.app.authorization = ('Basic', ('bot', ''))
 
     # Create lot in 'draft' status
     draft_lot = deepcopy(self.initial_data)
@@ -509,7 +509,7 @@ def change_waiting_lot(self):
     self.assertEqual(len(response.json['data']), 0)
 
 
-    self.app.authorization = ('Basic', ('bot1', ''))
+    self.app.authorization = ('Basic', ('bot', ''))
 
     # Create new lot in 'draft' status
     draft_lot = deepcopy(self.initial_data)
@@ -543,7 +543,7 @@ def change_waiting_lot(self):
     self.assertEqual(response.status, '200 OK')
 
 
-    self.app.authorization = ('Basic', ('bot1', ''))
+    self.app.authorization = ('Basic', ('bot', ''))
 
     # Move from 'waiting' to 'invalid' status
     response = self.app.patch_json(
@@ -595,7 +595,7 @@ def change_waiting_lot(self):
     self.assertEqual(response.status, '200 OK')
 
 
-    self.app.authorization = ('Basic', ('bot1', ''))
+    self.app.authorization = ('Basic', ('bot', ''))
 
     # Move from 'waiting' to 'active.pending' status
     response = self.app.patch_json(
@@ -714,7 +714,7 @@ def change_dissolved_lot(self):
     self.assertEqual(response.json['status'], 'error')
 
 
-    self.app.authorization = ('Basic', ('bot1', ''))
+    self.app.authorization = ('Basic', ('bot', ''))
 
     # Move from 'waiting' to 'active.pending' status
     response = self.app.patch_json(
@@ -797,7 +797,7 @@ def change_dissolved_lot(self):
     self.assertEqual(response.status, '200 OK')
 
 
-    self.app.authorization = ('Basic', ('bot1', ''))
+    self.app.authorization = ('Basic', ('bot', ''))
 
     # Create lot in 'active.pending' status
     pending_lot = deepcopy(self.initial_data)
@@ -833,7 +833,7 @@ def change_dissolved_lot(self):
     )
     self.assertEqual(response.status, '200 OK')
 
-    self.app.authorization = ('Basic', ('bot1', ''))
+    self.app.authorization = ('Basic', ('bot', ''))
 
     # Move from 'dissolved' to 'deleted' status
     response = self.app.patch_json(

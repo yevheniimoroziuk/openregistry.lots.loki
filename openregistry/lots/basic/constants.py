@@ -9,22 +9,22 @@ STATUS_CHANGES = {
 
     },
     "waiting": {
-        "invalid": "bot1",
-        "active.pending": "bot1",
+        "invalid": "bot",
+        "active.pending": "bot",
     },
     "invalid": {
 
     },
     "active.pending": {
         "dissolved": "lot_owner",
-        "active.inauction": "bot2",
+        "active.inauction": "bot",
     },
     "dissolved": {
 
     },
     "active.inauction": {
-        "active.pending": "bot2",
-        "sold": "bot2",
+        "active.pending": "bot",
+        "sold": "bot",
     },
     "sold": {
 
