@@ -18,7 +18,6 @@ from openregistry.lots.basic.tests.lot_blanks import (
     listing_draft,
     listing_changes,
     create_lot,
-    patch_lot,
     simple_add_lot,
     check_lot_assets,
 )
@@ -33,19 +32,19 @@ class LotTest(BaseWebTest):
 class LotResourceTest(BaseLotWebTest):
     initial_data = test_lot_data
     initial_auth = ('Basic', ('broker', ''))
+    initial_status = 'pending'
     relative_to = os.path.dirname(__file__)
-    test_create_lot = snitch(create_lot)
-    test_patch_lot = snitch(patch_lot)
-    test_lot_not_found = snitch(lot_not_found)
-    test_listing = snitch(listing)
-    test_get_lot = snitch(get_lot)
-    test_dateModified_lot = snitch(dateModified_lot)
-    test_change_draft_lot = snitch(change_draft_lot)
-    test_change_waiting_lot = snitch(change_waiting_lot)
-    test_change_dissolved_lot = snitch(change_dissolved_lot)
-    test_listing_draft = snitch(listing_draft)
-    test_listing_changes = snitch(listing_changes)
-    test_check_lot_assets = snitch(check_lot_assets)
+    test_01_listing = snitch(listing)
+    test_02_listing_draft = snitch(listing_draft)
+    test_03_listing_changes = snitch(listing_changes)
+    test_04_lot_not_found = snitch(lot_not_found)
+    test_05_get_lot = snitch(get_lot)
+    test_06_dateModified_lot = snitch(dateModified_lot)
+    test_07_create_lot = snitch(create_lot)
+    test_08_change_draft_lot = snitch(change_draft_lot)
+    test_09_change_waiting_lot = snitch(change_waiting_lot)
+    test_10_change_dissolved_lot = snitch(change_dissolved_lot)
+    test_11_check_lot_assets = snitch(check_lot_assets)
 
 
 def suite():

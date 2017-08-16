@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openregistry.lots.core.adapters import LotConfigurator
-from .constants import STATUS_CHANGES, TERMINATED_STATUSES
+from .constants import STATUS_CHANGES
 
 
 class BasicLotConfigurator(LotConfigurator):
@@ -8,4 +8,3 @@ class BasicLotConfigurator(LotConfigurator):
 
     name = "Basic Lot configurator"
     available_statuses = STATUS_CHANGES
-    terminated_statuses = TERMINATED_STATUSES

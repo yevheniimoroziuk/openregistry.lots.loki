@@ -40,14 +40,12 @@ def listing(self):
 
     for i in range(3):
         offset = get_now().isoformat()
-        response = self.app.post_json('/lots', {'data': self.initial_data})
-        self.assertEqual(response.status, '201 Created')
-        self.assertEqual(response.content_type, 'application/json')
-        lots.append(response.json['data'])
+        lot = self.create_lot()
+        lots.append(lot)
 
     ids = ','.join([i['id'] for i in lots])
 
-    while True:
+    for _ in range(10):
         response = self.app.get('/lots')
         self.assertTrue(ids.startswith(','.join([i['id'] for i in response.json['data']])))
         if len(response.json['data']) == 3:
@@ -59,7 +57,7 @@ def listing(self):
     self.assertEqual(set([i['dateModified'] for i in response.json['data']]), set([i['dateModified'] for i in lots]))
     self.assertEqual([i['dateModified'] for i in response.json['data']], sorted([i['dateModified'] for i in lots]))
 
-    while True:
+    for _ in range(10):
         response = self.app.get('/lots?offset={}'.format(offset))
         self.assertEqual(response.status, '200 OK')
         if len(response.json['data']) == 1:
@@ -111,13 +109,9 @@ def listing(self):
     self.assertNotIn('descending=1', response.json['prev_page']['uri'])
     self.assertEqual(len(response.json['data']), 0)
 
-    test_lot_data2 = self.initial_data.copy()
-    test_lot_data2['mode'] = 'test'
-    response = self.app.post_json('/lots', {'data': test_lot_data2})
-    self.assertEqual(response.status, '201 Created')
-    self.assertEqual(response.content_type, 'application/json')
+    self.create_lot(extra={"mode": "test"})
 
-    while True:
+    for _ in range(10):
         response = self.app.get('/lots?mode=test')
         self.assertEqual(response.status, '200 OK')
         if len(response.json['data']) == 1:
@@ -137,14 +131,12 @@ def listing_changes(self):
     lots = []
 
     for i in range(3):
-        response = self.app.post_json('/lots', {'data': self.initial_data})
-        self.assertEqual(response.status, '201 Created')
-        self.assertEqual(response.content_type, 'application/json')
-        lots.append(response.json['data'])
+        lot = self.create_lot()
+        lots.append(lot)
 
     ids = ','.join([i['id'] for i in lots])
 
-    while True:
+    for _ in range(10):
         response = self.app.get('/lots?feed=changes')
         self.assertTrue(ids.startswith(','.join([i['id'] for i in response.json['data']])))
         if len(response.json['data']) == 3:
@@ -203,13 +195,9 @@ def listing_changes(self):
     self.assertNotIn('descending=1', response.json['prev_page']['uri'])
     self.assertEqual(len(response.json['data']), 0)
 
-    test_lot_data2 = self.initial_data.copy()
-    test_lot_data2['mode'] = 'test'
-    response = self.app.post_json('/lots', {'data': test_lot_data2})
-    self.assertEqual(response.status, '201 Created')
-    self.assertEqual(response.content_type, 'application/json')
+    self.create_lot(extra={"mode": "test"})
 
-    while True:
+    for _ in range(10):
         response = self.app.get('/lots?feed=changes&mode=test')
         self.assertEqual(response.status, '200 OK')
         if len(response.json['data']) == 1:
@@ -226,22 +214,11 @@ def listing_draft(self):
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(len(response.json['data']), 0)
 
-    lots = []
-    data = self.initial_data.copy()
-    data.update({'status': 'draft'})
-
-    for i in range(3):
-        response = self.app.post_json('/lots', {'data': self.initial_data})
-        self.assertEqual(response.status, '201 Created')
-        self.assertEqual(response.content_type, 'application/json')
-        lots.append(response.json['data'])
-        response = self.app.post_json('/lots', {'data': data})
-        self.assertEqual(response.status, '201 Created')
-        self.assertEqual(response.content_type, 'application/json')
+    lots = [self.create_lot() for _ in range(3)]
 
     ids = ','.join([i['id'] for i in lots])
 
-    while True:
+    for _ in range(10):
         response = self.app.get('/lots')
         self.assertTrue(ids.startswith(','.join([i['id'] for i in response.json['data']])))
         if len(response.json['data']) == 3:
@@ -356,25 +333,6 @@ def get_lot(self):
     self.assertIn('{\n    "data": {\n        "', response.body)
 
 
-def patch_lot(self):
-    data = self.initial_data.copy()
-    response = self.app.get('/lots')
-    self.assertEqual(response.status, '200 OK')
-    self.assertEqual(len(response.json['data']), 0)
-
-    response = self.app.post_json('/lots', {'data': data})
-    self.assertEqual(response.status, '201 Created')
-    lot = response.json['data']
-    owner_token = response.json['access']['token']
-    dateModified = lot.pop('dateModified')
-
-    response = self.app.patch_json('/lots/{}?acc_token={}'.format(
-        lot['id'], owner_token), {'data': {'title': ' PATCHED'}})
-    self.assertEqual(response.status, '200 OK')
-    self.assertEqual(response.content_type, 'application/json')
-    self.assertNotEqual(response.json['data']['dateModified'], dateModified)
-
-
 def dateModified_lot(self):
     response = self.app.get('/lots')
     self.assertEqual(response.status, '200 OK')
@@ -392,18 +350,18 @@ def dateModified_lot(self):
     self.assertEqual(response.json['data']['dateModified'], dateModified)
 
     response = self.app.patch_json('/lots/{}?acc_token={}'.format(
-        lot['id'], token), {'data': {'description': 'PATCHED'}})
+        lot['id'], token), {'data': {'status': 'pending'}})
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(response.content_type, 'application/json')
 
     self.assertNotEqual(response.json['data']['dateModified'], dateModified)
-    asset = response.json['data']
-    dateModified = asset['dateModified']
+    lot = response.json['data']
+    dateModified = lot['dateModified']
 
-    response = self.app.get('/lots/{}'.format(asset['id']))
+    response = self.app.get('/lots/{}'.format(lot['id']))
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(response.content_type, 'application/json')
-    self.assertEqual(response.json['data'], asset)
+    self.assertEqual(response.json['data'], lot)
     self.assertEqual(response.json['data']['dateModified'], dateModified)
 
 
@@ -428,23 +386,6 @@ def change_draft_lot(self):
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(response.json['data'], lot)
 
-    # Move from 'draft' to 'deleted' status
-    response = self.app.patch_json(
-        '/lots/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'deleted'}}
-    )
-    self.assertEqual(response.status, '200 OK')
-
-    # Move from 'deleted' to 'draft' status
-    response = self.app.patch_json(
-        '/lots/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'draft'}},
-        status=403,
-    )
-    self.assertEqual(response.status, '403 Forbidden')
-    self.assertEqual(response.content_type, 'application/json')
-    self.assertEqual(response.json['status'], 'error')
-
     # Create new lot in 'draft' status
     draft_lot = deepcopy(draft_lot)
     draft_lot['assets'] = [uuid4().hex]
@@ -454,15 +395,15 @@ def change_draft_lot(self):
     token = response.json['access']['token']
     self.assertEqual(lot.get('status', ''), 'draft')
 
-    # Move from 'draft' to 'waiting' status
+    # Move from 'draft' to 'pending' status
     response = self.app.patch_json(
         '/lots/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'waiting'}}
+        {'data': {'status': 'pending'}}
     )
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(response.content_type, 'application/json')
 
-    # Move from 'waiting' to 'draft'
+    # Move from 'pending' to 'draft'
     response = self.app.patch_json(
         '/lots/{}?acc_token={}'.format(lot['id'], token),
         {'data': {'status': 'draft'}},
@@ -539,42 +480,9 @@ def change_waiting_lot(self):
     # Move from 'draft' to 'waiting' status
     response = self.app.patch_json(
         '/lots/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'waiting'}}
+        {'data': {'status': 'pending'}}
     )
     self.assertEqual(response.status, '200 OK')
-
-
-    self.app.authorization = ('Basic', ('bot1', ''))
-
-    # Move from 'waiting' to 'invalid' status
-    response = self.app.patch_json(
-        '/lots/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'invalid'}}
-    )
-    self.assertEqual(response.status, '200 OK')
-
-    # Move from 'invalid' to 'waiting' status
-    response = self.app.patch_json(
-        '/lots/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'waiting'}},
-        status=403,
-    )
-    self.assertEqual(response.status, '403 Forbidden')
-    self.assertEqual(response.content_type, 'application/json')
-    self.assertEqual(response.json['status'], 'error')
-
-    # Move from 'invalid' to 'active.pending' status
-    response = self.app.patch_json(
-        '/lots/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'active.pending'}},
-        status=403,
-    )
-    self.assertEqual(response.status, '403 Forbidden')
-    self.assertEqual(response.content_type, 'application/json')
-    self.assertEqual(response.json['status'], 'error')
-
-
-    self.app.authorization = ('Basic', ('broker', ''))
 
     # Create new lot in 'draft' status
     response = self.app.post_json('/lots', {'data': draft_lot})
@@ -588,27 +496,34 @@ def change_waiting_lot(self):
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(response.json['data'], lot)
 
-    # Move from 'draft' to 'waiting' status
+    # Move from 'draft' to 'pending' status
     response = self.app.patch_json(
         '/lots/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'waiting'}}
+        {'data': {'status': 'pending'}}
+    )
+    self.assertEqual(response.status, '200 OK')
+
+    # Move from 'pending' to 'verification' status
+    response = self.app.patch_json(
+        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        {'data': {'status': 'verification'}}
     )
     self.assertEqual(response.status, '200 OK')
 
 
     self.app.authorization = ('Basic', ('bot1', ''))
 
-    # Move from 'waiting' to 'active.pending' status
+    # Move from 'verification' to 'active.salable' status
     response = self.app.patch_json(
         '/lots/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'active.pending'}}
+        {'data': {'status': 'active.salable'}}
     )
     self.assertEqual(response.status, '200 OK')
 
-    # Move from 'active.pending' to 'waiting' status
+    # Move from 'active.salable' to 'verification' status
     response = self.app.patch_json(
         '/lots/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'waiting'}},
+        {'data': {'status': 'verification'}},
         status=403,
     )
     self.assertEqual(response.status, '403 Forbidden')
@@ -628,24 +543,7 @@ def change_waiting_lot(self):
 
     self.app.authorization = ('Basic', ('broker', ''))
 
-    # Create new lot in 'waiting' status
-    waiting_lot = deepcopy(self.initial_data)
-    waiting_lot['status'] = 'waiting'
-    waiting_lot['assets'] = [uuid4().hex]
-    response = self.app.post_json('/lots', {'data': waiting_lot})
-    self.assertEqual(response.status, '201 Created')
-    token = response.json['access']['token']
-    lot = response.json['data']
-
-    # Move from 'waiting' to 'invalid' status
-    response = self.app.patch_json(
-        '/lots/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'invalid'}},
-        status=403,
-    )
-    self.assertEqual(response.status, '403 Forbidden')
-    self.assertEqual(response.content_type, 'application/json')
-    self.assertEqual(response.json['status'], 'error')
+    lot = self.create_lot()
 
     # Move from 'waiting' to 'active.pending' status
     response = self.app.patch_json(
@@ -675,14 +573,6 @@ def change_dissolved_lot(self):
 
     self.app.authorization = ('Basic', ('broker', ''))
 
-    # Create lot in 'active.pending' status
-    pending_lot = deepcopy(self.initial_data)
-    pending_lot['status'] = 'active.pending'
-    response = self.app.post_json('/lots', {'data': pending_lot}, status=403)
-    self.assertEqual(response.status, '403 Forbidden')
-    self.assertEqual(response.content_type, 'application/json')
-    self.assertEqual(response.json['status'], 'error')
-
     # Create new lot in 'draft' status
     draft_lot = deepcopy(self.initial_data)
     draft_lot['assets'] = [uuid4().hex]
@@ -698,17 +588,24 @@ def change_dissolved_lot(self):
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(response.json['data'], lot)
 
-    # Move from 'draft' to 'waiting' status
+    # Move from 'draft' to 'pending' status
     response = self.app.patch_json(
         '/lots/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'waiting'}}
+        {'data': {'status': 'pending'}}
+    )
+    self.assertEqual(response.status, '200 OK')
+
+    # Move from 'pending' to 'verification' status
+    response = self.app.patch_json(
+        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        {'data': {'status': 'verification'}}
     )
     self.assertEqual(response.status, '200 OK')
 
     # Move from 'waiting' to 'active.pending' status
     response = self.app.patch_json(
         '/lots/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'active.pending'}},
+        {'data': {'status': 'active.salable'}},
         status=403,
     )
     self.assertEqual(response.status, '403 Forbidden')
@@ -720,24 +617,26 @@ def change_dissolved_lot(self):
     # Move from 'waiting' to 'active.pending' status
     response = self.app.patch_json(
         '/lots/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'active.pending'}}
+        {'data': {'status': 'active.salable'}}
     )
     self.assertEqual(response.status, '200 OK')
 
 
     self.app.authorization = ('Basic', ('broker', ''))
 
-    # Move from 'active.pending' to 'dissolved' status
+    # Move from 'active.salable' to 'dissolved' status
     response = self.app.patch_json(
         '/lots/{}?acc_token={}'.format(lot['id'], token),
         {'data': {'status': 'dissolved'}}
     )
     self.assertEqual(response.status, '200 OK')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['data']['status'], 'dissolved')
 
-    # Move from 'dissolved' to 'active.pending' status
+    # Move from 'dissolved' to 'active.salable' status
     response = self.app.patch_json(
         '/lots/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'active.pending'}},
+        {'data': {'status': 'active.salable'}},
         status=403,
     )
     self.assertEqual(response.status, '403 Forbidden')
@@ -790,28 +689,35 @@ def change_dissolved_lot(self):
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(response.json['data'], lot)
 
-    # Move from 'draft' to 'waiting' status
+    # Move from 'draft' to 'pending' status
     response = self.app.patch_json(
         '/lots/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'waiting'}}
+        {'data': {'status': 'pending'}}
+    )
+    self.assertEqual(response.status, '200 OK')
+
+    # Move from 'pending' to 'verification' status
+    response = self.app.patch_json(
+        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        {'data': {'status': 'verification'}}
     )
     self.assertEqual(response.status, '200 OK')
 
 
     self.app.authorization = ('Basic', ('bot1', ''))
 
-    # Create lot in 'active.pending' status
+    # Create lot in 'active.salable' status
     pending_lot = deepcopy(self.initial_data)
-    pending_lot['status'] = 'active.pending'
+    pending_lot['status'] = 'active.salable'
     response = self.app.post_json('/lots', {'data': pending_lot}, status=403)
     self.assertEqual(response.status, '403 Forbidden')
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(response.json['status'], 'error')
 
-    # Move from 'waiting' to 'active.pending' status
+    # Move from 'verification' to 'active.salable' status
     response = self.app.patch_json(
         '/lots/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'active.pending'}}
+        {'data': {'status': 'active.salable'}}
     )
     self.assertEqual(response.status, '200 OK')
 

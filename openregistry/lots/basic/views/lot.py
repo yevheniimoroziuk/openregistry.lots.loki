@@ -6,7 +6,6 @@ from openregistry.api.utils import (
 )
 from openregistry.api.validation import (
     validate_change_status,
-    validate_terminated_statuses
 )
 
 from openregistry.lots.core.utils import (
@@ -19,7 +18,6 @@ from openregistry.lots.core.validation import (
 
 patch_lot_validators = (
     validate_patch_lot_data,
-    validate_terminated_statuses,
     validate_change_status
 )
 
