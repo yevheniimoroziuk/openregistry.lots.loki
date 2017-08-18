@@ -24,6 +24,7 @@ Contents:
 
    overview
    standard/index
+   lotsWorkflow
 
 * :ref:`Authentication <openprocurementapi:authentication>`
 * :ref:`Responses <openprocurementapi:errors>`
