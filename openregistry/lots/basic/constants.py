@@ -20,17 +20,17 @@ STATUS_CHANGES = {
         "next_status": {}
     },
     "verification": {
-        "editing_permissions": ["bot1", "Administrator"],
+        "editing_permissions": ["concierge", "Administrator"],
         "next_status": {
-            "pending": ["bot1", "Administrator"],
-            "active.salable": ["bot1", "Administrator"]
+            "pending": ["concierge", "Administrator"],
+            "active.salable": ["concierge", "Administrator"]
         }
     },
     "active.salable": {
-        "editing_permissions": ["bot2", "Administrator", "lot_owner"],
+        "editing_permissions": ["convoy", "Administrator", "lot_owner"],
         "next_status": {
             "dissolved": ["lot_owner", "Administrator"],
-            "active.awaiting": ["bot2", "Administrator"],
+            "active.awaiting": ["convoy", "Administrator"],
             "verification": ["Administrator"]
         }
     },
@@ -39,17 +39,17 @@ STATUS_CHANGES = {
         "next_status": {}
     },
     "active.awaiting": {
-        "editing_permissions": ["bot2", "Administrator"],
+        "editing_permissions": ["convoy", "Administrator"],
         "next_status": {
-            "active.auction": ["bot2", "Administrator"],
-            "active.salable": ["bot2", "Administrator"]
+            "active.auction": ["convoy", "Administrator"],
+            "active.salable": ["convoy", "Administrator"]
         }
     },
     "active.auction": {
-        "editing_permissions": ["bot2", "Administrator"],
+        "editing_permissions": ["convoy", "Administrator"],
         "next_status": {
             "active.salable":  ["Administrator"],
-            "sold": ["bot2", "Administrator"]
+            "sold": ["convoy", "Administrator"]
         }
     }
 }
