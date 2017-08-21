@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import os
+from copy import deepcopy
 from uuid import uuid4
 
 from openregistry.lots.core.tests.base import (
@@ -38,13 +40,11 @@ test_lot_data = {
 
 
 class BaseLotWebTest(BaseLWT):
-    initial_data = test_lot_data
+    initial_data = deepcopy(test_lot_data)
     initial_auth = ('Basic', ('broker', ''))
+    relative_to = os.path.dirname(__file__)
 
 
 class LotContentWebTest(BaseLotWebTest):
-    initial_data = test_lot_data
-
-    def setUp(self):
-        super(LotContentWebTest, self).setUp()
-        self.create_lot()
+    init = True
+    initial_status = 'pending'
