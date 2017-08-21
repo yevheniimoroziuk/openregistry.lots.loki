@@ -296,18 +296,24 @@ def check_lot_assets(self):
     self.assertEqual(response.json['data'], lot)
 
     # # lot with no assets
-    # self.initial_data["assets"] = []
-    # response = self.app.post_json('/', {"data": self.initial_data})
-
+    self.initial_data["assets"] = []
+    response = self.app.post_json('/', {"data": self.initial_data}, status=422)
+    self.assertEqual(response.status, '422 Unprocessable Entity')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+    self.assertEqual(response.json['errors'], [
+        {u'description': [u"Please provide at least 1 item."], u'location': u'body', u'name': u'assets'}
+    ])
     # # lot with equal assets
-    # id_ex = uuid4().hex
-    # self.initial_data["assets"] = [id_ex, id_ex]
-    # response = self.app.post_json('/', {"data": self.initial_data})
-
-    ####################################################################
-    # TODO: fix the problem with no-assets-lot and different-assets-lot#
-    # - they should return 403 or something, not raise erorrs.         #
-    ####################################################################
+    id_ex = uuid4().hex
+    self.initial_data["assets"] = [id_ex, id_ex]
+    response = self.app.post_json('/', {"data": self.initial_data}, status=422)
+    self.assertEqual(response.status, '422 Unprocessable Entity')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+    self.assertEqual(response.json['errors'], [
+        {u'description': [u"Assets should be unique"], u'location': u'body', u'name': u'assets'}
+    ])
 
 
 def get_lot(self):
