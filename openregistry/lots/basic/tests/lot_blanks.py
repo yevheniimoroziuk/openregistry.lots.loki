@@ -32,7 +32,9 @@ def simple_add_lot(self):
 
 
 def listing(self):
-    response = self.app.get('/lots')
+    prefix = '{}/{}'.format(ROUTE_PREFIX, self.resource_name)
+
+    response = self.app.get('/')
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(len(response.json['data']), 0)
 
@@ -40,13 +42,13 @@ def listing(self):
 
     for i in range(3):
         offset = get_now().isoformat()
-        lot = self.create_lot()
+        lot = self.create_resource()
         lots.append(lot)
 
     ids = ','.join([i['id'] for i in lots])
 
     for _ in range(10):
-        response = self.app.get('/lots')
+        response = self.app.get('/')
         self.assertTrue(ids.startswith(','.join([i['id'] for i in response.json['data']])))
         if len(response.json['data']) == 3:
             break
@@ -58,34 +60,34 @@ def listing(self):
     self.assertEqual([i['dateModified'] for i in response.json['data']], sorted([i['dateModified'] for i in lots]))
 
     for _ in range(10):
-        response = self.app.get('/lots?offset={}'.format(offset))
+        response = self.app.get('/?offset={}'.format(offset))
         self.assertEqual(response.status, '200 OK')
         if len(response.json['data']) == 1:
             break
     self.assertEqual(len(response.json['data']), 1)
 
-    response = self.app.get('/lots?limit=2')
+    response = self.app.get('/?limit=2')
     self.assertEqual(response.status, '200 OK')
     self.assertNotIn('prev_page', response.json)
     self.assertEqual(len(response.json['data']), 2)
 
-    response = self.app.get(response.json['next_page']['path'].replace(ROUTE_PREFIX, ''))
+    response = self.app.get(response.json['next_page']['path'].replace(prefix, ''))
     self.assertEqual(response.status, '200 OK')
     self.assertIn('descending=1', response.json['prev_page']['uri'])
     self.assertEqual(len(response.json['data']), 1)
 
-    response = self.app.get(response.json['next_page']['path'].replace(ROUTE_PREFIX, ''))
+    response = self.app.get(response.json['next_page']['path'].replace(prefix, ''))
     self.assertEqual(response.status, '200 OK')
     self.assertIn('descending=1', response.json['prev_page']['uri'])
     self.assertEqual(len(response.json['data']), 0)
 
-    response = self.app.get('/lots', params=[('opt_fields', 'status')])
+    response = self.app.get('/', params=[('opt_fields', 'status')])
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(len(response.json['data']), 3)
     self.assertEqual(set(response.json['data'][0]), set([u'id', u'dateModified', u'status']))
     self.assertIn('opt_fields=status', response.json['next_page']['uri'])
 
-    response = self.app.get('/lots?descending=1')
+    response = self.app.get('/?descending=1')
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(len(response.json['data']), 3)
@@ -94,50 +96,52 @@ def listing(self):
     self.assertEqual([i['dateModified'] for i in response.json['data']],
                      sorted([i['dateModified'] for i in lots], reverse=True))
 
-    response = self.app.get('/lots?descending=1&limit=2')
+    response = self.app.get('/?descending=1&limit=2')
     self.assertEqual(response.status, '200 OK')
     self.assertNotIn('descending=1', response.json['prev_page']['uri'])
     self.assertEqual(len(response.json['data']), 2)
 
-    response = self.app.get(response.json['next_page']['path'].replace(ROUTE_PREFIX, ''))
+    response = self.app.get(response.json['next_page']['path'].replace(prefix, ''))
     self.assertEqual(response.status, '200 OK')
     self.assertNotIn('descending=1', response.json['prev_page']['uri'])
     self.assertEqual(len(response.json['data']), 1)
 
-    response = self.app.get(response.json['next_page']['path'].replace(ROUTE_PREFIX, ''))
+    response = self.app.get(response.json['next_page']['path'].replace(prefix, ''))
     self.assertEqual(response.status, '200 OK')
     self.assertNotIn('descending=1', response.json['prev_page']['uri'])
     self.assertEqual(len(response.json['data']), 0)
 
-    self.create_lot(extra={"mode": "test"})
+    self.create_resource(extra={"mode": "test"})
 
     for _ in range(10):
-        response = self.app.get('/lots?mode=test')
+        response = self.app.get('/?mode=test')
         self.assertEqual(response.status, '200 OK')
         if len(response.json['data']) == 1:
             break
     self.assertEqual(len(response.json['data']), 1)
 
-    response = self.app.get('/lots?mode=_all_')
+    response = self.app.get('/?mode=_all_')
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(len(response.json['data']), 4)
 
 
 def listing_changes(self):
-    response = self.app.get('/lots?feed=changes')
+    prefix = '{}/{}'.format(ROUTE_PREFIX, self.resource_name)
+
+    response = self.app.get('/?feed=changes')
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(len(response.json['data']), 0)
 
     lots = []
 
     for i in range(3):
-        lot = self.create_lot()
+        lot = self.create_resource()
         lots.append(lot)
 
     ids = ','.join([i['id'] for i in lots])
 
     for _ in range(10):
-        response = self.app.get('/lots?feed=changes')
+        response = self.app.get('/?feed=changes')
         self.assertTrue(ids.startswith(','.join([i['id'] for i in response.json['data']])))
         if len(response.json['data']) == 3:
             break
@@ -150,28 +154,28 @@ def listing_changes(self):
     self.assertEqual(set([i['dateModified'] for i in response.json['data']]), set([i['dateModified'] for i in lots]))
     self.assertEqual([i['dateModified'] for i in response.json['data']], sorted([i['dateModified'] for i in lots]))
 
-    response = self.app.get('/lots?feed=changes&limit=2')
+    response = self.app.get('/?feed=changes&limit=2')
     self.assertEqual(response.status, '200 OK')
     self.assertNotIn('prev_page', response.json)
     self.assertEqual(len(response.json['data']), 2)
 
-    response = self.app.get(response.json['next_page']['path'].replace(ROUTE_PREFIX, ''))
+    response = self.app.get(response.json['next_page']['path'].replace(prefix, ''))
     self.assertEqual(response.status, '200 OK')
     self.assertIn('descending=1', response.json['prev_page']['uri'])
     self.assertEqual(len(response.json['data']), 1)
 
-    response = self.app.get(response.json['next_page']['path'].replace(ROUTE_PREFIX, ''))
+    response = self.app.get(response.json['next_page']['path'].replace(prefix, ''))
     self.assertEqual(response.status, '200 OK')
     self.assertIn('descending=1', response.json['prev_page']['uri'])
     self.assertEqual(len(response.json['data']), 0)
 
-    response = self.app.get('/lots?feed=changes', params=[('opt_fields', 'status')])
+    response = self.app.get('/?feed=changes', params=[('opt_fields', 'status')])
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(len(response.json['data']), 3)
     self.assertEqual(set(response.json['data'][0]), set([u'id', u'dateModified', u'status']))
     self.assertIn('opt_fields=status', response.json['next_page']['uri'])
 
-    response = self.app.get('/lots?feed=changes&descending=1')
+    response = self.app.get('/?feed=changes&descending=1')
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(len(response.json['data']), 3)
@@ -180,46 +184,46 @@ def listing_changes(self):
     self.assertEqual([i['dateModified'] for i in response.json['data']],
                      sorted([i['dateModified'] for i in lots], reverse=True))
 
-    response = self.app.get('/lots?feed=changes&descending=1&limit=2')
+    response = self.app.get('/?feed=changes&descending=1&limit=2')
     self.assertEqual(response.status, '200 OK')
     self.assertNotIn('descending=1', response.json['prev_page']['uri'])
     self.assertEqual(len(response.json['data']), 2)
 
-    response = self.app.get(response.json['next_page']['path'].replace(ROUTE_PREFIX, ''))
+    response = self.app.get(response.json['next_page']['path'].replace(prefix, ''))
     self.assertEqual(response.status, '200 OK')
     self.assertNotIn('descending=1', response.json['prev_page']['uri'])
     self.assertEqual(len(response.json['data']), 1)
 
-    response = self.app.get(response.json['next_page']['path'].replace(ROUTE_PREFIX, ''))
+    response = self.app.get(response.json['next_page']['path'].replace(prefix, ''))
     self.assertEqual(response.status, '200 OK')
     self.assertNotIn('descending=1', response.json['prev_page']['uri'])
     self.assertEqual(len(response.json['data']), 0)
 
-    self.create_lot(extra={"mode": "test"})
+    self.create_resource(extra={"mode": "test"})
 
     for _ in range(10):
-        response = self.app.get('/lots?feed=changes&mode=test')
+        response = self.app.get('/?feed=changes&mode=test')
         self.assertEqual(response.status, '200 OK')
         if len(response.json['data']) == 1:
             break
     self.assertEqual(len(response.json['data']), 1)
 
-    response = self.app.get('/lots?feed=changes&mode=_all_')
+    response = self.app.get('/?feed=changes&mode=_all_')
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(len(response.json['data']), 4)
 
 
 def listing_draft(self):
-    response = self.app.get('/lots')
+    response = self.app.get('/')
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(len(response.json['data']), 0)
 
-    lots = [self.create_lot() for _ in range(3)]
+    lots = [self.create_resource() for _ in range(3)]
 
     ids = ','.join([i['id'] for i in lots])
 
     for _ in range(10):
-        response = self.app.get('/lots')
+        response = self.app.get('/')
         self.assertTrue(ids.startswith(','.join([i['id'] for i in response.json['data']])))
         if len(response.json['data']) == 3:
             break
@@ -232,32 +236,32 @@ def listing_draft(self):
 
 
 def create_lot(self):
-    response = self.app.get('/lots')
+    response = self.app.get('/')
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(len(response.json['data']), 0)
 
-    response = self.app.post_json('/lots', {"data": self.initial_data})
+    response = self.app.post_json('/', {"data": self.initial_data})
     self.assertEqual(response.status, '201 Created')
     self.assertEqual(response.content_type, 'application/json')
     lot = response.json['data']
 
-    response = self.app.get('/lots/{}'.format(lot['id']))
+    response = self.app.get('/{}'.format(lot['id']))
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(set(response.json['data']), set(lot))
     self.assertEqual(response.json['data'], lot)
 
-    response = self.app.post_json('/lots?opt_jsonp=callback', {"data": self.initial_data})
+    response = self.app.post_json('/?opt_jsonp=callback', {"data": self.initial_data})
     self.assertEqual(response.status, '201 Created')
     self.assertEqual(response.content_type, 'application/javascript')
     self.assertIn('callback({"', response.body)
 
-    response = self.app.post_json('/lots?opt_pretty=1', {"data": self.initial_data})
+    response = self.app.post_json('/?opt_pretty=1', {"data": self.initial_data})
     self.assertEqual(response.status, '201 Created')
     self.assertEqual(response.content_type, 'application/json')
     self.assertIn('{\n    "', response.body)
 
-    response = self.app.post_json('/lots', {"data": self.initial_data, "options": {"pretty": True}})
+    response = self.app.post_json('/', {"data": self.initial_data, "options": {"pretty": True}})
     self.assertEqual(response.status, '201 Created')
     self.assertEqual(response.content_type, 'application/json')
     self.assertIn('{\n    "', response.body)
@@ -267,7 +271,7 @@ def check_lot_assets(self):
 
 
     def create_single_lot():
-        response = self.app.post_json('/lots', {"data": self.initial_data})
+        response = self.app.post_json('/', {"data": self.initial_data})
         self.assertEqual(response.status, '201 Created')
         self.assertEqual(response.content_type, 'application/json')
         return response.json['data']
@@ -276,7 +280,7 @@ def check_lot_assets(self):
     # lot with a single assets
     self.initial_data["assets"] = [uuid4().hex]
     lot = create_single_lot()
-    response = self.app.get('/lots/{}'.format(lot['id']))
+    response = self.app.get('/{}'.format(lot['id']))
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(set(response.json['data']), set(lot))
@@ -285,22 +289,20 @@ def check_lot_assets(self):
     # lot with different assets
     self.initial_data["assets"] = [uuid4().hex, uuid4().hex]
     lot = create_single_lot()
-    response = self.app.get('/lots/{}'.format(lot['id']))
+    response = self.app.get('/{}'.format(lot['id']))
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(set(response.json['data']), set(lot))
     self.assertEqual(response.json['data'], lot)
 
-    # # this tests are not working corectly
-
     # # lot with no assets
     # self.initial_data["assets"] = []
-    # response = self.app.post_json('/lots', {"data": self.initial_data})
+    # response = self.app.post_json('/', {"data": self.initial_data})
 
     # # lot with equal assets
     # id_ex = uuid4().hex
     # self.initial_data["assets"] = [id_ex, id_ex]
-    # response = self.app.post_json('/lots', {"data": self.initial_data})
+    # response = self.app.post_json('/', {"data": self.initial_data})
 
     ####################################################################
     # TODO: fix the problem with no-assets-lot and different-assets-lot#
@@ -309,47 +311,47 @@ def check_lot_assets(self):
 
 
 def get_lot(self):
-    response = self.app.get('/lots')
+    response = self.app.get('/')
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(len(response.json['data']), 0)
 
-    response = self.app.post_json('/lots', {'data': self.initial_data})
+    response = self.app.post_json('/', {'data': self.initial_data})
     self.assertEqual(response.status, '201 Created')
     lot = response.json['data']
 
-    response = self.app.get('/lots/{}'.format(lot['id']))
+    response = self.app.get('/{}'.format(lot['id']))
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(response.json['data'], lot)
 
-    response = self.app.get('/lots/{}?opt_jsonp=callback'.format(lot['id']))
+    response = self.app.get('/{}?opt_jsonp=callback'.format(lot['id']))
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(response.content_type, 'application/javascript')
     self.assertIn('callback({"data": {"', response.body)
 
-    response = self.app.get('/lots/{}?opt_pretty=1'.format(lot['id']))
+    response = self.app.get('/{}?opt_pretty=1'.format(lot['id']))
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(response.content_type, 'application/json')
     self.assertIn('{\n    "data": {\n        "', response.body)
 
 
 def dateModified_lot(self):
-    response = self.app.get('/lots')
+    response = self.app.get('/')
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(len(response.json['data']), 0)
 
-    response = self.app.post_json('/lots', {'data': self.initial_data})
+    response = self.app.post_json('/', {'data': self.initial_data})
     self.assertEqual(response.status, '201 Created')
     lot = response.json['data']
     token = response.json['access']['token']
     dateModified = lot['dateModified']
 
-    response = self.app.get('/lots/{}'.format(lot['id']))
+    response = self.app.get('/{}'.format(lot['id']))
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(response.json['data']['dateModified'], dateModified)
 
-    response = self.app.patch_json('/lots/{}?acc_token={}'.format(
+    response = self.app.patch_json('/{}?acc_token={}'.format(
         lot['id'], token), {'data': {'status': 'pending'}})
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(response.content_type, 'application/json')
@@ -358,7 +360,7 @@ def dateModified_lot(self):
     lot = response.json['data']
     dateModified = lot['dateModified']
 
-    response = self.app.get('/lots/{}'.format(lot['id']))
+    response = self.app.get('/{}'.format(lot['id']))
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(response.json['data'], lot)
@@ -366,7 +368,7 @@ def dateModified_lot(self):
 
 
 def change_draft_lot(self):
-    response = self.app.get('/lots')
+    response = self.app.get('/')
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(len(response.json['data']), 0)
 
@@ -375,13 +377,13 @@ def change_draft_lot(self):
     # Create lot in 'draft' status
     draft_lot = deepcopy(self.initial_data)
     draft_lot['status'] = 'draft'
-    response = self.app.post_json('/lots', {'data': draft_lot})
+    response = self.app.post_json('/', {'data': draft_lot})
     self.assertEqual(response.status, '201 Created')
     lot = response.json['data']
     token = response.json['access']['token']
     self.assertEqual(lot.get('status', ''), 'draft')
 
-    response = self.app.get('/lots/{}'.format(lot['id']))
+    response = self.app.get('/{}'.format(lot['id']))
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(response.json['data'], lot)
@@ -389,7 +391,7 @@ def change_draft_lot(self):
     # Create new lot in 'draft' status
     draft_lot = deepcopy(draft_lot)
     draft_lot['assets'] = [uuid4().hex]
-    response = self.app.post_json('/lots', {'data': draft_lot})
+    response = self.app.post_json('/', {'data': draft_lot})
     self.assertEqual(response.status, '201 Created')
     lot = response.json['data']
     token = response.json['access']['token']
@@ -397,7 +399,7 @@ def change_draft_lot(self):
 
     # Move from 'draft' to 'pending' status
     response = self.app.patch_json(
-        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        '/{}?acc_token={}'.format(lot['id'], token),
         {'data': {'status': 'pending'}}
     )
     self.assertEqual(response.status, '200 OK')
@@ -405,7 +407,7 @@ def change_draft_lot(self):
 
     # Move from 'pending' to 'draft'
     response = self.app.patch_json(
-        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        '/{}?acc_token={}'.format(lot['id'], token),
         {'data': {'status': 'draft'}},
         status=403,
     )
@@ -418,14 +420,14 @@ def change_draft_lot(self):
     # Create lot in 'draft' status
     draft_lot = deepcopy(self.initial_data)
     draft_lot['status'] = 'draft'
-    response = self.app.post_json('/lots', {'data': draft_lot}, status=403)
+    response = self.app.post_json('/', {'data': draft_lot}, status=403)
     self.assertEqual(response.status, '403 Forbidden')
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(response.json['status'], 'error')
 
     # Move last 'draft' lot to 'deleted' status
     response = self.app.patch_json(
-        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        '/{}?acc_token={}'.format(lot['id'], token),
         {'data': {'status': 'deleted'}},
         status=403,
     )
@@ -436,7 +438,7 @@ def change_draft_lot(self):
     # Move from 'draft' to 'waiting' status
     # XXX TODO Waiting to Waiting
     # response = self.app.patch_json(
-    #     '/lots/{}?acc_token={}'.format(lot['id'], token),
+    #     '/{}?acc_token={}'.format(lot['id'], token),
     #     {'data': {'status': 'waiting'}},
     #     status=403,
     # )
@@ -446,7 +448,7 @@ def change_draft_lot(self):
 
 
 def change_waiting_lot(self):
-    response = self.app.get('/lots')
+    response = self.app.get('/')
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(len(response.json['data']), 0)
 
@@ -457,7 +459,7 @@ def change_waiting_lot(self):
     draft_lot = deepcopy(self.initial_data)
     draft_lot['assets'] = [uuid4().hex]
     draft_lot['status'] = 'draft'
-    response = self.app.post_json('/lots', {'data': draft_lot}, status=403)
+    response = self.app.post_json('/', {'data': draft_lot}, status=403)
     self.assertEqual(response.status, '403 Forbidden')
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(response.json['status'], 'error')
@@ -466,46 +468,46 @@ def change_waiting_lot(self):
     self.app.authorization = ('Basic', ('broker', ''))
 
     # Create new lot in 'draft' status
-    response = self.app.post_json('/lots', {'data': draft_lot})
+    response = self.app.post_json('/', {'data': draft_lot})
     self.assertEqual(response.status, '201 Created')
     lot = response.json['data']
     token = response.json['access']['token']
     self.assertEqual(lot.get('status', ''), 'draft')
 
-    response = self.app.get('/lots/{}'.format(lot['id']))
+    response = self.app.get('/{}'.format(lot['id']))
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(response.json['data'], lot)
 
     # Move from 'draft' to 'waiting' status
     response = self.app.patch_json(
-        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        '/{}?acc_token={}'.format(lot['id'], token),
         {'data': {'status': 'pending'}}
     )
     self.assertEqual(response.status, '200 OK')
 
     # Create new lot in 'draft' status
-    response = self.app.post_json('/lots', {'data': draft_lot})
+    response = self.app.post_json('/', {'data': draft_lot})
     self.assertEqual(response.status, '201 Created')
     lot = response.json['data']
     token = response.json['access']['token']
     self.assertEqual(lot.get('status', ''), 'draft')
 
-    response = self.app.get('/lots/{}'.format(lot['id']))
+    response = self.app.get('/{}'.format(lot['id']))
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(response.json['data'], lot)
 
     # Move from 'draft' to 'pending' status
     response = self.app.patch_json(
-        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        '/{}?acc_token={}'.format(lot['id'], token),
         {'data': {'status': 'pending'}}
     )
     self.assertEqual(response.status, '200 OK')
 
     # Move from 'pending' to 'verification' status
     response = self.app.patch_json(
-        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        '/{}?acc_token={}'.format(lot['id'], token),
         {'data': {'status': 'verification'}}
     )
     self.assertEqual(response.status, '200 OK')
@@ -515,14 +517,14 @@ def change_waiting_lot(self):
 
     # Move from 'verification' to 'active.salable' status
     response = self.app.patch_json(
-        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        '/{}?acc_token={}'.format(lot['id'], token),
         {'data': {'status': 'active.salable'}}
     )
     self.assertEqual(response.status, '200 OK')
 
     # Move from 'active.salable' to 'verification' status
     response = self.app.patch_json(
-        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        '/{}?acc_token={}'.format(lot['id'], token),
         {'data': {'status': 'verification'}},
         status=403,
     )
@@ -532,7 +534,7 @@ def change_waiting_lot(self):
 
     # Move from 'active.pending' to 'sold' status
     response = self.app.patch_json(
-        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        '/{}?acc_token={}'.format(lot['id'], token),
         {'data': {'status': 'sold'}},
         status=403,
     )
@@ -543,11 +545,11 @@ def change_waiting_lot(self):
 
     self.app.authorization = ('Basic', ('broker', ''))
 
-    lot = self.create_lot()
+    lot = self.create_resource()
 
     # Move from 'waiting' to 'active.pending' status
     response = self.app.patch_json(
-        '/lots/{}'.format(lot['id']),
+        '/{}'.format(lot['id']),
         {'data': {'status': 'active.pending'}},
         status=403,
     )
@@ -557,7 +559,7 @@ def change_waiting_lot(self):
 
     # Move from 'waiting' to 'sold' status
     response = self.app.patch_json(
-        '/lots/{}'.format(lot['id']),
+        '/{}'.format(lot['id']),
         {'data': {'status': 'sold'}},
         status=403,
     )
@@ -567,7 +569,7 @@ def change_waiting_lot(self):
 
 
 def change_dissolved_lot(self):
-    response = self.app.get('/lots')
+    response = self.app.get('/')
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(len(response.json['data']), 0)
 
@@ -577,34 +579,34 @@ def change_dissolved_lot(self):
     draft_lot = deepcopy(self.initial_data)
     draft_lot['assets'] = [uuid4().hex]
     draft_lot['status'] = 'draft'
-    response = self.app.post_json('/lots', {'data': draft_lot})
+    response = self.app.post_json('/', {'data': draft_lot})
     self.assertEqual(response.status, '201 Created')
     lot = response.json['data']
     token = response.json['access']['token']
     self.assertEqual(lot.get('status', ''), 'draft')
 
-    response = self.app.get('/lots/{}'.format(lot['id']))
+    response = self.app.get('/{}'.format(lot['id']))
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(response.json['data'], lot)
 
     # Move from 'draft' to 'pending' status
     response = self.app.patch_json(
-        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        '/{}?acc_token={}'.format(lot['id'], token),
         {'data': {'status': 'pending'}}
     )
     self.assertEqual(response.status, '200 OK')
 
     # Move from 'pending' to 'verification' status
     response = self.app.patch_json(
-        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        '/{}?acc_token={}'.format(lot['id'], token),
         {'data': {'status': 'verification'}}
     )
     self.assertEqual(response.status, '200 OK')
 
     # Move from 'waiting' to 'active.pending' status
     response = self.app.patch_json(
-        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        '/{}?acc_token={}'.format(lot['id'], token),
         {'data': {'status': 'active.salable'}},
         status=403,
     )
@@ -616,7 +618,7 @@ def change_dissolved_lot(self):
     self.app.authorization = ('Basic', ('concierge', ''))
     # Move from 'waiting' to 'active.pending' status
     response = self.app.patch_json(
-        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        '/{}?acc_token={}'.format(lot['id'], token),
         {'data': {'status': 'active.salable'}}
     )
     self.assertEqual(response.status, '200 OK')
@@ -626,7 +628,7 @@ def change_dissolved_lot(self):
 
     # Move from 'active.salable' to 'dissolved' status
     response = self.app.patch_json(
-        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        '/{}?acc_token={}'.format(lot['id'], token),
         {'data': {'status': 'dissolved'}}
     )
     self.assertEqual(response.status, '200 OK')
@@ -635,7 +637,7 @@ def change_dissolved_lot(self):
 
     # Move from 'dissolved' to 'active.salable' status
     response = self.app.patch_json(
-        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        '/{}?acc_token={}'.format(lot['id'], token),
         {'data': {'status': 'active.salable'}},
         status=403,
     )
@@ -645,7 +647,7 @@ def change_dissolved_lot(self):
 
     # Move from 'dissolved' to 'invalid' status
     response = self.app.patch_json(
-        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        '/{}?acc_token={}'.format(lot['id'], token),
         {'data': {'status': 'invalid'}},
         status=403,
     )
@@ -655,7 +657,7 @@ def change_dissolved_lot(self):
 
     # Move from 'dissolved' to 'deleted' status
     response = self.app.patch_json(
-        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        '/{}?acc_token={}'.format(lot['id'], token),
         {'data': {'status': 'deleted'}},
         status=403,
     )
@@ -665,7 +667,7 @@ def change_dissolved_lot(self):
 
     # Move from 'dissolved' to 'sold' status
     response = self.app.patch_json(
-        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        '/{}?acc_token={}'.format(lot['id'], token),
         {'data': {'status': 'sold'}},
         status=403,
     )
@@ -678,27 +680,27 @@ def change_dissolved_lot(self):
     draft_lot = deepcopy(self.initial_data)
     draft_lot['assets'] = [uuid4().hex]
     draft_lot['status'] = 'draft'
-    response = self.app.post_json('/lots', {'data': draft_lot})
+    response = self.app.post_json('/', {'data': draft_lot})
     self.assertEqual(response.status, '201 Created')
     lot = response.json['data']
     token = response.json['access']['token']
     self.assertEqual(lot.get('status', ''), 'draft')
 
-    response = self.app.get('/lots/{}'.format(lot['id']))
+    response = self.app.get('/{}'.format(lot['id']))
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(response.json['data'], lot)
 
     # Move from 'draft' to 'pending' status
     response = self.app.patch_json(
-        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        '/{}?acc_token={}'.format(lot['id'], token),
         {'data': {'status': 'pending'}}
     )
     self.assertEqual(response.status, '200 OK')
 
     # Move from 'pending' to 'verification' status
     response = self.app.patch_json(
-        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        '/{}?acc_token={}'.format(lot['id'], token),
         {'data': {'status': 'verification'}}
     )
     self.assertEqual(response.status, '200 OK')
@@ -709,21 +711,21 @@ def change_dissolved_lot(self):
     # Create lot in 'active.salable' status
     pending_lot = deepcopy(self.initial_data)
     pending_lot['status'] = 'active.salable'
-    response = self.app.post_json('/lots', {'data': pending_lot}, status=403)
+    response = self.app.post_json('/', {'data': pending_lot}, status=403)
     self.assertEqual(response.status, '403 Forbidden')
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(response.json['status'], 'error')
 
     # Move from 'verification' to 'active.salable' status
     response = self.app.patch_json(
-        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        '/{}?acc_token={}'.format(lot['id'], token),
         {'data': {'status': 'active.salable'}}
     )
     self.assertEqual(response.status, '200 OK')
 
     # Move from 'active.pending' to 'dissolved' status
     response = self.app.patch_json(
-        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        '/{}?acc_token={}'.format(lot['id'], token),
         {'data': {'status': 'dissolved'}},
         status=403,
     )
@@ -735,7 +737,7 @@ def change_dissolved_lot(self):
 
     # Move from 'active.pending' to 'dissolved' status
     response = self.app.patch_json(
-        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        '/{}?acc_token={}'.format(lot['id'], token),
         {'data': {'status': 'dissolved'}}
     )
     self.assertEqual(response.status, '200 OK')
@@ -744,7 +746,7 @@ def change_dissolved_lot(self):
 
     # Move from 'dissolved' to 'deleted' status
     response = self.app.patch_json(
-        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        '/{}?acc_token={}'.format(lot['id'], token),
         {'data': {'status': 'deleted'}},
         status=403,
     )
@@ -754,7 +756,7 @@ def change_dissolved_lot(self):
 
     # Move from 'dissolved' to 'sold' status
     response = self.app.patch_json(
-        '/lots/{}?acc_token={}'.format(lot['id'], token),
+        '/{}?acc_token={}'.format(lot['id'], token),
         {'data': {'status': 'sold'}},
         status=403,
     )
@@ -764,11 +766,11 @@ def change_dissolved_lot(self):
 
 
 def lot_not_found(self):
-    response = self.app.get('/lots')
+    response = self.app.get('/')
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(len(response.json['data']), 0)
 
-    response = self.app.get('/lots/some_id', status=404)
+    response = self.app.get('/some_id', status=404)
     self.assertEqual(response.status, '404 Not Found')
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(response.json['status'], 'error')
@@ -777,7 +779,7 @@ def lot_not_found(self):
     ])
 
     response = self.app.patch_json(
-        '/lots/some_id', {'data': {}}, status=404)
+        '/some_id', {'data': {}}, status=404)
     self.assertEqual(response.status, '404 Not Found')
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(response.json['status'], 'error')
@@ -789,5 +791,5 @@ def lot_not_found(self):
     data = {'contract': 'test', '_id': uuid4().hex}
     self.db.save(data)
 
-    response = self.app.get('/lots/{}'.format(data['_id']), status=404)
+    response = self.app.get('/{}'.format(data['_id']), status=404)
     self.assertEqual(response.status, '404 Not Found')
