@@ -70,7 +70,7 @@ Let's update lot description:
 
 .. XXX body is empty for some reason (printf fails)
 
-We see the added properies have merged with existing loy data. Additionally, the `dateModified` property was updated to reflect the last modification datestamp.
+We see the added properies have merged with existing lot data. Additionally, the `dateModified` property was updated to reflect the last modification datestamp.
 
 Checking the listing again reflects the new modification date:
 

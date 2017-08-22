@@ -1,0 +1,132 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: openregistry.lots.basic 0.1.dev0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-08-19 13:11+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Tutorial"
+msgstr "Туторіал"
+
+msgid "Exploring basic rules"
+msgstr "Базові правила"
+
+msgid "Just invoking it reveals empty set."
+msgstr "При виклику видає пустий набір."
+
+msgid "Now let's attempt creating a lot:"
+msgstr "Спробуймо створити новий лот"
+
+msgid ""
+"Error states that the only accepted Content-Type is `application/json`."
+msgstr ""
+"Помилка вказує, що єдиний прийнятний тип вмісту це `application/json`."
+
+msgid "Let's satisfy the Content-type requirement:"
+msgstr "Задовільнимо вимогу типу вмісту:"
+
+msgid "Error states that no `data` has been found in JSON body."
+msgstr "Помилка вказує, що `data`  не знайдено у тілі JSON."
+
+msgid "Creating lot"
+msgstr "Створення лоту"
+
+msgid "Let's create lot with the minimal (only required) data set:"
+msgstr ""
+"Створимо лот з мінімально допустимим набором даних (тільки параметри "
+"обовязкові для заповнення) :"
+
+msgid ""
+"Success! Now we can see that new object was created. Response code is `201` "
+"and `Location` response header reports the location of the created object.  "
+"The body of response reveals the information about the created lot: its "
+"internal `id` (that matches the `Location` segment), its official `lotID` "
+"and `dateModified` datestamp stating the moment in time when lot was last "
+"modified. Pay attention to the `lotType`. Note that lot is created with "
+"`pending` status."
+msgstr ""
+"Успіх! Тепер ми бачимо, що новий об’єкт було створено. Код відповіді 201 та "
+"заголовок відповіді `Location` вказує місцерозташування створеного об’єкта. "
+"Тіло відповіді показує інформацію про створений аукціон, його внутрішнє `id`"
+" (яке співпадає з сегментом `Location`), його офіційне `lotID` та "
+"`dateModified` дату, що показує час, коли лот востаннє модифікувався. "
+"Зверніть увагу на те, що лот створений в статусі `pending`."
+
+msgid ""
+"Let's access the URL of the created object (the `Location` header of the "
+"response):"
+msgstr "Використаємо URL створеного об’єкта (заголовок відповіді `Location`):"
+
+msgid "We can see the same response we got after creating lot."
+msgstr "Ми бачимо ту ж відповідь, що і після створення лоту."
+
+msgid "Let's see what listing of lots reveals us:"
+msgstr "Подивимось, що показує список лотів:"
+
+msgid ""
+"The previous lot contained only required fields. Let's try creating lot with"
+" more data (lot has status `created`):"
+msgstr ""
+"Попередній лот був створений лише з обов’язковими полями. Тепер додамо лот з"
+" максимально допустимим набором даних при створенні (лот повинен бути у "
+"статусі created):"
+
+msgid "Let's check what lot registry contains:"
+msgstr "Перевіримо, що містить реєстр:"
+
+msgid "And indeed we have 2 lots now."
+msgstr "Дійсно, в нас зараз є два лоти."
+
+msgid "Modifying Lot"
+msgstr "Модифікація лоту"
+
+msgid "Let's update lot description:"
+msgstr "Оновимо лот шляхом надання йому усіх інших важливих властивостей:"
+
+msgid "Checking the listing again reflects the new modification date:"
+msgstr "Ще одна перевірка списку відображає нову дату модифікації:"
+
+msgid "Deleting Lot"
+msgstr "Видалення лоту"
+
+msgid "Let's delete lot:"
+msgstr "Видалимо лот"
+
+msgid "Integration with assets"
+msgstr "Інтеграція з активами"
+
+msgid "Let's try exploring the `lots` endpoint:"
+msgstr "Подивимось як працює точка входу  `lots`:"
+
+msgid ""
+"We do see the internal `id` of the lot (that can be used to construct full "
+"URL by prepending `https://lb.api-sandbox.registry.ea.openprocurement.net/api/0.1/lots/`) "
+"and its `dateModified` datestamp."
+msgstr ""
+"Ми бачимо внутрішнє `id` лоту (що може бути використано для побудови повної "
+"URL-адреси, якщо додати `https://lb.api-"
+"sandbox.registry.ea.openprocurement.net/api/0.1/lots/` та його dateModified "
+"дату."
+
+msgid ""
+"And again we have `201 Created` response code, `Location` header and body with "
+"extra `id`, `lotID`, and `dateModified` properties."
+msgstr ""
+"І знову код відповіді `201 Created`, заголовок Location і тіло з додатковим "
+"`id`, `lotID` та властивість `dateModified`."
+
+msgid ""
+"We see the added properies have merged with existing lot data. Additionally, "
+"the `dateModified` property was updated to reflect the last modification datestamp."
+msgstr ""
+"Ми бачимо, що додаткові властивості об’єднані з існуючими даними лоту. "
+"Додатково оновлена властивість `dateModified`, щоб відображати останню дату "
+"модифікації."
+
+
