@@ -2,12 +2,13 @@
 
 import unittest
 
-from openregistry.lots.basic.tests import lot
+from openregistry.lots.basic.tests import lot, document
 
 
 def suite():
     suite = unittest.TestSuite()
     suite.addTest(lot.suite())
+    suite.addTest(document.suite())
     return suite
 
 
