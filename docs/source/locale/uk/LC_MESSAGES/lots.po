@@ -30,7 +30,7 @@ msgid "no error"
 msgstr "без помилок"
 
 msgid "endpoint not found"
-msgstr " ресурс не знайдено"
+msgstr "ресурс не знайдено"
 
 msgid "Sorting"
 msgstr "Сортування"
@@ -100,8 +100,8 @@ msgstr ""
 msgid "The safe frequency of synchronization requests is once per 5 minutes."
 msgstr "Безпечна частота запитів на синхронізацію - раз в 5 хвилин."
 
-msgid "asset not found"
-msgstr "актив не знайдено"
+msgid "lot not found"
+msgstr "лот не знайдено"
 
 msgid "Retrieving Lot Information"
 msgstr "Отримання інформації про лот"

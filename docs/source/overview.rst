@@ -29,7 +29,7 @@ the request.
 
 If the request was successful, we will get a response code of `201`
 indicating the object was created.  That response will have a data field at
-its top level, which will contain complete information on the new auction,
+its top level, which will contain complete information on the new lot,
 including its ID.
 
 If something went wrong during the request, we'll get a different status
