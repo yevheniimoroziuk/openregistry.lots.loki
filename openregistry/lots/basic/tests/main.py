@@ -2,13 +2,13 @@
 
 import unittest
 
-from openregistry.lots.basic.tests import lot
+from openregistry.lots.basic.tests import lot, document
 
 
 def suite():
     tests = unittest.TestSuite()
     tests.addTest(lot.suite())
-    return tests
+    tests.addTest(document.suite())
 
 
 if __name__ == '__main__':
