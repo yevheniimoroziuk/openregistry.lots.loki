@@ -2,10 +2,7 @@
 from schematics.types import StringType
 from zope.interface import implementer
 
-from openregistry.lots.core.models import (
-    ILot, Lot as BaseLot,
-    view_role, create_role, edit_role, Administrator_role
-)
+from openregistry.lots.core.models import ILot, Lot as BaseLot
 
 
 class IBasicLot(ILot):

@@ -2,12 +2,10 @@
 # -*- coding: utf-8 -*-
 import json
 import os
-from datetime import timedelta, datetime
-from uuid import uuid4
-
-from openregistry.api.models import get_now
-from openregistry.lots.basic.tests.base import PrefixedRequestClass, test_asset_data, BaseAssetWebTest
+from datetime import datetime
 from webtest import TestApp
+
+from openregistry.lots.basic.tests.base import PrefixedRequestClass, test_asset_data, BaseAssetWebTest
 
 now = datetime.now()
 

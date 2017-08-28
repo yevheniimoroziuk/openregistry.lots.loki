@@ -48,10 +48,10 @@ class LotResourceTest(BaseLotWebTest):
 
 
 def suite():
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(LotResourceTest))
-    suite.addTest(unittest.makeSuite(LotTest))
-    return suite
+    tests = unittest.TestSuite()
+    tests.addTest(unittest.makeSuite(LotResourceTest))
+    tests.addTest(unittest.makeSuite(LotTest))
+    return tests
 
 
 if __name__ == '__main__':
