@@ -75,4 +75,4 @@ Reading the individual lot information
 
    :reqheader Authorization: optional OAuth token to authenticate
    :statuscode 200: no error
-   :statuscode 404: asset not found
+   :statuscode 404: lot not found

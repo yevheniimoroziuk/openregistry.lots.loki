@@ -45,14 +45,16 @@ msgid "kmqHGqhpzgef4t5OVKoQCPa5v-CK14HOLmVrZV2QgmQ"
 msgstr ""
 
 msgid "Welcome to openregistry.lots.basic's documentation!"
-msgstr ""
+msgstr "Вітаємо на сайті документації по openregistry.lots.basic!"
 
 msgid ""
 "Please report any problems or suggestions for improvement either via the "
 "`mailing list <http://groups.google.com/group/open-procurement-general>`_ or"
 " the `issue tracker "
 "<https://github.com/openprocurement/openregistry.lots.basic/issues>`_."
-msgstr ""
+msgstr "Будь ласка повідомляйте про всі проблеми та поради покращень або через "
+"`розсилку <http://groups.google.com/group/open-procurement-general>`_, або "
+"`issue tracker <https://github.com/openprocurement/openregistry.lots.basic/issues>`_."
 
 #~ msgid "Welcome to openregistry.assets.basic's documentation!"
 #~ msgstr "Вітаємо на сайті документації по openregistry.assets.basic! "
