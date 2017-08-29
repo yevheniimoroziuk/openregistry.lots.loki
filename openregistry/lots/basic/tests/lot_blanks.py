@@ -107,21 +107,21 @@ def change_draft_lot(self):
     response = self.app.post_json('/', {'data': draft_lot})
     self.assertEqual(response.status, '201 Created')
     lot = response.json['data']
-    token = response.json['access']['token']
+    token = str(response.json['access']['token'])
     self.assertEqual(lot.get('status', ''), 'draft')
 
     # Move from 'draft' to 'pending' status
-    response = self.app.patch_json(
-        '/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'pending'}}
+    response = self.app.patch_json('/{}'.format(lot['id']),
+        headers={'X-Access-Token': token}, params={
+            'data': {'status': 'pending'}}
     )
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(response.content_type, 'application/json')
 
     # Move from 'pending' to 'draft'
-    response = self.app.patch_json(
-        '/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'draft'}},
+    response = self.app.patch_json('/{}'.format(lot['id']),
+        headers={'X-Access-Token': token}, params={
+            'data': {'status': 'draft'}},
         status=403,
     )
     self.assertEqual(response.status, '403 Forbidden')
@@ -139,9 +139,9 @@ def change_draft_lot(self):
     self.assertEqual(response.json['status'], 'error')
 
     # Move last 'draft' lot to 'deleted' status
-    response = self.app.patch_json(
-        '/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'deleted'}},
+    response = self.app.patch_json('/{}'.format(lot['id']),
+        headers={'X-Access-Token': token}, params={
+            'data': {'status': 'deleted'}},
         status=403,
     )
     self.assertEqual(response.status, '403 Forbidden')
@@ -184,7 +184,7 @@ def change_waiting_lot(self):
     response = self.app.post_json('/', {'data': draft_lot})
     self.assertEqual(response.status, '201 Created')
     lot = response.json['data']
-    token = response.json['access']['token']
+    token = str(response.json['access']['token'])
     self.assertEqual(lot.get('status', ''), 'draft')
 
     response = self.app.get('/{}'.format(lot['id']))
@@ -193,9 +193,9 @@ def change_waiting_lot(self):
     self.assertEqual(response.json['data'], lot)
 
     # Move from 'draft' to 'waiting' status
-    response = self.app.patch_json(
-        '/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'pending'}}
+    response = self.app.patch_json('/{}'.format(lot['id']),
+        headers={'X-Access-Token': token}, params={
+            'data': {'status': 'pending'}}
     )
     self.assertEqual(response.status, '200 OK')
 
@@ -203,7 +203,7 @@ def change_waiting_lot(self):
     response = self.app.post_json('/', {'data': draft_lot})
     self.assertEqual(response.status, '201 Created')
     lot = response.json['data']
-    token = response.json['access']['token']
+    token = str(response.json['access']['token'])
     self.assertEqual(lot.get('status', ''), 'draft')
 
     response = self.app.get('/{}'.format(lot['id']))
@@ -212,16 +212,16 @@ def change_waiting_lot(self):
     self.assertEqual(response.json['data'], lot)
 
     # Move from 'draft' to 'pending' status
-    response = self.app.patch_json(
-        '/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'pending'}}
+    response = self.app.patch_json('/{}'.format(lot['id']),
+        headers={'X-Access-Token': token}, params={
+            'data': {'status': 'pending'}}
     )
     self.assertEqual(response.status, '200 OK')
 
     # Move from 'pending' to 'verification' status
-    response = self.app.patch_json(
-        '/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'verification'}}
+    response = self.app.patch_json('/{}'.format(lot['id']),
+        headers={'X-Access-Token': token}, params={
+            'data': {'status': 'verification'}}
     )
     self.assertEqual(response.status, '200 OK')
 
@@ -229,16 +229,16 @@ def change_waiting_lot(self):
     self.app.authorization = ('Basic', ('concierge', ''))
 
     # Move from 'verification' to 'active.salable' status
-    response = self.app.patch_json(
-        '/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'active.salable'}}
+    response = self.app.patch_json('/{}'.format(lot['id']),
+        headers={'X-Access-Token': token}, params={
+            'data': {'status': 'active.salable'}}
     )
     self.assertEqual(response.status, '200 OK')
 
     # Move from 'active.salable' to 'verification' status
-    response = self.app.patch_json(
-        '/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'verification'}},
+    response = self.app.patch_json('/{}'.format(lot['id']),
+        headers={'X-Access-Token': token}, params={
+            'data': {'status': 'verification'}},
         status=403,
     )
     self.assertEqual(response.status, '403 Forbidden')
@@ -246,9 +246,9 @@ def change_waiting_lot(self):
     self.assertEqual(response.json['status'], 'error')
 
     # Move from 'active.pending' to 'sold' status
-    response = self.app.patch_json(
-        '/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'sold'}},
+    response = self.app.patch_json('/{}'.format(lot['id']),
+        headers={'X-Access-Token': token}, params={
+            'data': {'status': 'sold'}},
         status=403,
     )
     self.assertEqual(response.status, '403 Forbidden')
@@ -261,9 +261,9 @@ def change_waiting_lot(self):
     lot = self.create_resource()
 
     # Move from 'waiting' to 'active.pending' status
-    response = self.app.patch_json(
-        '/{}'.format(lot['id']),
-        {'data': {'status': 'active.pending'}},
+    response = self.app.patch_json('/{}'.format(lot['id']),
+        headers={'X-Access-Token': self.resource_token}, params={
+            'data': {'status': 'active.salable'}},
         status=403,
     )
     self.assertEqual(response.status, '403 Forbidden')
@@ -271,9 +271,9 @@ def change_waiting_lot(self):
     self.assertEqual(response.json['status'], 'error')
 
     # Move from 'waiting' to 'sold' status
-    response = self.app.patch_json(
-        '/{}'.format(lot['id']),
-        {'data': {'status': 'sold'}},
+    response = self.app.patch_json('/{}'.format(lot['id']),
+        headers={'X-Access-Token': self.resource_token}, params={
+            'data': {'status': 'sold'}},
         status=403,
     )
     self.assertEqual(response.status, '403 Forbidden')
@@ -295,7 +295,7 @@ def change_dissolved_lot(self):
     response = self.app.post_json('/', {'data': draft_lot})
     self.assertEqual(response.status, '201 Created')
     lot = response.json['data']
-    token = response.json['access']['token']
+    token = str(response.json['access']['token'])
     self.assertEqual(lot.get('status', ''), 'draft')
 
     response = self.app.get('/{}'.format(lot['id']))
@@ -304,23 +304,23 @@ def change_dissolved_lot(self):
     self.assertEqual(response.json['data'], lot)
 
     # Move from 'draft' to 'pending' status
-    response = self.app.patch_json(
-        '/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'pending'}}
+    response = self.app.patch_json('/{}'.format(lot['id']),
+        headers={'X-Access-Token': token}, params={
+            'data': {'status': 'pending'}}
     )
     self.assertEqual(response.status, '200 OK')
 
     # Move from 'pending' to 'verification' status
-    response = self.app.patch_json(
-        '/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'verification'}}
+    response = self.app.patch_json('/{}'.format(lot['id']),
+        headers={'X-Access-Token': token}, params={
+            'data': {'status': 'verification'}}
     )
     self.assertEqual(response.status, '200 OK')
 
     # Move from 'waiting' to 'active.pending' status
-    response = self.app.patch_json(
-        '/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'active.salable'}},
+    response = self.app.patch_json('/{}'.format(lot['id']),
+        headers={'X-Access-Token': token}, params={
+            'data': {'status': 'active.salable'}},
         status=403,
     )
     self.assertEqual(response.status, '403 Forbidden')
@@ -330,9 +330,9 @@ def change_dissolved_lot(self):
 
     self.app.authorization = ('Basic', ('concierge', ''))
     # Move from 'waiting' to 'active.pending' status
-    response = self.app.patch_json(
-        '/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'active.salable'}}
+    response = self.app.patch_json('/{}'.format(lot['id']),
+        headers={'X-Access-Token': token}, params={
+            'data': {'status': 'active.salable'}}
     )
     self.assertEqual(response.status, '200 OK')
 
@@ -340,18 +340,18 @@ def change_dissolved_lot(self):
     self.app.authorization = ('Basic', ('broker', ''))
 
     # Move from 'active.salable' to 'dissolved' status
-    response = self.app.patch_json(
-        '/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'dissolved'}}
+    response = self.app.patch_json('/{}'.format(lot['id']),
+        headers={'X-Access-Token': token}, params={
+            'data': {'status': 'dissolved'}}
     )
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(response.json['data']['status'], 'dissolved')
 
     # Move from 'dissolved' to 'active.salable' status
-    response = self.app.patch_json(
-        '/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'active.salable'}},
+    response = self.app.patch_json('/{}'.format(lot['id']),
+        headers={'X-Access-Token': token}, params={
+            'data': {'status': 'active.salable'}},
         status=403,
     )
     self.assertEqual(response.status, '403 Forbidden')
@@ -359,9 +359,9 @@ def change_dissolved_lot(self):
     self.assertEqual(response.json['status'], 'error')
 
     # Move from 'dissolved' to 'invalid' status
-    response = self.app.patch_json(
-        '/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'invalid'}},
+    response = self.app.patch_json('/{}'.format(lot['id']),
+        headers={'X-Access-Token': token}, params={
+            'data': {'status': 'invalid'}},
         status=403,
     )
     self.assertEqual(response.status, '403 Forbidden')
@@ -369,9 +369,9 @@ def change_dissolved_lot(self):
     self.assertEqual(response.json['status'], 'error')
 
     # Move from 'dissolved' to 'deleted' status
-    response = self.app.patch_json(
-        '/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'deleted'}},
+    response = self.app.patch_json('/{}'.format(lot['id']),
+        headers={'X-Access-Token': token}, params={
+            'data': {'status': 'deleted'}},
         status=403,
     )
     self.assertEqual(response.status, '403 Forbidden')
@@ -379,9 +379,9 @@ def change_dissolved_lot(self):
     self.assertEqual(response.json['status'], 'error')
 
     # Move from 'dissolved' to 'sold' status
-    response = self.app.patch_json(
-        '/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'sold'}},
+    response = self.app.patch_json('/{}'.format(lot['id']),
+        headers={'X-Access-Token': token}, params={
+            'data': {'status': 'sold'}},
         status=403,
     )
     self.assertEqual(response.status, '403 Forbidden')
@@ -396,7 +396,7 @@ def change_dissolved_lot(self):
     response = self.app.post_json('/', {'data': draft_lot})
     self.assertEqual(response.status, '201 Created')
     lot = response.json['data']
-    token = response.json['access']['token']
+    token = str(response.json['access']['token'])
     self.assertEqual(lot.get('status', ''), 'draft')
 
     response = self.app.get('/{}'.format(lot['id']))
@@ -405,16 +405,16 @@ def change_dissolved_lot(self):
     self.assertEqual(response.json['data'], lot)
 
     # Move from 'draft' to 'pending' status
-    response = self.app.patch_json(
-        '/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'pending'}}
+    response = self.app.patch_json('/{}'.format(lot['id']),
+        headers={'X-Access-Token': token}, params={
+            'data': {'status': 'pending'}}
     )
     self.assertEqual(response.status, '200 OK')
 
     # Move from 'pending' to 'verification' status
-    response = self.app.patch_json(
-        '/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'verification'}}
+    response = self.app.patch_json('/{}'.format(lot['id']),
+        headers={'X-Access-Token': token}, params={
+            'data': {'status': 'verification'}}
     )
     self.assertEqual(response.status, '200 OK')
 
@@ -430,16 +430,16 @@ def change_dissolved_lot(self):
     self.assertEqual(response.json['status'], 'error')
 
     # Move from 'verification' to 'active.salable' status
-    response = self.app.patch_json(
-        '/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'active.salable'}}
+    response = self.app.patch_json('/{}'.format(lot['id']),
+        headers={'X-Access-Token': token}, params={
+            'data': {'status': 'active.salable'}}
     )
     self.assertEqual(response.status, '200 OK')
 
     # Move from 'active.pending' to 'dissolved' status
-    response = self.app.patch_json(
-        '/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'dissolved'}},
+    response = self.app.patch_json('/{}'.format(lot['id']),
+        headers={'X-Access-Token': token}, params={
+            'data': {'status': 'dissolved'}},
         status=403,
     )
     self.assertEqual(response.status, '403 Forbidden')
@@ -449,18 +449,18 @@ def change_dissolved_lot(self):
     self.app.authorization = ('Basic', ('broker', ''))
 
     # Move from 'active.pending' to 'dissolved' status
-    response = self.app.patch_json(
-        '/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'dissolved'}}
+    response = self.app.patch_json('/{}'.format(lot['id']),
+        headers={'X-Access-Token': token}, params={
+            'data': {'status': 'dissolved'}}
     )
     self.assertEqual(response.status, '200 OK')
 
     self.app.authorization = ('Basic', ('concierge', ''))
 
     # Move from 'dissolved' to 'deleted' status
-    response = self.app.patch_json(
-        '/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'deleted'}},
+    response = self.app.patch_json('/{}'.format(lot['id']),
+        headers={'X-Access-Token': token}, params={
+            'data': {'status': 'deleted'}},
         status=403,
     )
     self.assertEqual(response.status, '403 Forbidden')
@@ -468,9 +468,9 @@ def change_dissolved_lot(self):
     self.assertEqual(response.json['status'], 'error')
 
     # Move from 'dissolved' to 'sold' status
-    response = self.app.patch_json(
-        '/{}?acc_token={}'.format(lot['id'], token),
-        {'data': {'status': 'sold'}},
+    response = self.app.patch_json('/{}'.format(lot['id']),
+        headers={'X-Access-Token': token}, params={
+            'data': {'status': 'sold'}},
         status=403,
     )
     self.assertEqual(response.status, '403 Forbidden')
