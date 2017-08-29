@@ -7,8 +7,8 @@ from openregistry.lots.basic.tests import lot, document
 
 def suite():
     tests = unittest.TestSuite()
+    tests.addTest(document.suite())  # TODO: find out where tests interfere between each other
     tests.addTest(lot.suite())
-    tests.addTest(document.suite())
     return tests
 
 
