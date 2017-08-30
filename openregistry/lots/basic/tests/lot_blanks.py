@@ -262,20 +262,18 @@ def change_waiting_lot(self):
 
     # Move from 'waiting' to 'active.pending' status
     response = self.app.patch_json('/{}'.format(lot['id']),
-        headers={'X-Access-Token': self.resource_token}, params={
-            'data': {'status': 'active.salable'}},
-        status=403,
-    )
+                                   headers=self.access_header,
+                                   params={'data': {'status': 'active.salable'}},
+                                   status=403)
     self.assertEqual(response.status, '403 Forbidden')
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(response.json['status'], 'error')
 
     # Move from 'waiting' to 'sold' status
     response = self.app.patch_json('/{}'.format(lot['id']),
-        headers={'X-Access-Token': self.resource_token}, params={
-            'data': {'status': 'sold'}},
-        status=403,
-    )
+                                   headers=self.access_header,
+                                   params={'data': {'status': 'sold'}},
+                                   status=403)
     self.assertEqual(response.status, '403 Forbidden')
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(response.json['status'], 'error')
