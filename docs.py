@@ -1,66 +1,218 @@
-
 # -*- coding: utf-8 -*-
-import json
-import os
-from datetime import datetime
-from webtest import TestApp
-
-from openregistry.lots.basic.tests.base import PrefixedRequestClass, test_asset_data, BaseAssetWebTest
-
-now = datetime.now()
-
-test_asset_data = test_asset_data.copy()
+from openregistry.api.tests.base import PrefixedRequestClass, DumpsTestAppwebtest
+from openregistry.lots.basic.tests.base import BaseLotWebTest
 
 
-class DumpsTestAppwebtest(TestApp):
-    def do_request(self, req, status=None, expect_errors=None):
-        req.headers.environ["HTTP_HOST"] = "api-sandbox.ea.openprocurement.org"
-        if hasattr(self, 'file_obj') and not self.file_obj.closed:
-            self.file_obj.write(req.as_bytes(True))
-            self.file_obj.write("\n")
-            if req.body:
-                try:
-                    self.file_obj.write(
-                        '\n' + json.dumps(json.loads(req.body), indent=2, ensure_ascii=False).encode('utf8'))
-                    self.file_obj.write("\n")
-                except:
-                    pass
-            self.file_obj.write("\n")
-        resp = super(DumpsTestAppwebtest, self).do_request(req, status=status, expect_errors=expect_errors)
-        if hasattr(self, 'file_obj') and not self.file_obj.closed:
-            headers = [(n.title(), v)
-                       for n, v in resp.headerlist
-                       if n.lower() != 'content-length']
-            headers.sort()
-            self.file_obj.write(str('\n%s\n%s\n') % (
-                resp.status,
-                str('\n').join([str('%s: %s') % (n, v) for n, v in headers]),
-            ))
-
-            if resp.testbody:
-                try:
-                    self.file_obj.write('\n' + json.dumps(json.loads(resp.testbody), indent=2, ensure_ascii=False).encode('utf8'))
-                except:
-                    pass
-            self.file_obj.write("\n\n")
-        return resp
-
-
-class AuctionResourceTest(BaseAuctionWebTest):
-    initial_data = test_asset_data
-    docservice = True
+class LotResourceTest(BaseLotWebTest):
 
     def setUp(self):
         self.app = DumpsTestAppwebtest(
-            "config:tests.ini", relative_to=os.path.dirname(base_test.__file__))
+            "config:tests.ini", relative_to=self.relative_to)
         self.app.RequestClass = PrefixedRequestClass
         self.app.authorization = ('Basic', ('broker', ''))
         self.couchdb_server = self.app.app.registry.couchdb_server
         self.db = self.app.app.registry.db
-        if self.docservice:
-            self.setUpDS()
-            self.app.app.registry.docservice_url = 'http://public.docs-sandbox.ea.openprocurement.org'
-            
-    def test_docs_acceleration(self):
-        # SANDBOX_MODE=TRUE
-        pass
+
+    def test_docs_tutorial(self):
+        request_path = '/?opt_pretty=1'
+
+        # Exploring basic rules
+        #
+        with open('docs/source/tutorial/lot-listing.http', 'w') as self.app.file_obj:
+            response = self.app.get(request_path)
+            self.assertEqual(response.status, '200 OK')
+            self.app.file_obj.write("\n")
+
+        with open('docs/source/tutorial/lot-post-attempt.http', 'w') as self.app.file_obj:
+            response = self.app.post(request_path, 'data', status=415)
+            self.assertEqual(response.status, '415 Unsupported Media Type')
+
+        with open('docs/source/tutorial/lot-post-attempt-json.http', 'w') as self.app.file_obj:
+            response = self.app.post(
+                request_path, 'data', content_type='application/json', status=422)
+            self.assertEqual(response.status, '422 Unprocessable Entity')
+
+        # Creating lot in draft status
+        #
+        with open('docs/source/tutorial/lot-post-2pc.http', 'w') as self.app.file_obj:
+            response = self.app.post_json(request_path, {"data": self.initial_data})
+            self.assertEqual(response.status, '201 Created')
+
+        lot_id = response.json['data']['id']
+        owner_token = response.json['access']['token']
+
+        with open('docs/source/tutorial/blank-lot-view.http', 'w') as self.app.file_obj:
+            response = self.app.get('/{}'.format(lot_id))
+            self.assertEqual(response.status, '200 OK')
+
+        # Switch to 'pending'
+        #
+        with open('docs/source/tutorial/lot-patch-2pc.http', 'w') as self.app.file_obj:
+            response = self.app.patch_json('/{}?acc_token={}'.format(lot_id, owner_token),
+                                           {'data': {"status": 'pending'}})
+            self.assertEqual(response.status, '200 OK')
+
+        # Modifying lot
+        #
+        with open('docs/source/tutorial/patch-lot.http', 'w') as self.app.file_obj:
+            response = self.app.patch_json('/{}?acc_token={}'.format(lot_id, owner_token), {'data':
+                {
+                    "description": "Змінений опис тестового лоту"
+                }
+            })
+            self.assertEqual(response.status, '200 OK')
+
+        self.app.get(request_path)
+        with open('docs/source/tutorial/lot-listing-after-patch.http', 'w') as self.app.file_obj:
+            response = self.app.get(request_path)
+            self.assertEqual(response.status, '200 OK')
+
+        # Switch to 'verification'
+        #
+        with open('docs/source/tutorial/lot-patch-2pc-verification.http', 'w') as self.app.file_obj:
+            response = self.app.patch_json('/{}?acc_token={}'.format(lot_id, owner_token),
+                                           {'data': {"status": 'verification'}})
+            self.assertEqual(response.status, '200 OK')
+
+        # Hack for update_after
+        #
+        self.app.get(request_path)
+        #
+
+        with open('docs/source/tutorial/initial-lot-listing.http', 'w') as self.app.file_obj:
+            response = self.app.get(request_path)
+            self.assertEqual(response.status, '200 OK')
+
+        with open('docs/source/tutorial/create-second-lot.http', 'w') as self.app.file_obj:
+            response = self.app.post_json(request_path, {"data": self.initial_data})
+            self.assertEqual(response.status, '201 Created')
+
+        second_lot_id = response.json['data']['id']
+        second_owner_token = response.json['access']['token']
+
+        with open('docs/source/tutorial/pending-second-lot.http', 'w') as self.app.file_obj:
+            response = self.app.patch_json('/{}?acc_token={}'.format(second_lot_id, second_owner_token),
+                                           {'data': {"status": 'pending'}})
+            self.assertEqual(response.status, '200 OK')
+
+        # Hack for update_after
+        #
+        self.app.get(request_path)
+        #
+
+        with open('docs/source/tutorial/listing-with-some-lots.http', 'w') as self.app.file_obj:
+            response = self.app.get(request_path)
+            self.assertEqual(response.status, '200 OK')
+
+        # Switch to 'deleted'
+        #
+        with open('docs/source/tutorial/lot-delete-2pc.http', 'w') as self.app.file_obj:
+            response = self.app.patch_json('/{}?acc_token={}'.format(second_lot_id, second_owner_token),
+                                           {'data': {"status": 'deleted'}})
+            self.assertEqual(response.status, '200 OK')
+
+        self.app.authorization = ('Basic', ('broker', ''))
+
+    def test_docs_tutorial_with_concierge(self):
+        request_path = '/?opt_pretty=1'
+
+        response = self.app.post_json(request_path, {"data": self.initial_data})
+        self.assertEqual(response.status, '201 Created')
+
+        lot_id = response.json['data']['id']
+        owner_token = response.json['access']['token']
+
+        response = self.app.patch_json('/{}?acc_token={}'.format(lot_id, owner_token),
+                                       {'data': {"status": 'pending'}})
+        self.assertEqual(response.status, '200 OK')
+
+        response = self.app.patch_json('/{}?acc_token={}'.format(lot_id, owner_token),
+                                       {'data': {"status": 'verification'}})
+        self.assertEqual(response.status, '200 OK')
+
+        self.app.authorization = ('Basic', ('concierge', ''))
+
+        # Switch to 'active.salable'
+        #
+        with open('docs/source/tutorial/concierge-patch-lot-to-active.salable.http', 'w') as self.app.file_obj:
+            response = self.app.patch_json('/{}'.format(lot_id),
+                                           {'data': {"status": 'active.salable'}})
+            self.assertEqual(response.status, '200 OK')
+
+        self.app.authorization = ('Basic', ('broker', ''))
+
+        # Switch to 'dissolved'
+        #
+        with open('docs/source/tutorial/patch-lot-to-dissolved.http', 'w') as self.app.file_obj:
+            response = self.app.patch_json('/{}?acc_token={}'.format(lot_id, owner_token),
+                                           {'data': {"status": 'dissolved'}})
+            self.assertEqual(response.status, '200 OK')
+
+        response = self.app.post_json(request_path, {"data": self.initial_data})
+        self.assertEqual(response.status, '201 Created')
+
+        lot_id = response.json['data']['id']
+        owner_token = response.json['access']['token']
+
+        response = self.app.patch_json('/{}?acc_token={}'.format(lot_id, owner_token),
+                                       {'data': {"status": 'pending'}})
+        self.assertEqual(response.status, '200 OK')
+
+        response = self.app.patch_json('/{}?acc_token={}'.format(lot_id, owner_token),
+                                       {'data': {"status": 'verification'}})
+        self.assertEqual(response.status, '200 OK')
+
+        self.app.authorization = ('Basic', ('concierge', ''))
+
+        # Switch to 'pending' from 'verification'
+        #
+        with open('docs/source/tutorial/concierge-patch-lot-to-pending.http', 'w') as self.app.file_obj:
+            response = self.app.patch_json('/{}'.format(lot_id),
+                                           {'data': {"status": 'pending'}})
+            self.assertEqual(response.status, '200 OK')
+
+        self.app.authorization = ('Basic', ('broker', ''))
+
+        response = self.app.patch_json('/{}?acc_token={}'.format(lot_id, owner_token),
+                                       {'data': {"status": 'verification'}})
+        self.assertEqual(response.status, '200 OK')
+
+        self.app.authorization = ('Basic', ('concierge', ''))
+
+        response = self.app.patch_json('/{}'.format(lot_id),
+                                       {'data': {"status": 'active.salable'}})
+        self.assertEqual(response.status, '200 OK')
+
+        self.app.authorization = ('Basic', ('convoy', ''))
+
+        # Switch to 'active.awaiting'
+        #
+        with open('docs/source/tutorial/convoy-patch-lot-to-active.awaiting.http', 'w') as self.app.file_obj:
+            response = self.app.patch_json('/{}'.format(lot_id),
+                                           {'data': {"status": 'active.awaiting'}})
+            self.assertEqual(response.status, '200 OK')
+
+        # Switch to 'active.salable' from 'active.awaiting'
+        #
+        with open('docs/source/tutorial/convoy-patch-lot-to-active.salable.http', 'w') as self.app.file_obj:
+            response = self.app.patch_json('/{}'.format(lot_id),
+                                           {'data': {"status": 'active.salable'}})
+            self.assertEqual(response.status, '200 OK')
+
+        response = self.app.patch_json('/{}'.format(lot_id),
+                                       {'data': {"status": 'active.awaiting'}})
+        self.assertEqual(response.status, '200 OK')
+
+        # Switch to 'active.auction'
+        #
+        with open('docs/source/tutorial/convoy-patch-lot-to-active.auction.http', 'w') as self.app.file_obj:
+            response = self.app.patch_json('/{}'.format(lot_id),
+                                           {'data': {"status": 'active.auction'}})
+            self.assertEqual(response.status, '200 OK')
+
+        # Switch to 'sold'
+        #
+        with open('docs/source/tutorial/convoy-patch-lot-to-sold.http', 'w') as self.app.file_obj:
+            response = self.app.patch_json('/{}'.format(lot_id),
+                                           {'data': {"status": 'sold'}})
+            self.assertEqual(response.status, '200 OK')

@@ -1,0 +1,51 @@
+PATCH /api/0.1/lots/b6837dec07b249b190ef7afbdc588a49 HTTP/1.0
+Authorization: Basic Y29udm95Og==
+Content-Length: 28
+Content-Type: application/json
+Host: lb.api-sandbox.registry.ea.openprocurement.net
+DATA:
+{
+  "data": {
+    "status": "sold"
+  }
+}
+
+Response: 200 OK
+Content-Type: application/json
+X-Content-Type-Options: nosniff
+{
+  "data": {
+    "status": "sold", 
+    "lotID": "UA-2017-08-31-000002", 
+    "description": "Щось там тестове", 
+    "title": "Тестовий лот", 
+    "lotType": "basic", 
+    "dateModified": "2017-08-31T11:52:05.327843+03:00", 
+    "owner": "broker", 
+    "lotCustodian": {
+      "contactPoint": {
+        "name": "Державне управління справами", 
+        "telephone": "0440000000"
+      }, 
+      "identifier": {
+        "scheme": "UA-EDR", 
+        "id": "00037256", 
+        "uri": "http://www.dus.gov.ua/"
+      }, 
+      "name": "Державне управління справами", 
+      "address": {
+        "postalCode": "01220", 
+        "countryName": "Україна", 
+        "streetAddress": "вул. Банкова, 11, корпус 1", 
+        "region": "м. Київ", 
+        "locality": "м. Київ"
+      }
+    }, 
+    "date": "2017-08-31T11:52:05.327468+03:00", 
+    "id": "b6837dec07b249b190ef7afbdc588a49", 
+    "assets": [
+      "cd1b996d88354747b6663cac5d021eff"
+    ]
+  }
+}
+
