@@ -40,9 +40,12 @@ test_lot_data = {
 
 
 class BaseLotWebTest(BaseLWT):
-    initial_data = deepcopy(test_lot_data)
     initial_auth = ('Basic', ('broker', ''))
     relative_to = os.path.dirname(__file__)
+
+    def setUp(self):
+        self.initial_data = deepcopy(test_lot_data)
+        super(BaseLotWebTest, self).setUp()
 
 
 class LotContentWebTest(BaseLotWebTest):
