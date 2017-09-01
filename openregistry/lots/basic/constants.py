@@ -48,7 +48,7 @@ STATUS_CHANGES = {
     "active.auction": {
         "editing_permissions": ["convoy", "Administrator"],
         "next_status": {
-            "active.salable":  ["Administrator"],
+            "active.salable": ["convoy", "Administrator"],
             "sold": ["convoy", "Administrator"]
         }
     }
