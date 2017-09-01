@@ -1,26 +1,18 @@
-PATCH /api/0.1/lots/b6837dec07b249b190ef7afbdc588a49 HTTP/1.0
-Authorization: Basic Y29udm95Og==
-Content-Length: 38
-Content-Type: application/json
+GET /api/0.1/lots/5f3b43354cc6497d86360fd8412818f6 HTTP/1.0
+Authorization: Basic Y29uY2llcmdlOg==
 Host: lb.api-sandbox.registry.ea.openprocurement.net
-DATA:
-{
-  "data": {
-    "status": "active.auction"
-  }
-}
 
 Response: 200 OK
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 {
   "data": {
-    "status": "active.auction", 
-    "lotID": "UA-2017-08-31-000002", 
+    "status": "pending", 
+    "lotID": "UA-2017-08-31-000004", 
     "description": "Щось там тестове", 
     "title": "Тестовий лот", 
     "lotType": "basic", 
-    "dateModified": "2017-08-31T11:52:05.238703+03:00", 
+    "dateModified": "2017-08-31T18:36:29.436097+03:00", 
     "owner": "broker", 
     "lotCustodian": {
       "contactPoint": {
@@ -41,10 +33,10 @@ X-Content-Type-Options: nosniff
         "locality": "м. Київ"
       }
     }, 
-    "date": "2017-08-31T11:52:05.238334+03:00", 
-    "id": "b6837dec07b249b190ef7afbdc588a49", 
+    "date": "2017-08-31T18:36:29.435752+03:00", 
+    "id": "5f3b43354cc6497d86360fd8412818f6", 
     "assets": [
-      "cd1b996d88354747b6663cac5d021eff"
+      "8d6018c7920b4bdd975cc4beeedc31a3"
     ]
   }
 }

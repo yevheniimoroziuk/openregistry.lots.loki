@@ -125,23 +125,23 @@ Integration with assets
 Concierge operations
 --------------------
 
-.. literalinclude:: tutorial/concierge-patch-lot-to-active.salable.http
+.. literalinclude:: tutorial/concierge-patched-lot-to-active.salable.http
    :language: javascript
 
-.. literalinclude:: tutorial/concierge-patch-lot-to-pending.http
+.. literalinclude:: tutorial/concierge-patched-lot-to-pending.http
    :language: javascript
 
 Convoy operations
 -----------------
 
-.. literalinclude:: tutorial/convoy-patch-lot-to-active.salable.http
+.. literalinclude:: tutorial/convoy-patched-lot-to-active.salable.http
    :language: javascript
 
-.. literalinclude:: tutorial/convoy-patch-lot-to-active.awaiting.http
+.. literalinclude:: tutorial/convoy-patched-lot-to-active.awaiting.http
    :language: javascript
 
-.. literalinclude:: tutorial/convoy-patch-lot-to-active.auction.http
+.. literalinclude:: tutorial/convoy-patched-lot-to-active.auction.http
    :language: javascript
 
-.. literalinclude:: tutorial/convoy-patch-lot-to-sold.http
+.. literalinclude:: tutorial/convoy-patched-lot-to-sold.http
    :language: javascript

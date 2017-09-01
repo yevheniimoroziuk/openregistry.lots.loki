@@ -6,6 +6,7 @@ from openregistry.lots.basic.tests.base import BaseLotWebTest
 class LotResourceTest(BaseLotWebTest):
 
     def setUp(self):
+        super(LotResourceTest, self).setUp()
         self.app = DumpsTestAppwebtest(
             "config:tests.ini", relative_to=self.relative_to)
         self.app.RequestClass = PrefixedRequestClass
@@ -134,9 +135,13 @@ class LotResourceTest(BaseLotWebTest):
 
         # Switch to 'active.salable'
         #
-        with open('docs/source/tutorial/concierge-patch-lot-to-active.salable.http', 'w') as self.app.file_obj:
-            response = self.app.patch_json('/{}'.format(lot_id),
-                                           {'data': {"status": 'active.salable'}})
+
+        response = self.app.patch_json('/{}'.format(lot_id),
+                                       {'data': {"status": 'active.salable'}})
+        self.assertEqual(response.status, '200 OK')
+
+        with open('docs/source/tutorial/concierge-patched-lot-to-active.salable.http', 'w') as self.app.file_obj:
+            response = self.app.get('/{}'.format(lot_id))
             self.assertEqual(response.status, '200 OK')
 
         self.app.authorization = ('Basic', ('broker', ''))
@@ -166,9 +171,12 @@ class LotResourceTest(BaseLotWebTest):
 
         # Switch to 'pending' from 'verification'
         #
-        with open('docs/source/tutorial/concierge-patch-lot-to-pending.http', 'w') as self.app.file_obj:
-            response = self.app.patch_json('/{}'.format(lot_id),
-                                           {'data': {"status": 'pending'}})
+        response = self.app.patch_json('/{}'.format(lot_id),
+                                       {'data': {"status": 'pending'}})
+        self.assertEqual(response.status, '200 OK')
+
+        with open('docs/source/tutorial/concierge-patched-lot-to-pending.http', 'w') as self.app.file_obj:
+            response = self.app.get('/{}'.format(lot_id))
             self.assertEqual(response.status, '200 OK')
 
         self.app.authorization = ('Basic', ('broker', ''))
@@ -187,16 +195,22 @@ class LotResourceTest(BaseLotWebTest):
 
         # Switch to 'active.awaiting'
         #
-        with open('docs/source/tutorial/convoy-patch-lot-to-active.awaiting.http', 'w') as self.app.file_obj:
-            response = self.app.patch_json('/{}'.format(lot_id),
-                                           {'data': {"status": 'active.awaiting'}})
+        response = self.app.patch_json('/{}'.format(lot_id),
+                                       {'data': {"status": 'active.awaiting'}})
+        self.assertEqual(response.status, '200 OK')
+
+        with open('docs/source/tutorial/convoy-patched-lot-to-active.awaiting.http', 'w') as self.app.file_obj:
+            response = self.app.get('/{}'.format(lot_id))
             self.assertEqual(response.status, '200 OK')
 
         # Switch to 'active.salable' from 'active.awaiting'
         #
-        with open('docs/source/tutorial/convoy-patch-lot-to-active.salable.http', 'w') as self.app.file_obj:
-            response = self.app.patch_json('/{}'.format(lot_id),
-                                           {'data': {"status": 'active.salable'}})
+        response = self.app.patch_json('/{}'.format(lot_id),
+                                       {'data': {"status": 'active.salable'}})
+        self.assertEqual(response.status, '200 OK')
+
+        with open('docs/source/tutorial/convoy-patched-lot-to-active.salable.http', 'w') as self.app.file_obj:
+            response = self.app.get('/{}'.format(lot_id))
             self.assertEqual(response.status, '200 OK')
 
         response = self.app.patch_json('/{}'.format(lot_id),
@@ -205,14 +219,20 @@ class LotResourceTest(BaseLotWebTest):
 
         # Switch to 'active.auction'
         #
-        with open('docs/source/tutorial/convoy-patch-lot-to-active.auction.http', 'w') as self.app.file_obj:
-            response = self.app.patch_json('/{}'.format(lot_id),
-                                           {'data': {"status": 'active.auction'}})
+        response = self.app.patch_json('/{}'.format(lot_id),
+                                       {'data': {"status": 'active.auction'}})
+        self.assertEqual(response.status, '200 OK')
+
+        with open('docs/source/tutorial/convoy-patched-lot-to-active.auction.http', 'w') as self.app.file_obj:
+            response = self.app.get('/{}'.format(lot_id))
             self.assertEqual(response.status, '200 OK')
 
         # Switch to 'sold'
         #
-        with open('docs/source/tutorial/convoy-patch-lot-to-sold.http', 'w') as self.app.file_obj:
-            response = self.app.patch_json('/{}'.format(lot_id),
-                                           {'data': {"status": 'sold'}})
+        response = self.app.patch_json('/{}'.format(lot_id),
+                                       {'data': {"status": 'sold'}})
+        self.assertEqual(response.status, '200 OK')
+
+        with open('docs/source/tutorial/convoy-patched-lot-to-sold.http', 'w') as self.app.file_obj:
+            response = self.app.get('/{}'.format(lot_id))
             self.assertEqual(response.status, '200 OK')
