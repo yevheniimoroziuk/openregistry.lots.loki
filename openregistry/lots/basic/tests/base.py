@@ -6,37 +6,7 @@ from uuid import uuid4
 from openregistry.lots.core.tests.base import (
     BaseLotWebTest as BaseLWT
 )
-
-
-test_organization = {
-    "name": u"Державне управління справами",
-    "identifier": {
-        "scheme": u"UA-EDR",
-        "id": u"00037256",
-        "uri": u"http://www.dus.gov.ua/"
-    },
-    "address": {
-        "countryName": u"Україна",
-        "postalCode": u"01220",
-        "region": u"м. Київ",
-        "locality": u"м. Київ",
-        "streetAddress": u"вул. Банкова, 11, корпус 1"
-    },
-    "contactPoint": {
-        "name": u"Державне управління справами",
-        "telephone": u"0440000000"
-    }
-}
-
-test_lotCustodian = test_organization.copy()
-
-test_lot_data = {
-    "title": u"Тестовий лот",
-    "description": u"Щось там тестове",
-    "lotType": "basic",
-    "lotCustodian": test_lotCustodian,
-    "assets": [uuid4().hex]
-}
+from openregistry.api.tests.blanks.json_data import test_lot_data
 
 
 class BaseLotWebTest(BaseLWT):
@@ -45,6 +15,7 @@ class BaseLotWebTest(BaseLWT):
 
     def setUp(self):
         self.initial_data = deepcopy(test_lot_data)
+        self.initial_data['assets'] = [uuid4().hex]
         super(BaseLotWebTest, self).setUp()
 
 
