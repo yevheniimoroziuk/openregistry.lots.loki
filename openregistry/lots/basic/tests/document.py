@@ -7,10 +7,12 @@ from openregistry.lots.basic.tests.base import (
     LotContentWebTest
 )
 from openregistry.api.tests.blanks.json_data import test_document_data
+from openregistry.api.constants import DOCUMENT_TYPES
 
 
 class LotDocumentWithDSResourceTest(LotContentWebTest, ResourceDocumentTestMixin):
     docservice = True
+    document_types = DOCUMENT_TYPES
 
     # status, in which operations with lot documents (adding, updating) are forbidden
     forbidden_document_modification_actions_status = 'active.salable'
