@@ -51,7 +51,7 @@ body of response reveals the information about the created lot: its internal
 `id` (that matches the `Location` segment), its official `lotID` and
 `dateModified` datestamp stating the moment in time when lot was last
 modified. Pay attention to the `lotType`. Note that lot is
-created with `pending` status.
+created with `verification` status.
 
 Let's access the URL of the created object (the `Location` header of the response):
 
@@ -125,8 +125,15 @@ Integration with assets
 Concierge operations
 --------------------
 
+For lot to be formed, you need to specify some id of the assets to be included 
+in that lot. If all of the assets are available, they will be attached to lot 
+and status will be changed to `active.salable`:
+
 .. literalinclude:: tutorial/concierge-patched-lot-to-active.salable.http
    :language: javascript
+
+In case of at least one of the assets is unavailable (e.g. it has already been 
+attached to another lot), status of the current one will be turned to `pending`:
 
 .. literalinclude:: tutorial/concierge-patched-lot-to-pending.http
    :language: javascript
@@ -134,14 +141,30 @@ Concierge operations
 Convoy operations
 -----------------
 
-.. literalinclude:: tutorial/convoy-patched-lot-to-active.salable.http
-   :language: javascript
+When lot is finally formed (`active.saleable`) it can be used in the 
+procedure within CDB. For this to be done, you need to specify lot id. 
+By doing this, you will find the `merchandisingObject` field with the current 
+lot id in the created procedure and id of the auction within which 
+it is going to be sold. Status of the lot used will be automatically changed 
+to `active.awaiting` in RDB. This indicates that Organizer is creating some auction with
+this lot within CDB, so it is currently unavailable for usage.
 
 .. literalinclude:: tutorial/convoy-patched-lot-to-active.awaiting.http
    :language: javascript
 
+When the procedure is successfully created, lot status will be changed to 
+`active.auction`: 
+
 .. literalinclude:: tutorial/convoy-patched-lot-to-active.auction.http
    :language: javascript
 
+After lot has been sold in the auction, its status is turned to `sold` within RDB:
+
 .. literalinclude:: tutorial/convoy-patched-lot-to-sold.http
    :language: javascript
+
+In case of that lot has not been sold, its status will be changed to `active.salable` in RDB:
+
+.. literalinclude:: tutorial/convoy-patched-lot-to-active.salable.http
+   :language: javascript
+
