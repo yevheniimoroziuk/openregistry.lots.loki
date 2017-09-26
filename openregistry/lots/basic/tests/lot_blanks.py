@@ -328,15 +328,15 @@ def change_dissolved_lot(self):
 
     self.app.authorization = ('Basic', ('broker', ''))
 
-    # Move from 'active.salable' to 'dissolved' status
+    # Move from 'active.salable' to 'pending.dissolution' status
     response = self.app.patch_json('/{}'.format(lot['id']),
                                    headers=access_header,
-                                   params={'data': {'status': 'dissolved'}})
+                                   params={'data': {'status': 'pending.dissolution'}})
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(response.content_type, 'application/json')
-    self.assertEqual(response.json['data']['status'], 'dissolved')
+    self.assertEqual(response.json['data']['status'], 'pending.dissolution')
 
-    # Move from 'dissolved' to 'active.salable' status
+    # Move from 'pending.dissolution' to 'active.salable' status
     response = self.app.patch_json('/{}'.format(lot['id']),
                                    headers=access_header,
                                    params={'data': {'status': 'active.salable'}},
@@ -345,7 +345,7 @@ def change_dissolved_lot(self):
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(response.json['status'], 'error')
 
-    # Move from 'dissolved' to 'invalid' status
+    # Move from 'pending.dissolution' to 'invalid' status
     response = self.app.patch_json('/{}'.format(lot['id']),
                                    headers=access_header,
                                    params={'data': {'status': 'invalid'}},
@@ -354,7 +354,7 @@ def change_dissolved_lot(self):
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(response.json['status'], 'error')
 
-    # Move from 'dissolved' to 'deleted' status
+    # Move from 'pending.dissolution' to 'deleted' status
     response = self.app.patch_json('/{}'.format(lot['id']),
                                    headers=access_header,
                                    params={'data': {'status': 'deleted'}},
@@ -363,7 +363,7 @@ def change_dissolved_lot(self):
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(response.json['status'], 'error')
 
-    # Move from 'dissolved' to 'sold' status
+    # Move from 'pending.dissolution' to 'sold' status
     response = self.app.patch_json('/{}'.format(lot['id']),
                                    headers=access_header,
                                    params={'data': {'status': 'sold'}},
@@ -418,10 +418,10 @@ def change_dissolved_lot(self):
                                    params={'data': {'status': 'active.salable'}})
     self.assertEqual(response.status, '200 OK')
 
-    # Move from 'active.pending' to 'dissolved' status
+    # Move from 'active.pending' to 'pending.dissolution' status
     response = self.app.patch_json('/{}'.format(lot['id']),
                                    headers=access_header,
-                                   params={'data': {'status': 'dissolved'}},
+                                   params={'data': {'status': 'pending.dissolution'}},
                                    status=403)
     self.assertEqual(response.status, '403 Forbidden')
     self.assertEqual(response.content_type, 'application/json')
@@ -429,13 +429,57 @@ def change_dissolved_lot(self):
 
     self.app.authorization = ('Basic', ('broker', ''))
 
-    # Move from 'active.pending' to 'dissolved' status
+    # Move from 'active.pending' to 'pending.dissolution' status
+    response = self.app.patch_json('/{}'.format(lot['id']),
+                                   headers=access_header,
+                                   params={'data': {'status': 'pending.dissolution'}})
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(response.json['data']['status'], 'pending.dissolution')
+
+    self.app.authorization = ('Basic', ('concierge', ''))
+
+    # Move from 'pending.dissolution' to 'deleted' status
+    response = self.app.patch_json('/{}'.format(lot['id']),
+                                   headers=access_header,
+                                   params={'data': {'status': 'deleted'}},
+                                   status=403)
+    self.assertEqual(response.status, '403 Forbidden')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+
+    # Move from 'pending.dissolution' to 'sold' status
+    response = self.app.patch_json('/{}'.format(lot['id']),
+                                   headers=access_header,
+                                   params={'data': {'status': 'sold'}},
+                                   status=403)
+    self.assertEqual(response.status, '403 Forbidden')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+
+    # Move from 'active.pending' to 'pending.dissolution' status
     response = self.app.patch_json('/{}'.format(lot['id']),
                                    headers=access_header,
                                    params={'data': {'status': 'dissolved'}})
     self.assertEqual(response.status, '200 OK')
+    self.assertEqual(response.json['data']['status'], 'dissolved')
 
-    self.app.authorization = ('Basic', ('concierge', ''))
+    # Move from 'dissolved' to 'active.salable' status
+    response = self.app.patch_json('/{}'.format(lot['id']),
+                                   headers=access_header,
+                                   params={'data': {'status': 'active.salable'}},
+                                   status=403)
+    self.assertEqual(response.status, '403 Forbidden')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+
+    # Move from 'dissolved' to 'invalid' status
+    response = self.app.patch_json('/{}'.format(lot['id']),
+                                   headers=access_header,
+                                   params={'data': {'status': 'invalid'}},
+                                   status=403)
+    self.assertEqual(response.status, '403 Forbidden')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
 
     # Move from 'dissolved' to 'deleted' status
     response = self.app.patch_json('/{}'.format(lot['id']),
@@ -454,3 +498,4 @@ def change_dissolved_lot(self):
     self.assertEqual(response.status, '403 Forbidden')
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(response.json['status'], 'error')
+
