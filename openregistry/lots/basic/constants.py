@@ -29,9 +29,16 @@ STATUS_CHANGES = {
     "active.salable": {
         "editing_permissions": ["convoy", "Administrator", "lot_owner"],
         "next_status": {
-            "dissolved": ["lot_owner", "Administrator"],
+            "pending.dissolution": ["lot_owner", "Administrator"],
             "active.awaiting": ["convoy", "Administrator"],
             "verification": ["Administrator"]
+        }
+    },
+    "pending.dissolution": {
+        "editing_permissions": ["concierge", "Administrator"],
+        "next_status": {
+            "dissolved": ["concierge", "Administrator"],
+            "active.salable": ["Administrator"]
         }
     },
     "dissolved": {
