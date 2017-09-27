@@ -79,12 +79,13 @@ The previous lot contained only required fields. Let's try creating lot with mor
 .. literalinclude:: tutorial/pending-second-lot.http
    :language: javascript
 
-.. XXX patching lot to dissolved
+.. XXX patching lot to pending.dissolution
 
-.. literalinclude:: tutorial/patch-lot-to-dissolved.http
+.. literalinclude:: tutorial/patch-lot-to-pending.dissolution.http
    :language: javascript
 
 And again we have `201 Created` response code, `Location` header and body with extra `id`, `lotID`, and `dateModified` properties.
+Only bot can change status to `dissolved`.
 
 Let's check what lot registry contains:
 
@@ -136,6 +137,12 @@ In case of at least one of the assets is unavailable (e.g. it has already been
 attached to another lot), status of the current one will be turned to `pending`:
 
 .. literalinclude:: tutorial/concierge-patched-lot-to-pending.http
+   :language: javascript
+
+When bot finds that status of a lot is `pending.dissolution`, it will 
+make status of lot assets to pending and change lot status to `dissolved`.
+   
+.. literalinclude:: tutorial/patch-lot-to-dissolved.http
    :language: javascript
 
 Convoy operations
