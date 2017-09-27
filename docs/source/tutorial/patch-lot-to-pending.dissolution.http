@@ -1,18 +1,26 @@
-GET /api/0.1/lots/d3e21de3ab594b5495e5efec0e3a5930 HTTP/1.0
-Authorization: Basic Y29udm95Og==
+PATCH /api/0.1/lots/806ab85348a24519bfee2e950bafa0f3?acc_token=311509e8adbb45f8bdf106c128f9bd1d HTTP/1.0
+Authorization: Basic YnJva2VyOg==
+Content-Length: 43
+Content-Type: application/json
 Host: lb.api-sandbox.registry.ea.openprocurement.net
+DATA:
+{
+  "data": {
+    "status": "pending.dissolution"
+  }
+}
 
 Response: 200 OK
 Content-Type: application/json
 X-Content-Type-Options: nosniff
 {
   "data": {
-    "status": "active.auction", 
-    "lotID": "UA-LR-DGF-2017-09-27-000004", 
+    "status": "pending.dissolution", 
+    "lotID": "UA-LR-DGF-2017-09-27-000003", 
     "description": "Щось там тестове", 
     "title": "Тестовий лот", 
     "lotType": "basic", 
-    "dateModified": "2017-09-27T16:00:30.608496+03:00", 
+    "dateModified": "2017-09-27T16:00:30.118687+03:00", 
     "owner": "broker", 
     "lotCustodian": {
       "contactPoint": {
@@ -33,8 +41,8 @@ X-Content-Type-Options: nosniff
         "locality": "м. Київ"
       }
     }, 
-    "date": "2017-09-27T16:00:30.608168+03:00", 
-    "id": "d3e21de3ab594b5495e5efec0e3a5930", 
+    "date": "2017-09-27T16:00:30.118464+03:00", 
+    "id": "806ab85348a24519bfee2e950bafa0f3", 
     "assets": [
       "2b472e973c0646f7916197602e724cf6"
     ]
