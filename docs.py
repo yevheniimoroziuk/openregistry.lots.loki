@@ -152,6 +152,7 @@ class LotResourceTest(BaseLotWebTest):
             response = self.app.patch_json('/{}?acc_token={}'.format(lot_id, owner_token),
                                            {'data': {"status": 'pending.dissolution'}})
             self.assertEqual(response.status, '200 OK')
+            self.assertEqual(response.json['data']['status'], 'pending.dissolution')
 
         self.app.authorization = ('Basic', ('concierge', ''))
 
@@ -161,6 +162,7 @@ class LotResourceTest(BaseLotWebTest):
             response = self.app.patch_json('/{}'.format(lot_id),
                                            {'data': {"status": 'dissolved'}})
             self.assertEqual(response.status, '200 OK')
+            self.assertEqual(response.json['data']['status'], 'dissolved')
 
         self.app.authorization = ('Basic', ('broker', ''))
 
