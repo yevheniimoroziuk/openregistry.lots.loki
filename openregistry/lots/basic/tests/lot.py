@@ -19,6 +19,7 @@ from openregistry.lots.basic.tests.lot_blanks import (
     change_active_salable_lot,
     change_active_awaiting_lot,
     change_active_auction_lot,
+    change_sold_lot,
     # LotTest
     simple_add_lot
 )
@@ -42,7 +43,9 @@ class LotResourceTest(BaseLotWebTest, ResourceTestMixin):
     test_14_check_active_awaiting_lot = snitch(change_active_awaiting_lot)
     test_15_check_active_auction_lot = snitch(change_active_auction_lot)
     test_16_change_dissolved_lot = snitch(change_dissolved_lot)
-    test_17_check_lot_assets = snitch(check_lot_assets)
+    test_17_check_sold_lot = snitch(change_sold_lot)
+    test_18_check_lot_assets = snitch(check_lot_assets)
+
 
 def suite():
     tests = unittest.TestSuite()
