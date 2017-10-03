@@ -146,12 +146,25 @@ class LotResourceTest(BaseLotWebTest):
 
         self.app.authorization = ('Basic', ('broker', ''))
 
+        # Switch to 'pending.dissolution'
+        #
+        with open('docs/source/tutorial/patch-lot-to-pending.dissolution.http', 'w') as self.app.file_obj:
+            response = self.app.patch_json('/{}?acc_token={}'.format(lot_id, owner_token),
+                                           {'data': {"status": 'pending.dissolution'}})
+            self.assertEqual(response.status, '200 OK')
+            self.assertEqual(response.json['data']['status'], 'pending.dissolution')
+
+        self.app.authorization = ('Basic', ('concierge', ''))
+
         # Switch to 'dissolved'
         #
         with open('docs/source/tutorial/patch-lot-to-dissolved.http', 'w') as self.app.file_obj:
-            response = self.app.patch_json('/{}?acc_token={}'.format(lot_id, owner_token),
+            response = self.app.patch_json('/{}'.format(lot_id),
                                            {'data': {"status": 'dissolved'}})
             self.assertEqual(response.status, '200 OK')
+            self.assertEqual(response.json['data']['status'], 'dissolved')
+
+        self.app.authorization = ('Basic', ('broker', ''))
 
         response = self.app.post_json(request_path, {"data": self.initial_data})
         self.assertEqual(response.status, '201 Created')
