@@ -58,5 +58,9 @@ STATUS_CHANGES = {
             "active.salable": ["convoy", "Administrator"],
             "sold": ["convoy", "Administrator"]
         }
+    },
+    "sold": {
+        "editing_permissions": [],
+        "next_status": {}
     }
 }
