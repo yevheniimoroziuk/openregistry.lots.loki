@@ -10,7 +10,6 @@ STATUS_CHANGES = {
     "pending": {
         "editing_permissions": ["lot_owner", "Administrator"],
         "next_status": {
-            "draft": ["Administrator"],
             "deleted": ["lot_owner", "Administrator"],
             "verification": ["lot_owner", "Administrator"]
         }
