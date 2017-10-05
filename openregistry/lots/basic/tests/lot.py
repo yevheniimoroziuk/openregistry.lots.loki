@@ -10,9 +10,16 @@ from openregistry.lots.basic.tests.base import (
 from openregistry.lots.basic.tests.lot_blanks import (
     # LotResourceTest
     change_draft_lot,
-    change_waiting_lot,
     change_dissolved_lot,
     check_lot_assets,
+    change_pending_lot,
+    change_verification_lot,
+    change_deleted_lot,
+    change_pending_dissolution_lot,
+    change_active_salable_lot,
+    change_active_awaiting_lot,
+    change_active_auction_lot,
+    change_sold_lot,
     # LotTest
     simple_add_lot
 )
@@ -28,9 +35,16 @@ class LotResourceTest(BaseLotWebTest, ResourceTestMixin):
     initial_status = 'pending'
 
     test_08_change_draft_lot = snitch(change_draft_lot)
-    test_09_change_waiting_lot = snitch(change_waiting_lot)
-    test_10_change_dissolved_lot = snitch(change_dissolved_lot)
-    test_11_check_lot_assets = snitch(check_lot_assets)
+    test_09_change_pending_lot = snitch(change_pending_lot)
+    test_10_check_verification_lot = snitch(change_verification_lot)
+    test_11_check_deleted_lot = snitch(change_deleted_lot)
+    test_12_check_pending_dissolution_lot = snitch(change_pending_dissolution_lot)
+    test_13_check_active_salable_lot = snitch(change_active_salable_lot)
+    test_14_check_active_awaiting_lot = snitch(change_active_awaiting_lot)
+    test_15_check_active_auction_lot = snitch(change_active_auction_lot)
+    test_16_change_dissolved_lot = snitch(change_dissolved_lot)
+    test_17_check_sold_lot = snitch(change_sold_lot)
+    test_18_check_lot_assets = snitch(check_lot_assets)
 
 
 def suite():
