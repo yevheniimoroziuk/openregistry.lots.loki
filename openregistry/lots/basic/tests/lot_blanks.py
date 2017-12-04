@@ -66,6 +66,31 @@ def create_single_lot(self, data):
     return response
 
 
+def check_lotIdentifier(self):
+    data = deepcopy(self.initial_data)
+    data['lotIdentifier'] = ''
+    response = self.app.post_json('/', {"data": data}, status=422)
+    self.assertEqual(response.status, '422 Unprocessable Entity')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+    self.assertEqual(response.json['errors'][0]['description'], ["String value is too short."])
+
+    del data['lotIdentifier']
+    response = self.app.post_json('/', {"data": data}, status=422)
+    self.assertEqual(response.status, '422 Unprocessable Entity')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+    self.assertEqual(response.json['errors'][0]['description'], ["This field is required."])
+
+    data['lotIdentifier'] = 'Q24421K222'
+    lot = create_single_lot(self, data).json['data']
+    response = self.app.get('/{}'.format(lot['id']))
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(set(response.json['data']), set(lot))
+    self.assertEqual(response.json['data'], lot)
+
+
 def check_lot_assets(self):
 
     # lot with a single assets
