@@ -21,6 +21,7 @@ from openregistry.lots.basic.tests.lot_blanks import (
     change_active_awaiting_lot,
     change_active_auction_lot,
     change_sold_lot,
+    change_pending_sold_lot,
     # LotTest
     simple_add_lot
 )
@@ -47,6 +48,7 @@ class LotResourceTest(BaseLotWebTest, ResourceTestMixin):
     test_17_check_sold_lot = snitch(change_sold_lot)
     test_18_check_lot_assets = snitch(check_lot_assets)
     test_19_check_lot_lotIdentifier = snitch(check_lotIdentifier)
+    test_20_check_pending_sold_lot = snitch(change_pending_sold_lot)
 
 
 def suite():
