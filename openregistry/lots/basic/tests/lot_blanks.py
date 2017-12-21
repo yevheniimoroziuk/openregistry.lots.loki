@@ -146,7 +146,7 @@ def change_draft_lot(self):
     lot = response.json['data']
     token = response.json['access']['token']
     access_header = {'X-Access-Token': str(token)}
-    self.assertEqual(lot.get('status', ''), 'draft')
+    self.assertEqual(lot['status'], 'draft')
 
     response = self.app.get('/{}'.format(lot['id']))
     self.assertEqual(response.status, '200 OK')
@@ -327,7 +327,7 @@ def change_verification_lot(self):
     lot = response.json['data']
     token = response.json['access']['token']
     access_header = {'X-Access-Token': str(token)}
-    self.assertEqual(lot.get('status', ''), 'draft')
+    self.assertEqual(lot['status'], 'draft')
 
     response = self.app.get('/{}'.format(lot['id']))
     self.assertEqual(response.status, '200 OK')
@@ -421,7 +421,7 @@ def change_deleted_lot(self):
     lot = response.json['data']
     token = response.json['access']['token']
     access_header = {'X-Access-Token': str(token)}
-    self.assertEqual(lot.get('status', ''), 'draft')
+    self.assertEqual(lot['status'], 'draft')
 
     response = self.app.get('/{}'.format(lot['id']))
     self.assertEqual(response.status, '200 OK')
@@ -477,7 +477,7 @@ def change_pending_dissolution_lot(self):
     lot = response.json['data']
     token = response.json['access']['token']
     access_header = {'X-Access-Token': str(token)}
-    self.assertEqual(lot.get('status', ''), 'draft')
+    self.assertEqual(lot['status'], 'draft')
 
     # Move status from 'draft' to 'pending'
     check_patch_status_200(self, '/{}'.format(lot['id']), 'pending', access_header)
@@ -578,7 +578,7 @@ def change_active_salable_lot(self):
     lot = response.json['data']
     token = response.json['access']['token']
     access_header = {'X-Access-Token': str(token)}
-    self.assertEqual(lot.get('status', ''), 'draft')
+    self.assertEqual(lot['status'], 'draft')
 
     response = self.app.get('/{}'.format(lot['id']))
     self.assertEqual(response.status, '200 OK')
@@ -614,6 +614,25 @@ def change_active_salable_lot(self):
     check_patch_status_200(self, '/{}'.format(lot['id']), 'active.salable')
 
 
+    self.app.authorization = ('Basic', ('broker', ''))
+
+    # Move from 'active.salable' to 'recomposed'
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'recomposed', access_header)
+
+
+    self.app.authorization = ('Basic', ('administrator', ''))
+
+    # Move from 'recomposed' to 'pending'
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'pending', access_header)
+
+    # Move from 'pending' to 'verification'
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'verification', access_header)
+
+    # Move from 'verification' to 'active.salable'
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'active.salable', access_header)
+
+
+
     self.app.authorization = ('Basic', ('concierge', ''))
 
     # Move from 'active.salable' to one of 'blacklist' status
@@ -637,6 +656,18 @@ def change_active_salable_lot(self):
     check_patch_status_200(self, '/{}'.format(lot['id']), 'active.salable')
 
     # Move from 'active.salable' to 'verification'
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'verification')
+
+    # Move from 'verification' to 'active.salable'
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'active.salable')
+
+    # Move from 'active.salable' to 'recomposed'
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'recomposed')
+
+    # Move from 'recomposed' to 'pending'
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'pending')
+
+    # Move from 'pending' to 'verification'
     check_patch_status_200(self, '/{}'.format(lot['id']), 'verification')
 
     # Move from 'verification' to 'active.salable'
@@ -697,7 +728,7 @@ def change_active_awaiting_lot(self):
     lot = response.json['data']
     token = response.json['access']['token']
     access_header = {'X-Access-Token': str(token)}
-    self.assertEqual(lot.get('status', ''), 'draft')
+    self.assertEqual(lot['status'], 'draft')
 
     response = self.app.get('/{}'.format(lot['id']))
     self.assertEqual(response.status, '200 OK')
@@ -792,7 +823,7 @@ def change_active_auction_lot(self):
     lot = response.json['data']
     token = response.json['access']['token']
     access_header = {'X-Access-Token': str(token)}
-    self.assertEqual(lot.get('status', ''), 'draft')
+    self.assertEqual(lot['status'], 'draft')
 
     response = self.app.get('/{}'.format(lot['id']))
     self.assertEqual(response.status, '200 OK')
@@ -859,7 +890,7 @@ def change_active_auction_lot(self):
     # Create new lot in 'draft' status
     response = create_single_lot(self, lot_info)
     lot = response.json['data']
-    self.assertEqual(lot.get('status', ''), 'draft')
+    self.assertEqual(lot['status'], 'draft')
 
     response = self.app.get('/{}'.format(lot['id']))
     self.assertEqual(response.status, '200 OK')
@@ -920,7 +951,7 @@ def change_dissolved_lot(self):
     lot = response.json['data']
     token = response.json['access']['token']
     access_header = {'X-Access-Token': str(token)}
-    self.assertEqual(lot.get('status', ''), 'draft')
+    self.assertEqual(lot['status'], 'draft')
 
     response = self.app.get('/{}'.format(lot['id']))
     self.assertEqual(response.status, '200 OK')
@@ -986,7 +1017,7 @@ def change_sold_lot(self):
     lot = response.json['data']
     token = response.json['access']['token']
     access_header = {'X-Access-Token': str(token)}
-    self.assertEqual(lot.get('status', ''), 'draft')
+    self.assertEqual(lot['status'], 'draft')
 
     response = self.app.get('/{}'.format(lot['id']))
     self.assertEqual(response.status, '200 OK')
@@ -1040,3 +1071,93 @@ def change_sold_lot(self):
     # Move from 'sold' to one of 'blacklist' status
     for status in STATUS_BLACKLIST['sold']['Administrator']:
         check_patch_status_403(self, '/{}'.format(lot['id']), status)
+
+
+def change_recomposed_lot(self):
+    response = self.app.get('/')
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(len(response.json['data']), 0)
+
+    self.app.authorization = ('Basic', ('broker', ''))
+
+    lot_info = self.initial_data
+    lot_info['status'] = 'draft'
+
+    # Create new lot in 'draft' status
+    response = create_single_lot(self, lot_info)
+    lot = response.json['data']
+    token = response.json['access']['token']
+    access_header = {'X-Access-Token': str(token)}
+    self.assertEqual(lot['status'], 'draft')
+
+    response = self.app.get('/{}'.format(lot['id']))
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['data'], lot)
+
+    # Move from 'draft' to 'pending'
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'pending', access_header)
+
+    # Move from 'pending' to 'verification'
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'verification', access_header)
+
+
+    self.app.authorization = ('Basic', ('administrator', ''))
+
+    # Move from 'verification' to 'active.salable'
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'active.salable')
+
+
+    self.app.authorization = ('Basic', ('broker', ''))
+
+    # Move from 'active.salable' to 'recomposed'
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'recomposed', access_header)
+
+    # Move from 'recomposed' to one of 'blacklist' status
+    for status in STATUS_BLACKLIST['recomposed']['lot_owner']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status, access_header)
+
+
+    self.app.authorization = ('Basic', ('concierge', ''))
+
+    # Move from 'recomposed' to one of 'blacklist' status
+    for status in STATUS_BLACKLIST['recomposed']['concierge']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status)
+
+
+    self.app.authorization = ('Basic', ('convoy', ''))
+
+    # Move from 'recomposed' to one of 'blacklist' status
+    for status in STATUS_BLACKLIST['recomposed']['convoy']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status)
+
+
+    self.app.authorization = ('Basic', ('concierge', ''))
+
+    # Move from 'recomposed' to 'recomposed'
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'recomposed')
+
+    # Move from 'recomposed' to 'pending'
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'pending')
+
+
+    self.app.authorization = ('Basic', ('administrator', ''))
+
+    # Move from 'pending' to 'verification'
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'verification')
+
+    # Move from 'verification' to 'active.salable'
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'active.salable')
+
+    # Move from 'active.salable' to 'recomposed'
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'recomposed')
+
+    # Move from 'recomposed' to one of 'blacklist' status
+    for status in STATUS_BLACKLIST['recomposed']['Administrator']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status)
+
+    # Move from 'recomposed' to 'recomposed'
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'recomposed')
+
+    # Move from 'recomposed' to 'pending'
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'pending')
