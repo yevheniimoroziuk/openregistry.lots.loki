@@ -249,3 +249,53 @@ class LotResourceTest(BaseLotWebTest):
         with open('docs/source/tutorial/convoy-patched-lot-to-sold.http', 'w') as self.app.file_obj:
             response = self.app.get('/{}'.format(lot_id))
             self.assertEqual(response.status, '200 OK')
+
+        # Recomposed tutorial
+
+        self.app.authorization = ('Basic', ('broker', ''))
+
+        response = self.app.post_json(request_path, {"data": self.initial_data})
+        self.assertEqual(response.status, '201 Created')
+
+        lot_id = response.json['data']['id']
+        owner_token = response.json['access']['token']
+
+        response = self.app.patch_json('/{}?acc_token={}'.format(lot_id, owner_token),
+                                       {'data': {"status": 'pending'}})
+        self.assertEqual(response.status, '200 OK')
+
+        response = self.app.patch_json('/{}?acc_token={}'.format(lot_id, owner_token),
+                                       {'data': {"status": 'verification'}})
+        self.assertEqual(response.status, '200 OK')
+
+        self.app.authorization = ('Basic', ('concierge', ''))
+
+        # Switch to 'active.salable'
+        #
+
+        response = self.app.patch_json('/{}'.format(lot_id),
+                                       {'data': {"status": 'active.salable'}})
+        self.assertEqual(response.status, '200 OK')
+
+        response = self.app.get('/{}'.format(lot_id))
+        self.assertEqual(response.status, '200 OK')
+
+        self.app.authorization = ('Basic', ('broker', ''))
+
+        # Switch to 'recomposed'
+        #
+        with open('docs/source/tutorial/patch-lot-to-recomposed.http', 'w') as self.app.file_obj:
+            response = self.app.patch_json('/{}?acc_token={}'.format(lot_id, owner_token),
+                                           {'data': {"status": 'recomposed'}})
+            self.assertEqual(response.status, '200 OK')
+            self.assertEqual(response.json['data']['status'], 'recomposed')
+
+        self.app.authorization = ('Basic', ('concierge', ''))
+
+        # Switch to 'pending'
+        #
+        with open('docs/source/tutorial/patch-lot-to-pending-from-recomposed.http', 'w') as self.app.file_obj:
+            response = self.app.patch_json('/{}'.format(lot_id),
+                                           {'data': {"status": 'pending'}})
+            self.assertEqual(response.status, '200 OK')
+            self.assertEqual(response.json['data']['status'], 'pending')

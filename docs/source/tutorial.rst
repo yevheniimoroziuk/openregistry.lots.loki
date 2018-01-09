@@ -95,6 +95,14 @@ Let's check what lot registry contains:
 
 And indeed we have 2 lots now.
 
+Assume that we have a lot in active.salable status, and we want
+change something in it. For such purposes `recomposed` status exists.
+
+.. literalinclude:: tutorial/patch-lot-to-recomposed.http
+   :language: javascript
+
+After some check would have been done, lot status will be switched to `pending` automatically.
+
 Modifying Lot
 -------------
 
@@ -146,6 +154,11 @@ turn status of the assets being attached to that lot to `pending`. Status of the
 .. literalinclude:: tutorial/patch-lot-to-dissolved.http
    :language: javascript
 
+When bot finds that status of a lot is `recomposed`,
+turn status of the assets being attached to that lot to `pending`. Status of the lot itself will become `pending`.
+
+.. literalinclude:: tutorial/patch-lot-to-pending-from-recomposed.http
+   :language: javascript
 Convoy operations
 -----------------
 
