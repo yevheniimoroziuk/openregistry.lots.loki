@@ -5,7 +5,7 @@ Lots Workflow
 
 .. graphviz::
 
-digraph G {
+    digraph G {
 
             subgraph cluster_1 {
                     node [style=filled, fillcolor=seashell2];
@@ -21,8 +21,10 @@ digraph G {
                     edge[dir="forward"];
                     "active.awaiting" -> "active.auction" [color="0.6667 1.0000 0.5020"];
                     edge[dir="forward"];
-                    "active.auction" -> "sold" [color="0.6667 1.0000 0.5020"];
-            color=white
+                    "active.auction" -> "pending.sold" [color="0.6667 1.0000 0.5020"];
+                    edge[dir="forward"];
+                    "pending.sold" -> "sold" [color="0.6667 1.0000 0.5020"];
+                    color=white;
             }
 
             subgraph cluster_1 {
@@ -42,7 +44,6 @@ digraph G {
             edge[style=solid];
             node [style=solid];
             "pending.dissolution" -> "dissolved" [color="0.6667 1.0000 0.5020"];
-
              
     }
 
