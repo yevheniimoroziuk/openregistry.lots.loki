@@ -62,7 +62,13 @@ STATUS_CHANGES = {
         "editing_permissions": ["convoy", "Administrator"],
         "next_status": {
             "active.salable": ["convoy", "Administrator"],
-            "sold": ["convoy", "Administrator"]
+            "pending.sold": ["convoy", "Administrator"]
+        }
+    },
+    "pending.sold": {
+        "editing_permissions": ['concierge',  'Administrator'],
+        "next_status": {
+            'sold': ['concierge',  'Administrator']
         }
     },
     "sold": {
