@@ -1,13 +1,12 @@
 POST /api/0.1/lots?opt_pretty=1 HTTP/1.0
 Authorization: Basic YnJva2VyOg==
-Content-Length: 1071
+Content-Length: 1104
 Content-Type: application/json
 Host: lb.api-sandbox.registry.ea.openprocurement.net
 DATA:
 {
   "data": {
-    "description": "Щось там тестове", 
-    "lotType": "basic", 
+    "lotIdentifier": "Q81318b19827", 
     "lotCustodian": {
       "contactPoint": {
         "name": "Державне управління справами", 
@@ -28,27 +27,30 @@ DATA:
       }
     }, 
     "assets": [
-      "d336c262c697423eb947c8628900f056"
+      "a53eaf78fb2e4625beff0e601fe335ef"
     ], 
-    "title": "Тестовий лот"
+    "title": "Тестовий лот", 
+    "lotType": "basic", 
+    "description": "Щось там тестове"
   }
 }
 
 Response: 201 Created
 Content-Type: application/json
-Location: http://lb.api-sandbox.registry.ea.openprocurement.net/api/0.1/lots/d793267872c14bd9b871101968fa7270
+Location: http://lb.api-sandbox.registry.ea.openprocurement.net/api/0.1/lots/03a71e3cde5e47ac8d83313bc7deda2c
 X-Content-Type-Options: nosniff
 {
   "access": {
-    "token": "0f51da9ca6b24fbb8d48147d956679df"
+    "token": "d8d43665aa394ad18c3f80e83fa58cbe"
   }, 
   "data": {
     "status": "draft", 
-    "lotID": "UA-LR-DGF-2017-09-27-000002", 
+    "lotIdentifier": "Q81318b19827", 
+    "lotID": "UA-LR-DGF-2018-01-09-000002", 
     "description": "Щось там тестове", 
     "title": "Тестовий лот", 
     "lotType": "basic", 
-    "dateModified": "2017-09-27T16:00:29.512356+03:00", 
+    "dateModified": "2018-01-09T17:32:39.321058+02:00", 
     "owner": "broker", 
     "lotCustodian": {
       "contactPoint": {
@@ -69,10 +71,10 @@ X-Content-Type-Options: nosniff
         "locality": "м. Київ"
       }
     }, 
-    "date": "2017-09-27T16:00:29.509278+03:00", 
-    "id": "d793267872c14bd9b871101968fa7270", 
+    "date": "2018-01-09T17:32:39.319198+02:00", 
+    "id": "03a71e3cde5e47ac8d83313bc7deda2c", 
     "assets": [
-      "d336c262c697423eb947c8628900f056"
+      "a53eaf78fb2e4625beff0e601fe335ef"
     ]
   }
 }

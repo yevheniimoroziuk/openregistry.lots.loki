@@ -1,4 +1,4 @@
-GET /api/0.1/lots/def2b43f991d47319cbf18b2631df5a1 HTTP/1.0
+GET /api/0.1/lots/4a7289b9449341d69302c2ad39fb0e67 HTTP/1.0
 Authorization: Basic YnJva2VyOg==
 Host: lb.api-sandbox.registry.ea.openprocurement.net
 
@@ -8,11 +8,12 @@ X-Content-Type-Options: nosniff
 {
   "data": {
     "status": "draft", 
-    "lotID": "UA-LR-DGF-2017-09-27-000001", 
+    "lotIdentifier": "Q81318b19827", 
+    "lotID": "UA-LR-DGF-2018-01-09-000001", 
     "description": "Щось там тестове", 
     "title": "Тестовий лот", 
     "lotType": "basic", 
-    "dateModified": "2017-09-27T16:00:29.136878+03:00", 
+    "dateModified": "2018-01-09T17:32:39.119582+02:00", 
     "owner": "broker", 
     "lotCustodian": {
       "contactPoint": {
@@ -33,10 +34,10 @@ X-Content-Type-Options: nosniff
         "locality": "м. Київ"
       }
     }, 
-    "date": "2017-09-27T16:00:29.134940+03:00", 
-    "id": "def2b43f991d47319cbf18b2631df5a1", 
+    "date": "2018-01-09T17:32:39.117474+02:00", 
+    "id": "4a7289b9449341d69302c2ad39fb0e67", 
     "assets": [
-      "d336c262c697423eb947c8628900f056"
+      "a53eaf78fb2e4625beff0e601fe335ef"
     ]
   }
 }
