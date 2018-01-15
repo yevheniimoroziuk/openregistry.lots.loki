@@ -95,13 +95,13 @@ Let's check what lot registry contains:
 
 And indeed we have 2 lots now.
 
-Assume that we have a lot in active.salable status, and we want
-change something in it. For such purposes `recomposed` status exists.
+Assume that we have lot in `active.salable` status and we want
+to modify this lot. For such purposes `recomposed` status exists.
 
 .. literalinclude:: tutorial/patch-lot-to-recomposed.http
    :language: javascript
 
-After some check would have been done, lot status will be switched to `pending` automatically.
+After some checks have been done, lot status will be switched to `pending` automatically.
 
 Modifying Lot
 -------------
@@ -148,17 +148,19 @@ attached to another lot), status of the current one will be turned to `pending`:
 .. literalinclude:: tutorial/concierge-patched-lot-to-pending.http
    :language: javascript
 
-When bot finds that status of a lot is `pending.dissolution`,
-turn status of the assets being attached to that lot to `pending`. Status of the lot itself will become `dissolved`.
+When bot finds that status of lot is `pending.dissolution`, it
+turns status of the assets being attached to that lot to `pending`. Status of the lot itself will become `dissolved`.
    
 .. literalinclude:: tutorial/patch-lot-to-dissolved.http
    :language: javascript
 
-When bot finds that status of a lot is `recomposed`,
-turn status of the assets being attached to that lot to `pending`. Status of the lot itself will become `pending`.
+When bot finds that status of lot is `recomposed`, it
+turns status of the assets being attached to that lot to `pending`. Status of the lot itself 
+becomes `pending` as well.
 
 .. literalinclude:: tutorial/patch-lot-to-pending-from-recomposed.http
    :language: javascript
+   
 Convoy operations
 -----------------
 
