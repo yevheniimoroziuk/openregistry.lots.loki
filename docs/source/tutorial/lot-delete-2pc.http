@@ -1,4 +1,4 @@
-PATCH /api/0.1/lots/03a71e3cde5e47ac8d83313bc7deda2c?acc_token=d8d43665aa394ad18c3f80e83fa58cbe HTTP/1.0
+PATCH /api/0.1/lots/462705149c174132b41d723ac081a816?acc_token=f48bb882fb7e49e9b629053657581259 HTTP/1.0
 Authorization: Basic YnJva2VyOg==
 Content-Length: 31
 Content-Type: application/json
@@ -17,11 +17,11 @@ X-Content-Type-Options: nosniff
   "data": {
     "status": "deleted", 
     "lotIdentifier": "Q81318b19827", 
-    "lotID": "UA-LR-DGF-2018-01-09-000002", 
+    "lotID": "UA-LR-DGF-2018-01-15-000002", 
     "description": "Щось там тестове", 
     "title": "Тестовий лот", 
     "lotType": "basic", 
-    "dateModified": "2018-01-09T17:32:39.406702+02:00", 
+    "dateModified": "2018-01-15T15:33:03.690514+02:00", 
     "owner": "broker", 
     "lotCustodian": {
       "contactPoint": {
@@ -42,10 +42,10 @@ X-Content-Type-Options: nosniff
         "locality": "м. Київ"
       }
     }, 
-    "date": "2018-01-09T17:32:39.406417+02:00", 
-    "id": "03a71e3cde5e47ac8d83313bc7deda2c", 
+    "date": "2018-01-15T15:33:03.690353+02:00", 
+    "id": "462705149c174132b41d723ac081a816", 
     "assets": [
-      "a53eaf78fb2e4625beff0e601fe335ef"
+      "b49f767133cb4d0bbcfd9c404ece8b01"
     ]
   }
 }

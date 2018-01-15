@@ -160,11 +160,18 @@ becomes `pending` as well.
 
 .. literalinclude:: tutorial/patch-lot-to-pending-from-recomposed.http
    :language: javascript
+
+When bot finds that status of lot is `pending.sold`, it
+turns status of the assets being attached to that lot to `complete`. Status of the lot itself
+becomes `sold` as well.
+
+.. literalinclude:: tutorial/patch-lot-to-sold-from-pending.sold.http
+   :language: javascript
    
 Convoy operations
 -----------------
 
-When lot is finally formed (`active.saleable`) it can be used in the 
+When lot is finally formed (`active.salable`) it can be used in the
 procedure within CDB. For this to be done, you need to specify lot id. 
 By doing this, you will find the `merchandisingObject` field with the current 
 lot id in the created procedure and id of the auction within which 
@@ -181,9 +188,9 @@ When the procedure is successfully created, lot status will be changed to
 .. literalinclude:: tutorial/convoy-patched-lot-to-active.auction.http
    :language: javascript
 
-After lot has been sold in the auction, its status is turned to `sold` within RDB:
+After lot has been sold in the auction, its status is turned to `pending.sold` within RDB:
 
-.. literalinclude:: tutorial/convoy-patched-lot-to-sold.http
+.. literalinclude:: tutorial/convoy-patched-lot-to-pending.sold.http
    :language: javascript
 
 In case of that lot has not been sold, its status will be changed to `active.salable` in RDB:

@@ -240,13 +240,25 @@ class LotResourceTest(BaseLotWebTest):
             response = self.app.get('/{}'.format(lot_id))
             self.assertEqual(response.status, '200 OK')
 
+        # Switch to 'pending.sold'
+        #
+        response = self.app.patch_json('/{}'.format(lot_id),
+                                       {'data': {"status": 'pending.sold'}})
+        self.assertEqual(response.status, '200 OK')
+
+        with open('docs/source/tutorial/convoy-patched-lot-to-pending.sold.http', 'w') as self.app.file_obj:
+            response = self.app.get('/{}'.format(lot_id))
+            self.assertEqual(response.status, '200 OK')
+
+        self.app.authorization = ('Basic', ('concierge', ''))
+
         # Switch to 'sold'
         #
         response = self.app.patch_json('/{}'.format(lot_id),
                                        {'data': {"status": 'sold'}})
         self.assertEqual(response.status, '200 OK')
 
-        with open('docs/source/tutorial/convoy-patched-lot-to-sold.http', 'w') as self.app.file_obj:
+        with open('docs/source/tutorial/patch-lot-to-sold-from-pending.sold.http', 'w') as self.app.file_obj:
             response = self.app.get('/{}'.format(lot_id))
             self.assertEqual(response.status, '200 OK')
 
