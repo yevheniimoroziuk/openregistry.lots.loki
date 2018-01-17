@@ -85,8 +85,6 @@ The previous lot contained only required fields. Let's try creating lot with mor
    :language: javascript
 
 And again we have `201 Created` response code, `Location` header and body with extra `id`, `lotID`, and `dateModified` properties.
-For lot to be dissolved you have to specify `pending.dissolution` status.
-After some check would have been done, lot status will be switched to `dissolved` automatically.
 
 Let's check what lot registry contains:
 
@@ -163,7 +161,7 @@ becomes `pending` as well.
 
 When bot finds that status of lot is `pending.sold`, it
 turns status of the assets being attached to that lot to `complete`. Status of the lot itself
-becomes `sold` as well.
+turns to `sold`.
 
 .. literalinclude:: tutorial/patch-lot-to-sold-from-pending.sold.http
    :language: javascript
