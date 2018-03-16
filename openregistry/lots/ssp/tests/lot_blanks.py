@@ -6,8 +6,8 @@ from openregistry.api.utils import get_now
 from openregistry.api.constants import ROUTE_PREFIX
 from openregistry.api.tests.base import create_blacklist
 
-from openregistry.lots.basic.models import Lot
-from openregistry.lots.basic.constants import STATUS_CHANGES
+from openregistry.lots.ssp.models import Lot
+from openregistry.lots.ssp.constants import STATUS_CHANGES
 from openregistry.lots.core.constants import LOT_STATUSES
 
 ROLES = ['lot_owner', 'Administrator', 'concierge', 'convoy']

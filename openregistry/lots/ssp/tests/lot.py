@@ -4,10 +4,10 @@ import unittest
 
 from openregistry.api.tests.base import BaseWebTest, snitch
 from openregistry.api.tests.blanks.mixins import ResourceTestMixin
-from openregistry.lots.basic.tests.base import (
+from openregistry.lots.ssp.tests.base import (
     test_lot_data, BaseLotWebTest
 )
-from openregistry.lots.basic.tests.lot_blanks import (
+from openregistry.lots.ssp.tests.lot_blanks import (
     # LotResourceTest
     change_draft_lot,
     change_dissolved_lot,

@@ -3,7 +3,7 @@ import unittest
 from copy import deepcopy
 
 from openregistry.api.tests.blanks.mixins import ResourceDocumentTestMixin
-from openregistry.lots.basic.tests.base import (
+from openregistry.lots.ssp.tests.base import (
     LotContentWebTest
 )
 from openregistry.api.tests.blanks.json_data import test_document_data

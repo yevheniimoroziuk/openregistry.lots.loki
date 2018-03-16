@@ -2,7 +2,7 @@
 
 import unittest
 
-from openregistry.lots.basic.tests import lot, document
+from openregistry.lots.ssp.tests import lot, document
 
 
 def suite():

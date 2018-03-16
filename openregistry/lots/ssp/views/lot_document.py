@@ -18,7 +18,7 @@ from openregistry.api.validation import (
 from openregistry.lots.core.validation import (
     validate_lot_document_update_not_by_author_or_lot_owner
 )
-from openregistry.lots.basic.validation import (
+from openregistry.lots.ssp.validation import (
     validate_document_operation_in_not_allowed_lot_status
 )
 
