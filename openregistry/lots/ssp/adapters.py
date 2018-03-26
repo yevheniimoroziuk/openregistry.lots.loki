@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from openregistry.lots.core.adapters import LotConfigurator
-from .constants import STATUS_CHANGES
+from openregistry.lots.ssp.constants import STATUS_CHANGES
 
 
 class BasicLotConfigurator(LotConfigurator):
-    """ BelowThreshold Tender configuration adapter """
+    """ SSP Tender configuration adapter """
 
-    name = "Basic Lot configurator"
+    name = "SSP Lot configurator"
     available_statuses = STATUS_CHANGES
