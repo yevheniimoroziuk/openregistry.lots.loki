@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from pyramid.interfaces import IRequest
 from openregistry.api.interfaces import IContentConfigurator
-from openregistry.lots.ssp.models import Lot, IBasicLot
+from openregistry.lots.ssp.models import Lot, ISSPLot
 from openregistry.lots.ssp.adapters import BasicLotConfigurator
 
 
@@ -10,5 +10,5 @@ def includeme(config):
     config.scan("openregistry.lots.ssp.views")
     config.scan("openregistry.lots.ssp.subscribers")
     config.registry.registerAdapter(BasicLotConfigurator,
-                                    (IBasicLot, IRequest),
+                                    (ISSPLot, IRequest),
                                     IContentConfigurator)
