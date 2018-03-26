@@ -23,10 +23,10 @@ from openregistry.lots.ssp.validation import (
 )
 
 
-@oplotsresource(name='basic:Lot Documents',
+@oplotsresource(name='ssp:Lot Documents',
                 collection_path='/lots/{lot_id}/documents',
                 path='/lots/{lot_id}/documents/{document_id}',
-                lotType='basic',
+                lotType='ssp',
                 description="Lot related binary files (PDFs, etc.)")
 class LotDocumentResource(APIResource):
 

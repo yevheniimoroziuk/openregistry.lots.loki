@@ -15,6 +15,7 @@ from openregistry.lots.core.utils import (
 from openregistry.lots.core.validation import (
     validate_patch_lot_data,
 )
+from openregistry.lots.ssp.events import PublicationInitializeEvent
 
 patch_lot_validators = (
     validate_patch_lot_data,
@@ -22,9 +23,9 @@ patch_lot_validators = (
 )
 
 
-@oplotsresource(name='basic:Lot',
+@oplotsresource(name='ssp:Lot',
                 path='/lots/{lot_id}',
-                lotType='basic',
+                lotType='ssp',
                 description="Open Contracting compatible data exchange format.")
 class LotResource(APIResource):
 
