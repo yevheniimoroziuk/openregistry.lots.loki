@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from pyramid.events import subscriber
 from openregistry.lots.ssp.events import PublicationInitializeEvent, ItemInitializeEvent
-from openregistry.api.utils import get_now
+from openprocurement.api.utils import get_now
 
 
 @subscriber(PublicationInitializeEvent, lotType="ssp")

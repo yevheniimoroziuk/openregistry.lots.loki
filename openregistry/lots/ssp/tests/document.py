@@ -2,8 +2,8 @@
 import unittest
 from copy import deepcopy
 
-from openregistry.api.tests.base import snitch
-from openregistry.api.tests.blanks.document import (
+from openprocurement.api.tests.base import snitch
+from openprocurement.api.tests.blanks.document import (
     not_found,
     create_document_in_forbidden_resource_status,
     put_resource_document_invalid,
@@ -16,7 +16,7 @@ from openregistry.api.tests.blanks.document import (
 from openregistry.lots.ssp.tests.base import (
     LotContentWebTest
 )
-from openregistry.api.tests.blanks.json_data import test_ssp_document_data
+from openprocurement.api.tests.blanks.json_data import test_ssp_document_data
 from openregistry.lots.ssp.constants import DOCUMENT_TYPES
 from openregistry.lots.ssp.tests.document_blanks import (
     patch_resource_document,

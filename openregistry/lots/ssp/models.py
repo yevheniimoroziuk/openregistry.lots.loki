@@ -10,8 +10,8 @@ from schematics.exceptions import ValidationError
 from zope.interface import implementer
 
 from openregistry.lots.core.models import ILot, Lot as BaseLot
-from openregistry.api.models.schematics_extender import Model, IsoDateTimeType
-from openregistry.api.models.ocds import (
+from openprocurement.api.registry_models.schematics_extender import Model, IsoDateTimeType
+from openprocurement.api.registry_models.ocds import (
     Identifier,
     Document as BaseDocument,
     Address,
@@ -20,8 +20,8 @@ from openregistry.api.models.ocds import (
     BaseUnit,
     Organization
 )
-from openregistry.api.utils import get_now
-from openregistry.api.models.roles import schematics_embedded_role
+from openprocurement.api.utils import get_now
+from openprocurement.api.registry_models.roles import schematics_embedded_role
 from openregistry.lots.ssp.constants import LOT_STATUSES, DOCUMENT_TYPES
 
 

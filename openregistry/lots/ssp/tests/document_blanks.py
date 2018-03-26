@@ -2,7 +2,7 @@
 from copy import deepcopy
 from datetime import datetime, timedelta
 
-from openregistry.api.constants import TZ
+from openprocurement.api.constants import TZ
 
 def patch_resource_document(self):
     response = self.app.post_json('/{}/documents'.format(self.resource_id),

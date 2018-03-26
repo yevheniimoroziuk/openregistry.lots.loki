@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openregistry.api.utils import (
+from openprocurement.api.utils import (
     get_file,
     update_file_content_type,
     json_view,
