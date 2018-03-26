@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
+from copy import deepcopy
+from datetime import datetime, timedelta
 
+from openregistry.api.constants import TZ
 
 def patch_resource_document(self):
     response = self.app.post_json('/{}/documents'.format(self.resource_id),
@@ -67,3 +70,61 @@ def patch_resource_document(self):
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(response.json['errors'][0]["description"],
                      "Can't update document in current ({}) {} status".format(self.forbidden_document_modification_actions_status, self.resource_name[:-1]))
+
+
+def model_validation(self):
+    initial_document_data = deepcopy(self.initial_document_data)
+    initial_document_data['documentType'] = 'x_dgfAssetFamiliarization'
+    response = self.app.post_json('/{}/documents'.format(self.resource_id),
+                                  headers=self.access_header,
+                                  params={'data': initial_document_data},
+                                  status=422)
+    self.assertEqual(response.status, '422 Unprocessable Entity')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+    self.assertEqual(response.json['errors'][0]['description'][0], u"accessDetails is required, when documentType is x_dgfAssetFamiliarization")
+
+    initial_document_data['accessDetails'] = u'Some access details'
+    response = self.app.post_json('/{}/documents'.format(self.resource_id),
+                                  headers=self.access_header,
+                                  params={'data': initial_document_data})
+    self.assertEqual(response.status, '201 Created')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['data']['accessDetails'], initial_document_data['accessDetails'])
+
+
+    initial_document_data['documentType'] = 'procurementPlan'
+    del initial_document_data['accessDetails']
+    response = self.app.post_json('/{}/documents'.format(self.resource_id),
+                                  headers=self.access_header,
+                                  params={'data': initial_document_data},
+                                  status=422)
+    self.assertEqual(response.status, '422 Unprocessable Entity')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+    self.assertEqual(response.json['errors'][0]['description'][0], u"dateSigned is required, when documentType is procurementPlan or projectPlan")
+
+    initial_document_data['documentType'] = 'projectPlan'
+    response = self.app.post_json('/{}/documents'.format(self.resource_id),
+                                  headers=self.access_header,
+                                  params={'data': initial_document_data},
+                                  status=422)
+    self.assertEqual(response.status, '422 Unprocessable Entity')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+    self.assertEqual(response.json['errors'][0]['description'][0], u"dateSigned is required, when documentType is procurementPlan or projectPlan")
+
+    initial_document_data['dateSigned'] = TZ.localize(datetime.now() + timedelta(10)).isoformat()
+    response = self.app.post_json('/{}/documents'.format(self.resource_id),
+                                  headers=self.access_header,
+                                  params={'data': initial_document_data})
+    self.assertEqual(response.status, '201 Created')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['data']['dateSigned'], initial_document_data['dateSigned'])
+
+    response = self.app.post_json('/{}/documents'.format(self.resource_id),
+                                  headers=self.access_header,
+                                  params={'data': initial_document_data})
+    self.assertEqual(response.status, '201 Created')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['data']['dateSigned'], initial_document_data['dateSigned'])

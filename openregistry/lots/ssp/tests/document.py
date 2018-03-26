@@ -3,7 +3,6 @@ import unittest
 from copy import deepcopy
 
 from openregistry.api.tests.base import snitch
-from openregistry.api.tests.blanks.mixins import ResourceDocumentTestMixin
 from openregistry.api.tests.blanks.document import (
     not_found,
     create_document_in_forbidden_resource_status,
@@ -18,9 +17,10 @@ from openregistry.lots.ssp.tests.base import (
     LotContentWebTest
 )
 from openregistry.api.tests.blanks.json_data import test_ssp_document_data
-from openregistry.api.constants import DOCUMENT_TYPES
+from openregistry.lots.ssp.constants import DOCUMENT_TYPES
 from openregistry.lots.ssp.tests.document_blanks import (
-    patch_resource_document
+    patch_resource_document,
+    model_validation
 )
 
 class LotDocumentWithDSResourceTest(LotContentWebTest):
@@ -35,6 +35,7 @@ class LotDocumentWithDSResourceTest(LotContentWebTest):
     test_06_create_resource_document_json_invalid = snitch(create_resource_document_json_invalid)
     test_07_create_resource_document_json = snitch(create_resource_document_json)
     test_08_put_resource_document_json = snitch(put_resource_document_json)
+    test_09_model_validation = snitch(model_validation)
 
 
     # status, in which operations with lot documents (adding, updating) are forbidden
