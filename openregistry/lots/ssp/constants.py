@@ -20,3 +20,7 @@ STATUS_CHANGES = {
         "next_status": {}
     },
 }
+
+DOCUMENT_TYPES = [
+    'notice', 'technicalSpecifications', 'illustration', 'virtualDataRoom',
+    'x_presentation', 'x_dgfAssetFamiliarization', 'procurementPlan', 'projectPlan']

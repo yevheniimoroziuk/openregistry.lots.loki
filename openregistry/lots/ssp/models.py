@@ -22,7 +22,7 @@ from openregistry.api.models.ocds import (
 )
 from openregistry.api.utils import get_now
 from openregistry.api.models.roles import schematics_embedded_role
-from openregistry.lots.ssp.constants import LOT_STATUSES
+from openregistry.lots.ssp.constants import LOT_STATUSES, DOCUMENT_TYPES
 
 
 create_role = (blacklist('owner_token', 'owner', '_attachments', 'revisions',
@@ -39,9 +39,19 @@ class ISSPLot(ILot):
 
 class Document(BaseDocument):
     documentOf = StringType(choices=['lot', 'item'])
+    documentType = StringType(choices=DOCUMENT_TYPES)
     dateSigned = IsoDateTimeType()
-    index = IntType()
+    index = IntType(required=False)
     accessDetails = StringType()
+
+    def validate_accessDetails(self, data, value):
+        if value is None and data['documentType'] == 'x_dgfAssetFamiliarization':
+            raise ValidationError(u"accessDetails is required, when documentType is x_dgfAssetFamiliarization")
+
+    def validate_dateSigned(self, data, value):
+        if value is None and data['documentType'] in ['procurementPlan', 'projectPlan']:
+            raise ValidationError(u"dateSigned is required, when documentType is procurementPlan or projectPlan")
+
 
 
 class Item(BaseItem):
@@ -66,13 +76,26 @@ class LotHolder(Model):
     address = ModelType(Address)
     contactPoint = ModelType(ContactPoint)
 
+#
+# class Auction(Model):
+#     id = StringType()
+#     auctionID = StringType()
+#     procurementMethodType = StringType()
+#     auctionPeriod =
+#     tenderingDuration =
+#     documents =
+#     value =
+#     minimalStep =
+#     guarantee =
+#     registrationFee =
+#     accountDetails =
 
 class Publication(Model):
     id = StringType(required=True, min_length=1, default=lambda: uuid4().hex)
     date = IsoDateTimeType()
     dateModified = IsoDateTimeType(default=get_now)
     documents = ListType(ModelType(Document), min_size=1)
-    # auction = ModelType(Auction)
+    # auctions = ListType(ModelType(Auction), max_size=3)
 
 
 @implementer(ISSPLot)
