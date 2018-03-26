@@ -20,6 +20,11 @@ from openprocurement.api.registry_models.ocds import (
     BaseUnit,
     Organization
 )
+from openprocurement.api.models import (
+    Guarantee,
+    Period,
+    Value
+)
 from openprocurement.api.utils import get_now
 from openprocurement.api.registry_models.roles import schematics_embedded_role
 from openregistry.lots.ssp.constants import LOT_STATUSES, DOCUMENT_TYPES
@@ -76,26 +81,39 @@ class LotHolder(Model):
     address = ModelType(Address)
     contactPoint = ModelType(ContactPoint)
 
-#
-# class Auction(Model):
-#     id = StringType()
-#     auctionID = StringType()
-#     procurementMethodType = StringType()
-#     auctionPeriod =
-#     tenderingDuration =
-#     documents =
-#     value =
-#     minimalStep =
-#     guarantee =
-#     registrationFee =
-#     accountDetails =
+
+class Period(Period):
+    startDate = startDate = IsoDateTimeType(required=True)
+
+
+class AccountDetails(Model):
+    description = StringType()
+    bankName = StringType()
+    accountNumber = StringType()
+    UA_EDR = StringType()
+    MFO = StringType()
+
+
+class Auction(Model):
+    id = StringType()
+    auctionID = StringType()
+    procurementMethodType = StringType(choices=['SSP.english', 'SSP.insider'])
+    auctionPeriod = ModelType(Period, required=True)
+    tenderingDuration = IsoDateTimeType(required=True)
+    documents = ListType(ModelType(Document))
+    value = ModelType(Value, required=True)
+    minimalStep = ModelType(Value, required=True)
+    guarantee = ModelType(Guarantee, required=True)
+    registrationFee = ModelType(Guarantee)
+    accountDetails = ModelType(AccountDetails)
+
 
 class Publication(Model):
     id = StringType(required=True, min_length=1, default=lambda: uuid4().hex)
     date = IsoDateTimeType()
     dateModified = IsoDateTimeType(default=get_now)
     documents = ListType(ModelType(Document), min_size=1)
-    # auctions = ListType(ModelType(Auction), max_size=3)
+    auctions = ListType(ModelType(Auction), max_size=3)
 
 
 @implementer(ISSPLot)
