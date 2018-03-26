@@ -6,7 +6,7 @@ from uuid import uuid4
 from openregistry.lots.core.tests.base import (
     BaseLotWebTest as BaseLWT
 )
-from openregistry.api.tests.blanks.json_data import test_lot_data
+from openregistry.api.tests.blanks.json_data import test_ssp_lot_data
 
 
 class BaseLotWebTest(BaseLWT):
@@ -14,7 +14,7 @@ class BaseLotWebTest(BaseLWT):
     relative_to = os.path.dirname(__file__)
 
     def setUp(self):
-        self.initial_data = deepcopy(test_lot_data)
+        self.initial_data = deepcopy(test_ssp_lot_data)
         self.initial_data['assets'] = [uuid4().hex]
         super(BaseLotWebTest, self).setUp()
 
