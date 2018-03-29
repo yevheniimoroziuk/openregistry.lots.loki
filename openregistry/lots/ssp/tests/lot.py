@@ -7,7 +7,7 @@ from openprocurement.api.tests.blanks.mixins import ResourceTestMixin
 from openregistry.lots.ssp.tests.base import (
     test_ssp_lot_data, BaseLotWebTest
 )
-from openregistry.lots.ssp.tests.lot_blanks import (
+from openregistry.lots.ssp.tests.blanks.lot_blanks import (
     # LotResourceTest
     change_draft_lot,
     # change_dissolved_lot,

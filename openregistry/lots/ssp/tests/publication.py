@@ -2,29 +2,22 @@
 import unittest
 from copy import deepcopy
 
-from openregistry.api.tests.base import snitch
-from openregistry.api.tests.blanks.mixins import ResourceDocumentTestMixin
-from openregistry.api.tests.blanks.document import (
-    not_found,
-    create_document_in_forbidden_resource_status,
-    put_resource_document_invalid,
-    create_resource_document_error,
-    create_resource_document_json_invalid,
-    create_resource_document_json,
-    put_resource_document_json
-)
+from openprocurement.api.tests.base import snitch
+
 
 from openregistry.lots.ssp.tests.base import (
     LotContentWebTest
 )
-from openregistry.api.tests.blanks.json_data import test_ssp_document_data
-from openregistry.api.constants import DOCUMENT_TYPES
-from openregistry.lots.ssp.tests.document_blanks import (
-    patch_resource_document
+from openprocurement.api.tests.blanks.json_data import test_ssp_publication_data
+from openregistry.lots.ssp.tests.blanks.publication_blanks import (
+    create_publication,
+    patch_publication
 )
 
 class LotPublicationResourceTest(LotContentWebTest):
-    initial_publication_data = deepcopy(test_ssp_document_data)
+    initial_publication_data = deepcopy(test_ssp_publication_data)
+    test_create_publication_resource = snitch(create_publication)
+    test_patch_publication_resource = snitch(patch_publication)
 
 
 def suite():

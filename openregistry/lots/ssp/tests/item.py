@@ -8,18 +8,20 @@ from openregistry.lots.ssp.tests.base import (
     LotContentWebTest
 )
 from openprocurement.api.tests.blanks.json_data import test_ssp_item_data
-from openregistry.lots.ssp.tests.item_blanks import (
-    create_item_resource
+from openregistry.lots.ssp.tests.blanks.item_blanks import (
+    create_item_resource,
+    patch_item
 )
 
-class LotPublicationResourceTest(LotContentWebTest):
+class LotItemResourceTest(LotContentWebTest):
     initial_item_data = deepcopy(test_ssp_item_data)
     test_create_item_resource = snitch(create_item_resource)
+    test_patch_item_resource = snitch(patch_item)
 
 
 def suite():
     suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(LotPublicationResourceTest))
+    suite.addTest(unittest.makeSuite(LotItemResourceTest))
     return suite
 
 
