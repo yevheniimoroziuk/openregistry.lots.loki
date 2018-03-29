@@ -11,10 +11,7 @@ from zope.interface import implementer
 
 from openregistry.lots.core.models import ILot, Lot as BaseLot
 from openprocurement.api.registry_models.schematics_extender import Model, IsoDateTimeType, IsoDurationType
-from openprocurement.api.registry_models.roles import (
-    item_roles,
-    publication_roles
-)
+
 from openprocurement.api.registry_models.ocds import (
     Identifier,
     Document as BaseDocument,
@@ -32,7 +29,10 @@ from openprocurement.api.models import (
 from openprocurement.api.utils import get_now
 from openprocurement.api.registry_models.roles import schematics_embedded_role
 from openregistry.lots.ssp.constants import LOT_STATUSES, DOCUMENT_TYPES
-
+from openregistry.lots.ssp.roles import (
+    item_roles,
+    publication_roles
+)
 
 create_role = (blacklist('owner_token', 'owner', '_attachments', 'revisions',
                          'date', 'dateModified', 'lotID', 'documents', 'publications'
