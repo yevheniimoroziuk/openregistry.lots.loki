@@ -13,8 +13,7 @@ from openregistry.lots.core.models import ILot, Lot as BaseLot
 from openprocurement.api.registry_models.schematics_extender import Model, IsoDateTimeType, IsoDurationType
 from openprocurement.api.registry_models.roles import (
     item_roles,
-    publication_roles,
-    publication_auction_roles
+    publication_roles
 )
 from openprocurement.api.registry_models.ocds import (
     Identifier,
@@ -103,9 +102,6 @@ class AccountDetails(Model):
 
 
 class Auction(Model):
-    class Options:
-        roles = publication_auction_roles
-
     id = StringType()
     auctionID = StringType()
     procurementMethodType = StringType(choices=['SSP.english', 'SSP.insider'])
