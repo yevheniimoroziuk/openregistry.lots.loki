@@ -9,10 +9,11 @@ from openprocurement.api.utils import (
 from openregistry.lots.core.utils import (
     save_lot, oplotsresource, apply_patch,
 )
+from openregistry.lots.ssp.validation import validate_publication_data
 
 @oplotsresource(name='ssp:Lot Publications',
                 collection_path='/lots/{lot_id}/publications',
-                path='/lots/{lot_id}/publciations/{publication_id}',
+                path='/lots/{lot_id}/publications/{publication_id}',
                 lotType='ssp',
                 description="Lot related publications")
 class LotPublicationsResource(APIResource):
@@ -29,7 +30,7 @@ class LotPublicationsResource(APIResource):
             ]).values(), key=lambda i: i['dateModified'])
         return {'data': collection_data}
 
-    @json_view(content_type="application/json", permission='upload_lot_publication', validators=())
+    @json_view(content_type="application/json", permission='upload_lot_publications', validators=(validate_publication_data, ))
     def collection_post(self):
         """Lot Publications Upload"""
         publication = self.request.validated['publication']
@@ -49,7 +50,7 @@ class LotPublicationsResource(APIResource):
         publication_data = publication.serialize("view")
         return {'data': publication_data}
 
-    @json_view(content_type="application/json", permission='upload_lot_publication', validators=())
+    @json_view(content_type="application/json", permission='upload_lot_publications', validators=(validate_publication_data, ))
     def patch(self):
         """Lot Publications Update"""
         if apply_patch(self.request, src=self.request.context.serialize()):

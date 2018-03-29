@@ -9,6 +9,9 @@ from openprocurement.api.utils import (
 from openregistry.lots.core.utils import (
     save_lot, oplotsresource, apply_patch,
 )
+from openregistry.lots.ssp.validation import (
+    validate_item_data
+)
 
 
 @oplotsresource(name='ssp:Lot Items',
@@ -30,7 +33,7 @@ class LotItemResource(APIResource):
             ]).values(), key=lambda i: i['dateModified'])
         return {'data': collection_data}
 
-    @json_view(content_type="application/json", permission='upload_lot_item', validators=())
+    @json_view(content_type="application/json", permission='upload_lot_items', validators=(validate_item_data, ))
     def collection_post(self):
         """Lot Item Upload"""
         item = self.request.validated['item']
@@ -50,7 +53,7 @@ class LotItemResource(APIResource):
         publication_data = publication.serialize("view")
         return {'data': publication_data}
 
-    @json_view(content_type="application/json", permission='upload_lot_item', validators=())
+    @json_view(content_type="application/json", permission='upload_lot_items', validators=(validate_item_data, ))
     def patch(self):
         """Lot Item Update"""
         if apply_patch(self.request, src=self.request.context.serialize()):
