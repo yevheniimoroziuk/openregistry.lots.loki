@@ -8,7 +8,7 @@ from openprocurement.api.tests.base import snitch
 from openregistry.lots.ssp.tests.base import (
     LotContentWebTest
 )
-from openprocurement.api.tests.blanks.json_data import test_ssp_publication_data
+from openregistry.lots.ssp.tests.json_data import test_ssp_publication_data
 from openregistry.lots.ssp.tests.blanks.publication_blanks import (
     create_publication,
     patch_publication

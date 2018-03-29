@@ -16,7 +16,7 @@ from openprocurement.api.tests.blanks.document import (
 from openregistry.lots.ssp.tests.base import (
     LotContentWebTest
 )
-from openprocurement.api.tests.blanks.json_data import test_ssp_document_data
+from openregistry.lots.ssp.tests.json_data import test_ssp_document_data
 from openregistry.lots.ssp.constants import DOCUMENT_TYPES
 from openregistry.lots.ssp.tests.blanks.document_blanks import (
     patch_resource_document,

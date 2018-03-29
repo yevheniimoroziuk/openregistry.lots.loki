@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 def create_item_resource(self):
     response = self.app.post_json('/{}/items'.format(self.resource_id),
                                   headers=self.access_header,

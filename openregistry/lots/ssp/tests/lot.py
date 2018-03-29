@@ -5,8 +5,9 @@ import unittest
 from openprocurement.api.tests.base import BaseWebTest, snitch
 from openprocurement.api.tests.blanks.mixins import ResourceTestMixin
 from openregistry.lots.ssp.tests.base import (
-    test_ssp_lot_data, BaseLotWebTest
+    BaseLotWebTest
 )
+from openregistry.lots.ssp.tests.json_data import test_ssp_lot_data
 from openregistry.lots.ssp.tests.blanks.lot_blanks import (
     # LotResourceTest
     change_draft_lot,
