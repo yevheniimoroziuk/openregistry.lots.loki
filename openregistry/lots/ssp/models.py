@@ -10,7 +10,12 @@ from schematics.exceptions import ValidationError
 from zope.interface import implementer
 
 from openregistry.lots.core.models import ILot, Lot as BaseLot
-from openprocurement.api.registry_models.schematics_extender import Model, IsoDateTimeType
+from openprocurement.api.registry_models.schematics_extender import Model, IsoDateTimeType, IsoDurationType
+from openprocurement.api.registry_models.roles import (
+    item_roles,
+    publication_roles,
+    publication_auction_roles
+)
 from openprocurement.api.registry_models.ocds import (
     Identifier,
     Document as BaseDocument,
@@ -60,6 +65,9 @@ class Document(BaseDocument):
 
 
 class Item(BaseItem):
+    class Options:
+        roles = item_roles
+
     unit = ModelType(BaseUnit)
 
 
@@ -95,11 +103,14 @@ class AccountDetails(Model):
 
 
 class Auction(Model):
+    class Options:
+        roles = publication_auction_roles
+
     id = StringType()
     auctionID = StringType()
     procurementMethodType = StringType(choices=['SSP.english', 'SSP.insider'])
     auctionPeriod = ModelType(Period, required=True)
-    tenderingDuration = IsoDateTimeType(required=True)
+    tenderingDuration = IsoDurationType(required=True)
     documents = ListType(ModelType(Document))
     value = ModelType(Value, required=True)
     minimalStep = ModelType(Value, required=True)
@@ -108,12 +119,16 @@ class Auction(Model):
     accountDetails = ModelType(AccountDetails)
 
 
+
 class Publication(Model):
+    class Options:
+        roles = publication_roles
+
     id = StringType(required=True, min_length=1, default=lambda: uuid4().hex)
     date = IsoDateTimeType()
     dateModified = IsoDateTimeType(default=get_now)
-    documents = ListType(ModelType(Document), min_size=1)
-    auctions = ListType(ModelType(Auction), max_size=3)
+    documents = ListType(ModelType(Document), default=list())
+    auctions = ListType(ModelType(Auction), max_size=3, min_size=3)
 
 
 @implementer(ISSPLot)
@@ -133,20 +148,20 @@ class Lot(BaseLot):
     lotCustodian = ModelType(LotCustodian, serialize_when_none=False)
     lotHolder = ModelType(LotHolder, serialize_when_none=False)
     officialRegistrationID = StringType(serialize_when_none=True)
-    items = ModelType(Item)
+    items = ListType(ModelType(Item), default=list())
     publications = ListType(ModelType(Publication), default=list())
     documents = ListType(ModelType(Document), default=list())
 
-    def validate_status(self, data, value):
-        is_procurement_plan = any([bool(doc.documentType == 'procurementPlan') for doc in data.get('documents', [])])
-        if value == 'editing' and is_procurement_plan:
-            raise ValidationError(u"Lot must have a document with type procurementPlan to be moved to editing")
+    # def validate_status(self, data, value):
+    #     is_procurement_plan = any([bool(doc.documentType == 'procurementPlan') for doc in data.get('documents', [])])
+    #     if value == 'editing' and is_procurement_plan:
+    #         raise ValidationError(u"Lot must have a document with type procurementPlan to be moved to editing")
 
     def __acl__(self):
         acl = [
             (Allow, '{}_{}'.format(self.owner, self.owner_token), 'edit_lot'),
             (Allow, '{}_{}'.format(self.owner, self.owner_token), 'upload_lot_documents'),
-            (Allow, '{}_{}'.format(self.owner, self.owner_token), 'upload_lot_item'),
-            (Allow, '{}_{}'.format(self.owner, self.owner_token), 'upload_lot_publication'),
+            (Allow, '{}_{}'.format(self.owner, self.owner_token), 'upload_lot_items'),
+            (Allow, '{}_{}'.format(self.owner, self.owner_token), 'upload_lot_publications'),
         ]
         return acl
