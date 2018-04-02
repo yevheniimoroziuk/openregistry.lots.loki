@@ -145,7 +145,9 @@ class Auction(Model):
     def validate_dutchSteps(self, data, value):
         if value and data['procurementMethodType'] != 'Loki.insider':
             raise ValidationError('Field dutchSteps is allowed only when procuremenentMethodType is Loki.insider')
-        data['dutchSteps'] = 99 if data.get('dutchSteps') is None else data['dutchSteps']
+        if data['procurementMethodType'] == 'Loki.insider' and not value:
+            data['dutchSteps'] = 99 if data.get('dutchSteps') is None else data['dutchSteps']
+
 
 class DecisionDetails(Model):
     title = StringType()
