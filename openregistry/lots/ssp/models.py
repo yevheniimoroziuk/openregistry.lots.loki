@@ -10,16 +10,23 @@ from openprocurement.api.models.models import (
 )
 from openprocurement.api.models.registry_models.roles import schematics_embedded_role
 from openprocurement.api.models.registry_models.ocds import (
-    Identifier,
+    Identifier as BaseIdentifier,
     Document as BaseDocument,
     Address,
     ContactPoint,
     Item as BaseItem,
     BaseUnit,
-    Organization
+    Organization,
+    ItemClassification,
+    Classification
 )
-from openprocurement.api.models.schematics_extender import Model, IsoDateTimeType, IsoDurationType
-from openprocurement.api.utils import get_now
+from openprocurement.api.models.schematics_extender import (
+    Model,
+    IsoDateTimeType,
+    IsoDurationType,
+    DecimalType
+)
+from openprocurement.api.constants import IDENTIFIER_CODES
 from openregistry.lots.core.models import ILot, Lot as BaseLot
 from openregistry.lots.ssp.constants import LOT_STATUSES, DOCUMENT_TYPES
 from openregistry.lots.ssp.roles import (
@@ -29,7 +36,7 @@ from openregistry.lots.ssp.roles import (
 from pyramid.security import Allow
 from schematics.exceptions import ValidationError
 from schematics.transforms import blacklist
-from schematics.types import StringType, IntType
+from schematics.types import StringType, IntType, URLType
 from schematics.types.compound import ModelType, ListType
 from zope.interface import implementer
 
@@ -79,14 +86,23 @@ class Item(BaseItem):
     class Options:
         roles = item_roles
 
-    unit = ModelType(BaseUnit)
+    unit = ModelType(BaseUnit, required=True)
+    quantity = DecimalType(precision=-4, required=True)
+    address = ModelType(Address, required=True)
+    classification = ModelType(ItemClassification, required=True)
     registrationDetails = ModelType(RegistrationDetails, required=True)
+
+
+class Identifier(BaseIdentifier):
+    scheme = StringType(choices=IDENTIFIER_CODES)
+    legalName = StringType(required=True)
+    uri = URLType(required=True)
 
 
 class LotCustodian(Organization):
     name = StringType()
     identifier = ModelType(Identifier, serialize_when_none=False)
-    additionalIdentifiers = ListType(ModelType(Identifier))
+    additionalIdentifiers = ListType(ModelType(Identifier), default=list())
     address = ModelType(Address, serialize_when_none=False)
     contactPoint = ModelType(ContactPoint, serialize_when_none=False)
     kind = StringType(choices=['general', 'special', 'other'])
@@ -96,7 +112,7 @@ class LotHolder(Model):
     name = StringType(required=True)
     name_ru = StringType()
     name_en = StringType()
-    identifier = ModelType(Identifier)
+    identifier = ModelType(Identifier, required=True)
     additionalIdentifiers = ListType(ModelType(Identifier), default=list())
     address = ModelType(Address)
     contactPoint = ModelType(ContactPoint)
@@ -110,9 +126,7 @@ class AccountDetails(Model):
     description = StringType()
     bankName = StringType()
     accountNumber = StringType()
-    UA_EDR = StringType()
-    MFO = StringType()
-
+    additionalClassifications = ListType(ModelType(Classification), default=list())
 
 class Auction(Model):
     id = StringType()
@@ -126,11 +140,15 @@ class Auction(Model):
     guarantee = ModelType(Guarantee, required=True)
     registrationFee = ModelType(Guarantee)
     accountDetails = ModelType(AccountDetails)
-    dutchSteps = IntType(default=99)
+    dutchSteps = IntType(default=None, min_value=1, max_value=100)
 
+    def validate_dutchSteps(self, data, value):
+        if value and data['procurementMethodType'] != 'SSP.insider':
+            raise ValidationError('Field dutchSteps is allowed only when procuremenentMethodType is SSP.insider')
+        data['dutchSteps'] = 99 if data.get('dutchSteps') is None else data['dutchSteps']
 
 class DecisionDetails(Model):
-    title = StringType(required=True)
+    title = StringType()
     decisionDate = IsoDateTimeType(required=True)
     decisionID = StringType(required=True)
 
@@ -170,12 +188,6 @@ class Lot(BaseLot):
     publications = ListType(ModelType(Publication), default=list())
     documents = ListType(ModelType(Document), default=list())
     decisionDetails = ModelType(DecisionDetails, required=True)
-
-
-    # def validate_status(self, data, value):
-    #     is_procurement_plan = any([bool(doc.documentType == 'procurementPlan') for doc in data.get('documents', [])])
-    #     if value == 'editing' and is_procurement_plan:
-    #         raise ValidationError(u"Lot must have a document with type procurementPlan to be moved to editing")
 
     def __acl__(self):
         acl = [
