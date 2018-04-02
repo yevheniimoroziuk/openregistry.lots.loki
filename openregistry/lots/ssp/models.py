@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 from uuid import uuid4
 
-from pyramid.security import Allow
-
-from schematics.transforms import blacklist
-from schematics.types import StringType, BaseType, IntType, MD5Type
-from schematics.types.compound import ModelType, ListType
-from schematics.exceptions import ValidationError
-from zope.interface import implementer
-
-from openregistry.lots.core.models import ILot, Lot as BaseLot
-from openprocurement.api.registry_models.schematics_extender import Model, IsoDateTimeType, IsoDurationType
-
-from openprocurement.api.registry_models.ocds import (
+from openprocurement.api.models.auction_models.models import (
+    Value
+)
+from openprocurement.api.models.models import (
+    Guarantee,
+    Period
+)
+from openprocurement.api.models.registry_models.roles import schematics_embedded_role
+from openprocurement.api.models.registry_models.ocds import (
     Identifier,
     Document as BaseDocument,
     Address,
@@ -21,18 +18,20 @@ from openprocurement.api.registry_models.ocds import (
     BaseUnit,
     Organization
 )
-from openprocurement.api.models import (
-    Guarantee,
-    Period,
-    Value
-)
+from openprocurement.api.models.schematics_extender import Model, IsoDateTimeType, IsoDurationType
 from openprocurement.api.utils import get_now
-from openprocurement.api.registry_models.roles import schematics_embedded_role
+from openregistry.lots.core.models import ILot, Lot as BaseLot
 from openregistry.lots.ssp.constants import LOT_STATUSES, DOCUMENT_TYPES
 from openregistry.lots.ssp.roles import (
     item_roles,
     publication_roles
 )
+from pyramid.security import Allow
+from schematics.exceptions import ValidationError
+from schematics.transforms import blacklist
+from schematics.types import StringType, IntType
+from schematics.types.compound import ModelType, ListType
+from zope.interface import implementer
 
 create_role = (blacklist('owner_token', 'owner', '_attachments', 'revisions',
                          'date', 'dateModified', 'lotID', 'documents', 'publications'
@@ -62,12 +61,26 @@ class Document(BaseDocument):
             raise ValidationError(u"dateSigned is required, when documentType is procurementPlan or projectPlan")
 
 
+class RegistrationDetails(Model):
+    status = StringType(choices=['unknown', 'proceed', 'complete'], required=True)
+    registrationID = StringType()
+    registrationDate = IsoDateTimeType()
+
+    def validate_registrationID(self, data, value):
+        if value and data['status'] != 'complete':
+            raise ValidationError(u"You can fill registrationID only when status is complete")
+
+    def validate_registrationDate(self, data, value):
+        if value and data['status'] != 'complete':
+            raise ValidationError(u"You can fill registrationDate only when status is complete")
+
 
 class Item(BaseItem):
     class Options:
         roles = item_roles
 
     unit = ModelType(BaseUnit)
+    registrationDetails = ModelType(RegistrationDetails, required=True)
 
 
 class LotCustodian(Organization):
@@ -89,8 +102,8 @@ class LotHolder(Model):
     contactPoint = ModelType(ContactPoint)
 
 
-class Period(Period):
-    startDate = startDate = IsoDateTimeType(required=True)
+class StartDateRequiredPeriod(Period):
+    startDate = IsoDateTimeType(required=True)
 
 
 class AccountDetails(Model):
@@ -105,7 +118,7 @@ class Auction(Model):
     id = StringType()
     auctionID = StringType()
     procurementMethodType = StringType(choices=['SSP.english', 'SSP.insider'])
-    auctionPeriod = ModelType(Period, required=True)
+    auctionPeriod = ModelType(StartDateRequiredPeriod, required=True)
     tenderingDuration = IsoDurationType(required=True)
     documents = ListType(ModelType(Document))
     value = ModelType(Value, required=True)
@@ -113,7 +126,13 @@ class Auction(Model):
     guarantee = ModelType(Guarantee, required=True)
     registrationFee = ModelType(Guarantee)
     accountDetails = ModelType(AccountDetails)
+    dutchSteps = IntType(default=99)
 
+
+class DecisionDetails(Model):
+    title = StringType(required=True)
+    decisionDate = IsoDateTimeType(required=True)
+    decisionID = StringType(required=True)
 
 
 class Publication(Model):
@@ -121,10 +140,12 @@ class Publication(Model):
         roles = publication_roles
 
     id = StringType(required=True, min_length=1, default=lambda: uuid4().hex)
-    date = IsoDateTimeType()
-    dateModified = IsoDateTimeType(default=get_now)
     documents = ListType(ModelType(Document), default=list())
     auctions = ListType(ModelType(Auction), max_size=3, min_size=3)
+    decisionDetails = ModelType(DecisionDetails, required=True)
+
+    def validate_auctions(self, data, value):
+        pass
 
 
 @implementer(ISSPLot)
@@ -140,6 +161,7 @@ class Lot(BaseLot):
 
     status = StringType(choices=LOT_STATUSES,
                         default='draft')
+    description = StringType(required=True)
     lotType = StringType(default="ssp")
     lotCustodian = ModelType(LotCustodian, serialize_when_none=False)
     lotHolder = ModelType(LotHolder, serialize_when_none=False)
@@ -147,6 +169,8 @@ class Lot(BaseLot):
     items = ListType(ModelType(Item), default=list())
     publications = ListType(ModelType(Publication), default=list())
     documents = ListType(ModelType(Document), default=list())
+    decisionDetails = ModelType(DecisionDetails, required=True)
+
 
     # def validate_status(self, data, value):
     #     is_procurement_plan = any([bool(doc.documentType == 'procurementPlan') for doc in data.get('documents', [])])
