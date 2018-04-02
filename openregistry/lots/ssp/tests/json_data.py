@@ -17,16 +17,29 @@ test_ssp_lot_data = {
     "description": u"Щось там тестове",
     "lotIdentifier": u"Q81318b19827",
     "lotType": "ssp",
-    "lotCustodian": deepcopy(test_organization),
+    "lotCustodian": deepcopy(test_organization).update(
+        {
+            'identifier': {
+              "legalNama": "Legal Name",
+              "id": "identifier-id",
+              "uri": "https://localhost"
+            }
+        }),
     "assets": [],
-    "lotHolder": {"name": "name"},
+    "lotHolder": {
+        "name": "name",
+        "identifier": {
+            "legalName": "Legal Name",
+            "id": "identifier-id",
+            "uri": "https://localhost"
+        }
+    },
     "decisionDetails": {
         "title": "Some Title",
         "decisionDate": (now + timedelta(days=5)).isoformat(),
         "decisionID": "ID-DECISION"
     },
 }
-
 publication_auction_common = {
     'auctionPeriod': {
         'startDate': (now + timedelta(days=5)).isoformat(),
@@ -75,3 +88,15 @@ test_ssp_item_data = deepcopy(test_item_data)
 test_ssp_item_data['registrationDetails'] = {
     'status': 'unknown'
 }
+test_ssp_item_data.update(
+    {
+        "unit": {"code": "code"},
+        "classification": {
+            "scheme": "CAV",
+            "id": "42111000-7",
+            "description": "Description"
+        },
+        "address": {"countryName": "Ukraine"},
+        "quantity": 5.0001
+    }
+)
