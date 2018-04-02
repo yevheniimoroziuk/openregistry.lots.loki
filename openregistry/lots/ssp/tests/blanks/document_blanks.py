@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 
 from openprocurement.api.constants import TZ
 
+
 def patch_resource_document(self):
     response = self.app.post_json('/{}/documents'.format(self.resource_id),
                                   headers=self.access_header,

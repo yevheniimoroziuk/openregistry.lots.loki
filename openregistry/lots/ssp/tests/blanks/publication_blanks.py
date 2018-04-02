@@ -46,7 +46,8 @@ def patch_publication(self):
                     pub_eng,
                     pub_eng,
                     pub_insider
-                ]
+                ],
+                "decisionDetails": self.initial_publication_data['decisionDetails']
             }})
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(response.content_type, 'application/json')

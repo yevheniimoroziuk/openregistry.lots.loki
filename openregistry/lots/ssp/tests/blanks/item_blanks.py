@@ -28,7 +28,8 @@ def patch_item(self):
     response = self.app.patch_json('/{}/items/{}'.format(self.resource_id, item_id),
         headers=self.access_header, params={
             "data": {
-                "description": "new item description"
+                "description": "new item description",
+                "registrationDetails": self.initial_item_data['registrationDetails']
             }})
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(response.content_type, 'application/json')

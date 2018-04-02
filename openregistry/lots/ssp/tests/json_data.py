@@ -9,8 +9,9 @@ from openprocurement.api.tests.blanks.json_data import (
     test_organization
 )
 
-
+now = get_now()
 test_ssp_document_data = deepcopy(test_document_data)
+test_ssp_document_data['documentOf'] = 'lot'
 test_ssp_lot_data = {
     "title": u"Тестовий лот",
     "description": u"Щось там тестове",
@@ -18,10 +19,14 @@ test_ssp_lot_data = {
     "lotType": "ssp",
     "lotCustodian": deepcopy(test_organization),
     "assets": [],
-    "lotHolder": {"name": "name"}
+    "lotHolder": {"name": "name"},
+    "decisionDetails": {
+        "title": "Some Title",
+        "decisionDate": (now + timedelta(days=5)).isoformat(),
+        "decisionID": "ID-DECISION"
+    },
 }
 
-now = get_now()
 publication_auction_common = {
     'auctionPeriod': {
         'startDate': (now + timedelta(days=5)).isoformat(),
@@ -59,6 +64,14 @@ test_ssp_publication_data = {
         publication_auction_english_data,
         publication_auction_insider_data
     ],
+    "decisionDetails": {
+        "title": "Some Title",
+        "decisionDate": (now + timedelta(days=5)).isoformat(),
+        "decisionID": "ID-DECISION"
+    }
 }
 
 test_ssp_item_data = deepcopy(test_item_data)
+test_ssp_item_data['registrationDetails'] = {
+    'status': 'unknown'
+}
