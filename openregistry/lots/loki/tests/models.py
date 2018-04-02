@@ -8,10 +8,10 @@ from datetime import timedelta
 from schematics.exceptions import ConversionError, ValidationError, ModelValidationError
 
 from openprocurement.api.utils import get_now
-from openregistry.lots.ssp.tests.json_data import (
-    test_ssp_item_data
+from openregistry.lots.loki.tests.json_data import (
+    test_loki_item_data
 )
-from openregistry.lots.ssp.models import (
+from openregistry.lots.loki.models import (
     StartDateRequiredPeriod,
     Document,
     RegistrationDetails,
@@ -191,23 +191,23 @@ class DummyModelsTest(unittest.TestCase):
             }
         )
 
-        ssp_item_data = deepcopy(test_ssp_item_data)
-        item = Item(ssp_item_data)
+        loki_item_data = deepcopy(test_loki_item_data)
+        item = Item(loki_item_data)
         item.validate()
-        self.assertEqual(item.serialize()['description'], ssp_item_data['description'])
-        self.assertEqual(item.serialize()['classification'], ssp_item_data['classification'])
-        self.assertEqual(item.serialize()['additionalClassifications'], ssp_item_data['additionalClassifications'])
-        self.assertEqual(item.serialize()['address'], ssp_item_data['address'])
-        self.assertEqual(item.serialize()['id'], ssp_item_data['id'])
-        self.assertEqual(item.serialize()['unit'], ssp_item_data['unit'])
-        self.assertEqual(float(item.serialize()['quantity']), ssp_item_data['quantity'])
-        self.assertEqual(item.serialize()['registrationDetails'], ssp_item_data['registrationDetails'])
+        self.assertEqual(item.serialize()['description'], loki_item_data['description'])
+        self.assertEqual(item.serialize()['classification'], loki_item_data['classification'])
+        self.assertEqual(item.serialize()['additionalClassifications'], loki_item_data['additionalClassifications'])
+        self.assertEqual(item.serialize()['address'], loki_item_data['address'])
+        self.assertEqual(item.serialize()['id'], loki_item_data['id'])
+        self.assertEqual(item.serialize()['unit'], loki_item_data['unit'])
+        self.assertEqual(float(item.serialize()['quantity']), loki_item_data['quantity'])
+        self.assertEqual(item.serialize()['registrationDetails'], loki_item_data['registrationDetails'])
 
         with self.assertRaisesRegexp(ValueError, 'Item Model has no role "test"'):
             item.serialize('test')
 
-        ssp_item_data['location'] = {'latitude': '123', 'longitude': '567'}
-        item2 = Item(ssp_item_data)
+        loki_item_data['location'] = {'latitude': '123', 'longitude': '567'}
+        item2 = Item(loki_item_data)
         item2.validate()
 
         self.assertNotEqual(item, item2)
@@ -285,7 +285,7 @@ class DummyModelsTest(unittest.TestCase):
 
     def test_Auction(self):
         data = {
-            "procurementMethodType": "SSP.english",
+            "procurementMethodType": "Loki.english",
             "auctionPeriod": {
                 "startDate": now.isoformat(),
                 "endDate": (now + timedelta(days=5)).isoformat()
@@ -325,12 +325,12 @@ class DummyModelsTest(unittest.TestCase):
             auction.validate()
         self.assertEqual(
             ex.exception.messages,
-            {'dutchSteps': [u'Field dutchSteps is allowed only when procuremenentMethodType is SSP.insider']}
+            {'dutchSteps': [u'Field dutchSteps is allowed only when procuremenentMethodType is Loki.insider']}
         )
 
         auction = Auction()
         del data['dutchSteps']
-        data['procurementMethodType'] = 'SSP.insider'
+        data['procurementMethodType'] = 'Loki.insider'
         auction.import_data(data)
         auction.validate()
         self.assertEqual(auction.dutchSteps, 99)
@@ -355,7 +355,7 @@ class DummyModelsTest(unittest.TestCase):
 
         auction = Auction()
         data['dutchSteps'] = 55
-        data['procurementMethodType'] = 'SSP.insider'
+        data['procurementMethodType'] = 'Loki.insider'
         auction.import_data(data)
         auction.validate()
         self.assertEqual(auction.dutchSteps, data['dutchSteps'])

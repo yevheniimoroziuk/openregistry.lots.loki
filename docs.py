@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openregistry.api.tests.base import PrefixedRequestClass, DumpsTestAppwebtest
-from openregistry.lots.ssp.tests.base import BaseLotWebTest
+from openregistry.lots.loki.tests.base import BaseLotWebTest
 
 
 class LotResourceTest(BaseLotWebTest):

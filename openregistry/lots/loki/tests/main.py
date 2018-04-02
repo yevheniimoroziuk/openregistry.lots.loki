@@ -2,7 +2,7 @@
 
 import unittest
 
-from openregistry.lots.ssp.tests import lot, document, publication, item
+from openregistry.lots.loki.tests import lot, document, publication, item
 
 
 def suite():

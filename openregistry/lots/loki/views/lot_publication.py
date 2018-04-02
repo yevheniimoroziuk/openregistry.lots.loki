@@ -9,12 +9,12 @@ from openprocurement.api.utils import (
 from openregistry.lots.core.utils import (
     save_lot, oplotsresource, apply_patch,
 )
-from openregistry.lots.ssp.validation import validate_publication_data
+from openregistry.lots.loki.validation import validate_publication_data
 
-@oplotsresource(name='ssp:Lot Publications',
+@oplotsresource(name='loki:Lot Publications',
                 collection_path='/lots/{lot_id}/publications',
                 path='/lots/{lot_id}/publications/{publication_id}',
-                lotType='ssp',
+                lotType='loki',
                 description="Lot related publications")
 class LotPublicationsResource(APIResource):
 

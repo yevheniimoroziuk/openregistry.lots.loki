@@ -5,17 +5,17 @@ from copy import deepcopy
 from openprocurement.api.tests.base import snitch
 
 
-from openregistry.lots.ssp.tests.base import (
+from openregistry.lots.loki.tests.base import (
     LotContentWebTest
 )
-from openregistry.lots.ssp.tests.json_data import test_ssp_publication_data
-from openregistry.lots.ssp.tests.blanks.publication_blanks import (
+from openregistry.lots.loki.tests.json_data import test_loki_publication_data
+from openregistry.lots.loki.tests.blanks.publication_blanks import (
     create_publication,
     patch_publication
 )
 
 class LotPublicationResourceTest(LotContentWebTest):
-    initial_publication_data = deepcopy(test_ssp_publication_data)
+    initial_publication_data = deepcopy(test_loki_publication_data)
     test_create_publication_resource = snitch(create_publication)
     test_patch_publication_resource = snitch(patch_publication)
 

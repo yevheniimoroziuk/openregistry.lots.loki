@@ -28,8 +28,8 @@ from openprocurement.api.models.schematics_extender import (
 )
 from openprocurement.api.constants import IDENTIFIER_CODES
 from openregistry.lots.core.models import ILot, Lot as BaseLot
-from openregistry.lots.ssp.constants import LOT_STATUSES, DOCUMENT_TYPES
-from openregistry.lots.ssp.roles import (
+from openregistry.lots.loki.constants import LOT_STATUSES, DOCUMENT_TYPES
+from openregistry.lots.loki.roles import (
     item_roles,
     publication_roles
 )
@@ -48,7 +48,7 @@ edit_role = (blacklist('owner_token', 'owner', '_attachments',
                        'lotID', 'mode', 'doc_id', 'items', 'publications') + schematics_embedded_role)
 
 
-class ISSPLot(ILot):
+class ILokiLot(ILot):
     """ Marker interface for basic lots """
 
 
@@ -131,7 +131,7 @@ class AccountDetails(Model):
 class Auction(Model):
     id = StringType()
     auctionID = StringType()
-    procurementMethodType = StringType(choices=['SSP.english', 'SSP.insider'])
+    procurementMethodType = StringType(choices=['Loki.english', 'Loki.insider'])
     auctionPeriod = ModelType(StartDateRequiredPeriod, required=True)
     tenderingDuration = IsoDurationType(required=True)
     documents = ListType(ModelType(Document))
@@ -143,8 +143,8 @@ class Auction(Model):
     dutchSteps = IntType(default=None, min_value=1, max_value=100)
 
     def validate_dutchSteps(self, data, value):
-        if value and data['procurementMethodType'] != 'SSP.insider':
-            raise ValidationError('Field dutchSteps is allowed only when procuremenentMethodType is SSP.insider')
+        if value and data['procurementMethodType'] != 'Loki.insider':
+            raise ValidationError('Field dutchSteps is allowed only when procuremenentMethodType is Loki.insider')
         data['dutchSteps'] = 99 if data.get('dutchSteps') is None else data['dutchSteps']
 
 class DecisionDetails(Model):
@@ -166,7 +166,7 @@ class Publication(Model):
         pass
 
 
-@implementer(ISSPLot)
+@implementer(ILokiLot)
 class Lot(BaseLot):
     class Options:
         roles = {
@@ -180,7 +180,7 @@ class Lot(BaseLot):
     status = StringType(choices=LOT_STATUSES,
                         default='draft')
     description = StringType(required=True)
-    lotType = StringType(default="ssp")
+    lotType = StringType(default="loki")
     lotCustodian = ModelType(LotCustodian, serialize_when_none=False)
     lotHolder = ModelType(LotHolder, serialize_when_none=False)
     officialRegistrationID = StringType(serialize_when_none=True)

@@ -50,7 +50,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'openregistry.lots.ssp'
+project = u'openregistry.lots.loki'
 copyright = u'2017, Quintagroup, Ltd'
 
 # The version info for the project you're documenting, acts as replacement for

@@ -5,10 +5,10 @@ version = '0.1'
 
 entry_points = {
     'openregistry.lots.core.plugins': [
-        'lots.ssp = openregistry.lots.ssp.includeme:includeme'
+        'lots.loki = openregistry.lots.loki.includeme:includeme'
     ],
     'openregistry.tests': [
-        'lots.ssp = openregistry.lots.ssp.tests.main:suite'
+        'lots.loki = openregistry.lots.loki.tests.main:suite'
     ]
 }
 
@@ -22,7 +22,7 @@ docs_requires = requires + [
     'sphinxcontrib-httpdomain',
 ]
 
-setup(name='openregistry.lots.ssp',
+setup(name='openregistry.lots.loki',
       version=version,
       description="",
       long_description=open("README.rst").read() + "\n" +
@@ -36,7 +36,7 @@ setup(name='openregistry.lots.ssp',
       author='Quintagroup, Ltd.',
       author_email='info@quintagroup.com',
       license='Apache License 2.0',
-      url='https://github.com/openprocurement/openregistry.lots.ssp',
+      url='https://github.com/openprocurement/openregistry.lots.loki',
       packages=find_packages(exclude=['ez_setup']),
       namespace_packages=['openregistry', 'openregistry.lots'],
       include_package_data=True,

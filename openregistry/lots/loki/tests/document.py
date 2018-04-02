@@ -13,12 +13,12 @@ from openprocurement.api.tests.blanks.document import (
     put_resource_document_json
 )
 
-from openregistry.lots.ssp.tests.base import (
+from openregistry.lots.loki.tests.base import (
     LotContentWebTest
 )
-from openregistry.lots.ssp.tests.json_data import test_ssp_document_data
-from openregistry.lots.ssp.constants import DOCUMENT_TYPES
-from openregistry.lots.ssp.tests.blanks.document_blanks import (
+from openregistry.lots.loki.tests.json_data import test_loki_document_data
+from openregistry.lots.loki.constants import DOCUMENT_TYPES
+from openregistry.lots.loki.tests.blanks.document_blanks import (
     patch_resource_document,
     model_validation
 )
@@ -43,7 +43,7 @@ class LotDocumentWithDSResourceTest(LotContentWebTest):
 
     def setUp(self):
         super(LotDocumentWithDSResourceTest, self).setUp()
-        self.initial_document_data = deepcopy(test_ssp_document_data)
+        self.initial_document_data = deepcopy(test_loki_document_data)
         self.initial_document_data['url'] = self.generate_docservice_url()
 
 

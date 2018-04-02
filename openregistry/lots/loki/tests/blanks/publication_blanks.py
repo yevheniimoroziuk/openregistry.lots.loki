@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openregistry.lots.ssp.tests.json_data import (
+from openregistry.lots.loki.tests.json_data import (
     publication_auction_english_data,
     publication_auction_insider_data
 )

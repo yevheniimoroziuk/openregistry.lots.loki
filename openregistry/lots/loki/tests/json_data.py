@@ -10,13 +10,13 @@ from openprocurement.api.tests.blanks.json_data import (
 )
 
 now = get_now()
-test_ssp_document_data = deepcopy(test_document_data)
-test_ssp_document_data['documentOf'] = 'lot'
-test_ssp_lot_data = {
+test_loki_document_data = deepcopy(test_document_data)
+test_loki_document_data['documentOf'] = 'lot'
+test_loki_lot_data = {
     "title": u"Тестовий лот",
     "description": u"Щось там тестове",
     "lotIdentifier": u"Q81318b19827",
-    "lotType": "ssp",
+    "lotType": "loki",
     "lotCustodian": deepcopy(test_organization).update(
         {
             'identifier': {
@@ -66,12 +66,12 @@ publication_auction_common = {
     }
 }
 publication_auction_english_data = deepcopy(publication_auction_common)
-publication_auction_english_data.update({'procurementMethodType': 'SSP.english'})
+publication_auction_english_data.update({'procurementMethodType': 'Loki.english'})
 
 publication_auction_insider_data = deepcopy(publication_auction_common)
-publication_auction_insider_data.update({'procurementMethodType': 'SSP.insider'})
+publication_auction_insider_data.update({'procurementMethodType': 'Loki.insider'})
 
-test_ssp_publication_data = {
+test_loki_publication_data = {
     'auctions': [
         publication_auction_english_data,
         publication_auction_english_data,
@@ -84,11 +84,11 @@ test_ssp_publication_data = {
     }
 }
 
-test_ssp_item_data = deepcopy(test_item_data)
-test_ssp_item_data['registrationDetails'] = {
+test_loki_item_data = deepcopy(test_item_data)
+test_loki_item_data['registrationDetails'] = {
     'status': 'unknown'
 }
-test_ssp_item_data.update(
+test_loki_item_data.update(
     {
         "unit": {"code": "code"},
         "classification": {

@@ -9,15 +9,15 @@ from openprocurement.api.utils import (
 from openregistry.lots.core.utils import (
     save_lot, oplotsresource, apply_patch,
 )
-from openregistry.lots.ssp.validation import (
+from openregistry.lots.loki.validation import (
     validate_item_data
 )
 
 
-@oplotsresource(name='ssp:Lot Items',
+@oplotsresource(name='loki:Lot Items',
                 collection_path='/lots/{lot_id}/items',
                 path='/lots/{lot_id}/items/{item_id}',
-                lotType='ssp',
+                lotType='loki',
                 description="Lot related items")
 class LotItemResource(APIResource):
 

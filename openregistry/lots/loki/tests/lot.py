@@ -4,11 +4,11 @@ import unittest
 
 from openprocurement.api.tests.base import BaseWebTest, snitch
 from openprocurement.api.tests.blanks.mixins import ResourceTestMixin
-from openregistry.lots.ssp.tests.base import (
+from openregistry.lots.loki.tests.base import (
     BaseLotWebTest
 )
-from openregistry.lots.ssp.tests.json_data import test_ssp_lot_data
-from openregistry.lots.ssp.tests.blanks.lot_blanks import (
+from openregistry.lots.loki.tests.json_data import test_loki_lot_data
+from openregistry.lots.loki.tests.blanks.lot_blanks import (
     # LotResourceTest
     change_draft_lot,
     # change_dissolved_lot,
@@ -31,7 +31,7 @@ from openregistry.lots.ssp.tests.blanks.lot_blanks import (
 
 
 class LotTest(BaseWebTest):
-    initial_data = test_ssp_lot_data
+    initial_data = test_loki_lot_data
     relative_to = os.path.dirname(__file__)
     test_simple_add_lot = snitch(simple_add_lot)
 

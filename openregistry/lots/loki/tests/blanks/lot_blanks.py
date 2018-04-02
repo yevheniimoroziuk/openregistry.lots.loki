@@ -6,8 +6,8 @@ from openprocurement.api.utils import get_now
 from openprocurement.api.constants import ROUTE_PREFIX
 from openprocurement.api.tests.base import create_blacklist
 
-from openregistry.lots.ssp.models import Lot
-from openregistry.lots.ssp.constants import STATUS_CHANGES, LOT_STATUSES
+from openregistry.lots.loki.models import Lot
+from openregistry.lots.loki.constants import STATUS_CHANGES, LOT_STATUSES
 
 
 ROLES = ['lot_owner', 'Administrator', 'concierge', 'convoy']
