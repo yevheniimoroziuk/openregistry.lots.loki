@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from openprocurement.api.models.registry_models.roles import schematics_default_role
 from schematics.transforms import blacklist
-from openprocurement.api.registry_models.roles import schematics_default_role
-
 
 item_create_role = blacklist('id')
 item_edit_role = blacklist('id')
