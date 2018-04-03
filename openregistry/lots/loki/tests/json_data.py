@@ -66,15 +66,19 @@ publication_auction_common = {
     }
 }
 publication_auction_english_data = deepcopy(publication_auction_common)
-publication_auction_english_data.update({'procurementMethodType': 'Loki.english'})
+# publication_auction_english_data.update({'procurementMethodType': 'Loki.english'})
+
+publication_auction_english_half_data = deepcopy(publication_auction_common)
+publication_auction_english_half_data['value']['amount'] = publication_auction_english_data['value']['amount'] / 2
+# publication_auction_english_half_data.update({'procurementMethodType': 'Loki.english'})
 
 publication_auction_insider_data = deepcopy(publication_auction_common)
-publication_auction_insider_data.update({'procurementMethodType': 'Loki.insider'})
+# publication_auction_insider_data.update({'procurementMethodType': 'Loki.insider'})
 
 test_loki_publication_data = {
     'auctions': [
         publication_auction_english_data,
-        publication_auction_english_data,
+        publication_auction_english_half_data,
         publication_auction_insider_data
     ],
     "decisionDetails": {

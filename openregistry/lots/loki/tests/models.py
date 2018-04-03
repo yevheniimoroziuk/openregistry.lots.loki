@@ -9,7 +9,10 @@ from schematics.exceptions import ConversionError, ValidationError, ModelValidat
 
 from openprocurement.api.utils import get_now
 from openregistry.lots.loki.tests.json_data import (
-    test_loki_item_data
+    test_loki_item_data,
+    publication_auction_english_data,
+    publication_auction_english_half_data,
+    publication_auction_insider_data
 )
 from openregistry.lots.loki.models import (
     StartDateRequiredPeriod,
@@ -383,7 +386,63 @@ class DummyModelsTest(unittest.TestCase):
         decision_details.validate()
 
     def test_Publication(self):
-        pass
+        publication = Publication()
+
+        self.assertEqual(publication.serialize('create'), None)
+        self.assertEqual(publication.serialize('edit'), None)
+
+        data = {
+            'auctions': [
+                publication_auction_english_data,
+                publication_auction_english_data,
+                publication_auction_insider_data
+            ],
+            'decisionDetails': {
+                'decisionDate': now.isoformat(),
+                'decisionID': 'decisionID'
+            }
+        }
+
+        with self.assertRaises(ModelValidationError) as ex:
+            publication.validate()
+        self.assertEqual(
+            ex.exception.messages,
+            {'decisionDetails': [u'This field is required.']}
+        )
+
+        publication.import_data(data)
+        with self.assertRaises(ModelValidationError) as ex:
+            publication.validate()
+        self.assertEqual(
+            ex.exception.messages,
+            {'auctions': [u'In second loki.english value.amount must be a half of value.amount first loki.english']}
+        )
+
+        data.update({
+            'auctions': [
+                publication_auction_english_data,
+                publication_auction_english_half_data,
+                publication_auction_english_half_data
+            ]
+        })
+        publication.import_data(data)
+        with self.assertRaises(ModelValidationError) as ex:
+            publication.validate()
+        self.assertEqual(
+            ex.exception.messages,
+            {'auctions': [u'Loki.english and Loki.insider must have same value.amount']}
+        )
+
+        data.update({
+            'auctions': [
+                publication_auction_english_data,
+                publication_auction_english_half_data,
+                publication_auction_insider_data
+            ]
+        })
+        publication.import_data(data)
+        publication.validate()
+
 
 def suite():
     tests = unittest.TestSuite()
