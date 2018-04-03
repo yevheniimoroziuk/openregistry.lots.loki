@@ -122,11 +122,15 @@ class StartDateRequiredPeriod(Period):
     startDate = IsoDateTimeType(required=True)
 
 
+class UAEDRAndMFOClassification(Classification):
+    scheme = StringType(choices=['UA-EDR', 'MFO'], required=True)
+
+
 class AccountDetails(Model):
     description = StringType()
     bankName = StringType()
     accountNumber = StringType()
-    additionalClassifications = ListType(ModelType(Classification), default=list())
+    additionalClassifications = ListType(ModelType(UAEDRAndMFOClassification), default=list())
 
 class Auction(Model):
     id = StringType()
@@ -165,7 +169,17 @@ class Publication(Model):
     decisionDetails = ModelType(DecisionDetails, required=True)
 
     def validate_auctions(self, data, value):
-        pass
+        if not value:
+            return
+        full_price = value[0].value.amount
+        price_range = (round(full_price/2), full_price/2) if round(full_price/2) < full_price/2 else (full_price/2, round(full_price/2))
+        if not (value[1].value.amount >= price_range[0] and value[1].value.amount <= price_range[1]):
+            raise ValidationError('In second loki.english value.amount must be a half of value.amount first loki.english')
+        if value[0].value.amount != value[2].value.amount:
+            raise ValidationError('Loki.english and Loki.insider must have same value.amount')
+        data['auctions'][0]['procurementMethodType'] = 'Loki.english'
+        data['auctions'][1]['procurementMethodType'] = 'Loki.english'
+        data['auctions'][2]['procurementMethodType'] = 'Loki.insider'
 
 
 @implementer(ILokiLot)
