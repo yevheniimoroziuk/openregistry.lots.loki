@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openregistry.lots.core.adapters import LotConfigurator
-from openregistry.lots.loki.constants import STATUS_CHANGES
+from .constants import STATUS_CHANGES
 
 
 class BasicLotConfigurator(LotConfigurator):

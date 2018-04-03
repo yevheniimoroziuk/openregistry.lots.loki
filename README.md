@@ -1,1 +1,0 @@
-# openregistry.lots.basic
