@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from pyramid.interfaces import IRequest
+
 from openprocurement.api.interfaces import IContentConfigurator
-from openregistry.lots.loki.models import Lot, ILokiLot
-from openregistry.lots.loki.adapters import BasicLotConfigurator
+from .models import Lot, ILokiLot
+from .adapters import BasicLotConfigurator
 
 
 def includeme(config):

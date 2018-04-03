@@ -1,6 +1,13 @@
 # -*- coding: utf-8 -*-
 from uuid import uuid4
 
+from pyramid.security import Allow
+from schematics.exceptions import ValidationError
+from schematics.transforms import blacklist
+from schematics.types import StringType, IntType, URLType
+from schematics.types.compound import ModelType, ListType
+from zope.interface import implementer
+
 from openprocurement.api.models.auction_models.models import (
     Value
 )
@@ -8,7 +15,6 @@ from openprocurement.api.models.models import (
     Guarantee,
     Period
 )
-from openprocurement.api.models.registry_models.roles import schematics_embedded_role
 from openprocurement.api.models.registry_models.ocds import (
     Identifier as BaseIdentifier,
     Document as BaseDocument,
@@ -28,24 +34,13 @@ from openprocurement.api.models.schematics_extender import (
 )
 from openprocurement.api.constants import IDENTIFIER_CODES
 from openregistry.lots.core.models import ILot, Lot as BaseLot
-from openregistry.lots.loki.constants import LOT_STATUSES, DOCUMENT_TYPES
-from openregistry.lots.loki.roles import (
-    item_roles,
-    publication_roles
-)
-from pyramid.security import Allow
-from schematics.exceptions import ValidationError
-from schematics.transforms import blacklist
-from schematics.types import StringType, IntType, URLType
-from schematics.types.compound import ModelType, ListType
-from zope.interface import implementer
 
-create_role = (blacklist('owner_token', 'owner', '_attachments', 'revisions',
-                         'date', 'dateModified', 'lotID', 'documents', 'publications'
-                         'status', 'doc_id', 'items', 'publications') + schematics_embedded_role)
-edit_role = (blacklist('owner_token', 'owner', '_attachments',
-                       'revisions', 'date', 'dateModified', 'documents', 'publications'
-                       'lotID', 'mode', 'doc_id', 'items', 'publications') + schematics_embedded_role)
+from .constants import LOT_STATUSES, DOCUMENT_TYPES
+from .roles import (
+    item_roles,
+    publication_roles,
+    lot_roles
+)
 
 
 class ILokiLot(ILot):
@@ -128,6 +123,7 @@ class AccountDetails(Model):
     accountNumber = StringType()
     additionalClassifications = ListType(ModelType(Classification), default=list())
 
+
 class Auction(Model):
     id = StringType()
     auctionID = StringType()
@@ -171,16 +167,9 @@ class Publication(Model):
 @implementer(ILokiLot)
 class Lot(BaseLot):
     class Options:
-        roles = {
-            'create': create_role,
-            'edit': edit_role,
-            'edit_draft': edit_role,
-            'edit_pending': edit_role,
+        roles = lot_roles
 
-        }
-
-    status = StringType(choices=LOT_STATUSES,
-                        default='draft')
+    status = StringType(choices=LOT_STATUSES, default='draft')
     description = StringType(required=True)
     lotType = StringType(default="loki")
     lotCustodian = ModelType(LotCustodian, serialize_when_none=False)
