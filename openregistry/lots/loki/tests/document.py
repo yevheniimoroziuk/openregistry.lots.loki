@@ -17,7 +17,7 @@ from openregistry.lots.loki.tests.base import (
     LotContentWebTest
 )
 from openregistry.lots.loki.tests.json_data import test_loki_document_data
-from openregistry.lots.loki.constants import DOCUMENT_TYPES
+from openprocurement.api.models.registry_models.loki import LOKI_DOCUMENT_TYPES
 from openregistry.lots.loki.tests.blanks.document_blanks import (
     patch_resource_document,
     model_validation
@@ -25,7 +25,7 @@ from openregistry.lots.loki.tests.blanks.document_blanks import (
 
 class LotDocumentWithDSResourceTest(LotContentWebTest):
     docservice = True
-    document_types = DOCUMENT_TYPES
+    document_types = LOKI_DOCUMENT_TYPES
 
     test_01_not_found = snitch(not_found)
     test_02_create_document_in_forbidden_resource_status = snitch(create_document_in_forbidden_resource_status)

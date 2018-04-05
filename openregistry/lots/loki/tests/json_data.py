@@ -34,11 +34,13 @@ test_loki_lot_data = {
             "uri": "https://localhost"
         }
     },
-    "decisionDetails": {
+    "decisions": [
+        {
         "title": "Some Title",
         "decisionDate": (now + timedelta(days=5)).isoformat(),
         "decisionID": "ID-DECISION"
-    },
+        },
+    ]
 }
 publication_auction_common = {
     'auctionPeriod': {
@@ -81,26 +83,13 @@ test_loki_publication_data = {
         publication_auction_english_half_data,
         publication_auction_insider_data
     ],
-    "decisionDetails": {
+    "decisions": [
+        {
         "title": "Some Title",
         "decisionDate": (now + timedelta(days=5)).isoformat(),
         "decisionID": "ID-DECISION"
-    }
+        }
+    ]
 }
 
-test_loki_item_data = deepcopy(test_item_data)
-test_loki_item_data['registrationDetails'] = {
-    'status': 'unknown'
-}
-test_loki_item_data.update(
-    {
-        "unit": {"code": "code"},
-        "classification": {
-            "scheme": "CAV",
-            "id": "42111000-7",
-            "description": "Description"
-        },
-        "address": {"countryName": "Ukraine"},
-        "quantity": 5.0001
-    }
-)
+
