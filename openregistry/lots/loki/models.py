@@ -15,15 +15,14 @@ from openprocurement.api.models.models import (
     Guarantee,
     Period
 )
-from openprocurement.api.models.registry_models.loki import (
-    Document,
-    Item,
+
+from openprocurement.api.models.registry_models.ocds import (
+    Classification,
+    lokiDocument as Document,
+    lokiItem as Item,
     Decision,
     AssetCustodian,
     AssetHolder
-)
-from openprocurement.api.models.registry_models.ocds import (
-    Classification,
 )
 from openprocurement.api.models.schematics_extender import (
     Model,

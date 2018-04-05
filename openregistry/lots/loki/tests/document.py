@@ -17,7 +17,7 @@ from openregistry.lots.loki.tests.base import (
     LotContentWebTest
 )
 from openregistry.lots.loki.tests.json_data import test_loki_document_data
-from openprocurement.api.models.registry_models.loki import LOKI_DOCUMENT_TYPES
+from openprocurement.api.models.registry_models.ocds import LOKI_DOCUMENT_TYPES
 from openregistry.lots.loki.tests.blanks.document_blanks import (
     patch_resource_document,
     model_validation
