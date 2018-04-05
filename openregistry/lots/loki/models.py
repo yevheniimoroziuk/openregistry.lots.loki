@@ -15,27 +15,25 @@ from openprocurement.api.models.models import (
     Guarantee,
     Period
 )
+from openprocurement.api.models.registry_models.loki import (
+    Document,
+    Item,
+    Decision,
+    AssetCustodian,
+    AssetHolder
+)
 from openprocurement.api.models.registry_models.ocds import (
-    Identifier as BaseIdentifier,
-    Document as BaseDocument,
-    Address,
-    ContactPoint,
-    Item as BaseItem,
-    BaseUnit,
-    Organization,
-    ItemClassification,
-    Classification
+    Classification,
 )
 from openprocurement.api.models.schematics_extender import (
     Model,
     IsoDateTimeType,
     IsoDurationType,
-    DecimalType
 )
 from openprocurement.api.constants import IDENTIFIER_CODES
 from openregistry.lots.core.models import ILot, Lot as BaseLot
 
-from .constants import LOT_STATUSES, DOCUMENT_TYPES
+from .constants import LOT_STATUSES
 from .roles import (
     item_roles,
     publication_roles,
@@ -45,72 +43,6 @@ from .roles import (
 
 class ILokiLot(ILot):
     """ Marker interface for basic lots """
-
-
-class Document(BaseDocument):
-    documentOf = StringType(choices=['lot', 'item'])
-    documentType = StringType(choices=DOCUMENT_TYPES)
-    dateSigned = IsoDateTimeType()
-    index = IntType(required=False)
-    accessDetails = StringType()
-
-    def validate_accessDetails(self, data, value):
-        if value is None and data['documentType'] == 'x_dgfAssetFamiliarization':
-            raise ValidationError(u"accessDetails is required, when documentType is x_dgfAssetFamiliarization")
-
-    def validate_dateSigned(self, data, value):
-        if value is None and data['documentType'] in ['procurementPlan', 'projectPlan']:
-            raise ValidationError(u"dateSigned is required, when documentType is procurementPlan or projectPlan")
-
-
-class RegistrationDetails(Model):
-    status = StringType(choices=['unknown', 'proceed', 'complete'], required=True)
-    registrationID = StringType()
-    registrationDate = IsoDateTimeType()
-
-    def validate_registrationID(self, data, value):
-        if value and data['status'] != 'complete':
-            raise ValidationError(u"You can fill registrationID only when status is complete")
-
-    def validate_registrationDate(self, data, value):
-        if value and data['status'] != 'complete':
-            raise ValidationError(u"You can fill registrationDate only when status is complete")
-
-
-class Item(BaseItem):
-    class Options:
-        roles = item_roles
-
-    unit = ModelType(BaseUnit, required=True)
-    quantity = DecimalType(precision=-4, required=True)
-    address = ModelType(Address, required=True)
-    classification = ModelType(ItemClassification, required=True)
-    registrationDetails = ModelType(RegistrationDetails, required=True)
-
-
-class Identifier(BaseIdentifier):
-    scheme = StringType(choices=IDENTIFIER_CODES)
-    legalName = StringType(required=True)
-    uri = URLType(required=True)
-
-
-class LotCustodian(Organization):
-    name = StringType()
-    identifier = ModelType(Identifier, serialize_when_none=False)
-    additionalIdentifiers = ListType(ModelType(Identifier), default=list())
-    address = ModelType(Address, serialize_when_none=False)
-    contactPoint = ModelType(ContactPoint, serialize_when_none=False)
-    kind = StringType(choices=['general', 'special', 'other'])
-
-
-class LotHolder(Model):
-    name = StringType(required=True)
-    name_ru = StringType()
-    name_en = StringType()
-    identifier = ModelType(Identifier, required=True)
-    additionalIdentifiers = ListType(ModelType(Identifier), default=list())
-    address = ModelType(Address)
-    contactPoint = ModelType(ContactPoint)
 
 
 class StartDateRequiredPeriod(Period):
@@ -149,12 +81,6 @@ class Auction(Model):
             data['dutchSteps'] = 99 if data.get('dutchSteps') is None else data['dutchSteps']
 
 
-class DecisionDetails(Model):
-    title = StringType()
-    decisionDate = IsoDateTimeType(required=True)
-    decisionID = StringType(required=True)
-
-
 class Publication(Model):
     class Options:
         roles = publication_roles
@@ -162,7 +88,7 @@ class Publication(Model):
     id = StringType(required=True, min_length=1, default=lambda: uuid4().hex)
     documents = ListType(ModelType(Document), default=list())
     auctions = ListType(ModelType(Auction), max_size=3, min_size=3)
-    decisionDetails = ModelType(DecisionDetails, required=True)
+    decisions = ListType(ModelType(Decision), default=list())
 
     def validate_auctions(self, data, value):
         if not value:
@@ -186,13 +112,13 @@ class Lot(BaseLot):
     status = StringType(choices=LOT_STATUSES, default='draft')
     description = StringType(required=True)
     lotType = StringType(default="loki")
-    lotCustodian = ModelType(LotCustodian, serialize_when_none=False)
-    lotHolder = ModelType(LotHolder, serialize_when_none=False)
+    lotCustodian = ModelType(AssetCustodian, serialize_when_none=False)
+    lotHolder = ModelType(AssetHolder, serialize_when_none=False)
     officialRegistrationID = StringType(serialize_when_none=True)
     items = ListType(ModelType(Item), default=list())
     publications = ListType(ModelType(Publication), default=list())
     documents = ListType(ModelType(Document), default=list())
-    decisionDetails = ModelType(DecisionDetails, required=True)
+    decisions = ListType(ModelType(Decision, required=True), default=list())
 
     def __acl__(self):
         acl = [
