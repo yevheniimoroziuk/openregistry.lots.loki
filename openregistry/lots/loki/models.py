@@ -26,7 +26,8 @@ from openregistry.lots.core.models import (
     IsoDurationType,
     DecimalType,
     IDENTIFIER_CODES,
-    ILot, BaseLot
+    ILot,
+    Lot as BaseLot
 )
 
 from .constants import LOT_STATUSES, DOCUMENT_TYPES
@@ -35,7 +36,6 @@ from .roles import (
     publication_roles,
     lot_roles
 )
-
 
 class ILokiLot(ILot):
     """ Marker interface for basic lots """
