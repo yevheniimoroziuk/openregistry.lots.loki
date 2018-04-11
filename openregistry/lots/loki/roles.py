@@ -2,7 +2,7 @@
 
 from schematics.transforms import blacklist
 
-from openprocurement.api.models.registry_models.roles import (
+from openregistry.lots.core.models import (
     schematics_default_role,
     schematics_embedded_role
 )

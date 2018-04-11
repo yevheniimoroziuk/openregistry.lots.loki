@@ -2,8 +2,8 @@
 import unittest
 from copy import deepcopy
 
-from openprocurement.api.tests.base import snitch
-from openprocurement.api.tests.blanks.document import (
+from openregistry.lots.core.tests.base import snitch
+from openregistry.lots.core.tests.blanks.document import (
     not_found,
     create_document_in_forbidden_resource_status,
     put_resource_document_invalid,

@@ -2,6 +2,12 @@
 from copy import deepcopy
 from datetime import timedelta
 
+#from openregistry.lots.core.utils import get_now
+#from openregistry.lots.core.tests.blanks.json_data import (
+#    test_document_data,
+#    test_item_data,
+#    test_organization
+#)
 from openprocurement.api.utils import get_now
 from openprocurement.api.tests.blanks.json_data import (
     test_document_data,

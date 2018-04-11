@@ -2,7 +2,7 @@
 import unittest
 from copy import deepcopy
 
-from openprocurement.api.tests.base import snitch
+from openregistry.lots.core.tests.base import snitch
 
 
 from openregistry.lots.loki.tests.base import (

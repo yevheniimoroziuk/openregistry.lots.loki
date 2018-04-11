@@ -1,17 +1,15 @@
 # -*- coding: utf-8 -*-
-from openprocurement.api.utils import (
+from openregistry.lots.core.utils import (
     json_view,
     context_unpack,
-    APIResource
+    APIResource,
+    oplotsresource,
+    apply_patch
 )
-from openprocurement.api.validation import (
+
+from openregistry.lots.core.validation import (
     validate_change_status,
 )
-
-from openregistry.lots.core.utils import (
-    oplotsresource, apply_patch
-)
-
 from openregistry.lots.core.validation import (
     validate_patch_lot_data,
 )

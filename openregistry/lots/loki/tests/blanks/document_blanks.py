@@ -2,7 +2,7 @@
 from copy import deepcopy
 from datetime import datetime, timedelta
 
-from openprocurement.api.constants import TZ
+from openregistry.lots.core.constants import TZ
 
 
 def patch_resource_document(self):

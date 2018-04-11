@@ -7,7 +7,7 @@ from datetime import timedelta
 
 from schematics.exceptions import ConversionError, ValidationError, ModelValidationError
 
-from openprocurement.api.utils import get_now
+from openregistry.lots.core.utils import get_now
 from openregistry.lots.loki.tests.json_data import (
     test_loki_item_data
 )

@@ -8,32 +8,26 @@ from schematics.types import StringType, IntType, URLType
 from schematics.types.compound import ModelType, ListType
 from zope.interface import implementer
 
-from openprocurement.api.models.auction_models.models import (
-    Value
-)
-from openprocurement.api.models.models import (
+from openregistry.lots.core.models import (
+    Value,
     Guarantee,
-    Period
-)
-from openprocurement.api.models.registry_models.ocds import (
-    Identifier as BaseIdentifier,
-    Document as BaseDocument,
+    Period,
+    BaseIdentifier,
+    BaseDocument,
     Address,
     ContactPoint,
-    Item as BaseItem,
+    BaseItem,
     BaseUnit,
     Organization,
     ItemClassification,
-    Classification
-)
-from openprocurement.api.models.schematics_extender import (
+    Classification,
     Model,
     IsoDateTimeType,
     IsoDurationType,
-    DecimalType
+    DecimalType,
+    IDENTIFIER_CODES,
+    ILot, BaseLot
 )
-from openprocurement.api.constants import IDENTIFIER_CODES
-from openregistry.lots.core.models import ILot, Lot as BaseLot
 
 from .constants import LOT_STATUSES, DOCUMENT_TYPES
 from .roles import (
