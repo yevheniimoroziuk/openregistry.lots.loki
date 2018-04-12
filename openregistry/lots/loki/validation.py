@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
-from openprocurement.api.utils import raise_operation_error, update_logging_context
-from openprocurement.api.validation import (
+from openregistry.lots.core.utils import raise_operation_error, update_logging_context
+from openregistry.lots.core.validation import (
     validate_data
 )
-
 def validate_document_operation_in_not_allowed_lot_status(request, error_handler, **kwargs):
     status = request.validated['lot_status']
     if status != 'pending':
