@@ -14,8 +14,8 @@ STATUS_CHANGES = {
     "composing": {
         "editing_permissions": ["Administrator", "concierge"],
         "next_status": {
-            "pending": ["concierge"],
-            "invalid": ["concierge"],
+            "pending": ["concierge", "Administrator"],
+            "invalid": ["concierge", "Administrator"],
         }
     },
     "pending": {
