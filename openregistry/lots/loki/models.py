@@ -4,7 +4,7 @@ from uuid import uuid4
 from pyramid.security import Allow
 from schematics.exceptions import ValidationError
 from schematics.transforms import blacklist
-from schematics.types import StringType, IntType, URLType
+from schematics.types import StringType, IntType, URLType, MD5Type
 from schematics.types.compound import ModelType, ListType
 from zope.interface import implementer
 
@@ -79,15 +79,23 @@ class Auction(Model):
         if data['procurementMethodType'] == 'Loki.insider' and not value:
             data['dutchSteps'] = 99 if data.get('dutchSteps') is None else data['dutchSteps']
 
-
-class Publication(Model):
+@implementer(ILokiLot)
+class Lot(BaseLot):
     class Options:
-        roles = publication_roles
+        roles = lot_roles
 
-    id = StringType(required=True, min_length=1, default=lambda: uuid4().hex)
+    status = StringType(choices=LOT_STATUSES, default='draft')
+    description = StringType(required=True)
+    lotType = StringType(default="loki")
+    # rectificationPeriod
+    lotCustodian = ModelType(AssetCustodian, serialize_when_none=False)
+    lotHolder = ModelType(AssetHolder, serialize_when_none=False)
+    officialRegistrationID = StringType(serialize_when_none=True)
+    items = ListType(ModelType(Item), default=list())
     documents = ListType(ModelType(Document), default=list())
-    auctions = ListType(ModelType(Auction), max_size=3, min_size=3)
-    decisions = ListType(ModelType(Decision), default=list())
+    decisions = ListType(ModelType(Decision), default=list(), max_size=2)
+    assets = ListType(MD5Type(), required=True, min_size=1, max_size=1)
+    auctions = ListType(ModelType(Auction), max_size=3, min_size=3, required=True)
 
     def validate_auctions(self, data, value):
         if not value:
@@ -101,23 +109,6 @@ class Publication(Model):
         data['auctions'][0]['procurementMethodType'] = 'Loki.english'
         data['auctions'][1]['procurementMethodType'] = 'Loki.english'
         data['auctions'][2]['procurementMethodType'] = 'Loki.insider'
-
-
-@implementer(ILokiLot)
-class Lot(BaseLot):
-    class Options:
-        roles = lot_roles
-
-    status = StringType(choices=LOT_STATUSES, default='draft')
-    description = StringType(required=True)
-    lotType = StringType(default="loki")
-    lotCustodian = ModelType(AssetCustodian, serialize_when_none=False)
-    lotHolder = ModelType(AssetHolder, serialize_when_none=False)
-    officialRegistrationID = StringType(serialize_when_none=True)
-    items = ListType(ModelType(Item), default=list())
-    publications = ListType(ModelType(Publication), default=list())
-    documents = ListType(ModelType(Document), default=list())
-    decisions = ListType(ModelType(Decision, required=True), default=list())
 
     def __acl__(self):
         acl = [

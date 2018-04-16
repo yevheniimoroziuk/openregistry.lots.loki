@@ -93,4 +93,3 @@ def model_validation(self):
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(response.json['data']['accessDetails'], initial_document_data['accessDetails'])
 
-
