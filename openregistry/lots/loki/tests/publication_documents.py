@@ -12,7 +12,7 @@ from openregistry.lots.loki.tests.json_data import (
     test_loki_publication_data,
     test_loki_document_data
 )
-from openregistry.lots.loki.constants import DOCUMENT_TYPES
+from openprocurement.api.models.registry_models.ocds import LOKI_DOCUMENT_TYPES
 from openregistry.lots.loki.tests.blanks.publication_documents_blanks import (
     not_found_publication_document,
     create_publication_document,
@@ -22,7 +22,7 @@ from openregistry.lots.loki.tests.blanks.publication_documents_blanks import (
 
 class LotPublicationResourceTest(LotContentWebTest):
     docservice = True
-    document_types = DOCUMENT_TYPES
+    document_types = LOKI_DOCUMENT_TYPES
 
     initial_publication_data = deepcopy(test_loki_publication_data)
     # initial_document_data = deepcopy(test_loki_document_data)

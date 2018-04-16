@@ -7,7 +7,7 @@ from openprocurement.api.tests.base import snitch
 from openregistry.lots.loki.tests.base import (
     LotContentWebTest
 )
-from openregistry.lots.loki.tests.json_data import test_loki_item_data
+from openprocurement.api.tests.blanks.json_data import test_loki_item_data
 from openregistry.lots.loki.tests.blanks.item_blanks import (
     create_item_resource,
     patch_item

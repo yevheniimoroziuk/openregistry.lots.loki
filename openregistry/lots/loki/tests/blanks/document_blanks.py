@@ -94,38 +94,3 @@ def model_validation(self):
     self.assertEqual(response.json['data']['accessDetails'], initial_document_data['accessDetails'])
 
 
-    initial_document_data['documentType'] = 'procurementPlan'
-    del initial_document_data['accessDetails']
-    response = self.app.post_json('/{}/documents'.format(self.resource_id),
-                                  headers=self.access_header,
-                                  params={'data': initial_document_data},
-                                  status=422)
-    self.assertEqual(response.status, '422 Unprocessable Entity')
-    self.assertEqual(response.content_type, 'application/json')
-    self.assertEqual(response.json['status'], 'error')
-    self.assertEqual(response.json['errors'][0]['description'][0], u"dateSigned is required, when documentType is procurementPlan or projectPlan")
-
-    initial_document_data['documentType'] = 'projectPlan'
-    response = self.app.post_json('/{}/documents'.format(self.resource_id),
-                                  headers=self.access_header,
-                                  params={'data': initial_document_data},
-                                  status=422)
-    self.assertEqual(response.status, '422 Unprocessable Entity')
-    self.assertEqual(response.content_type, 'application/json')
-    self.assertEqual(response.json['status'], 'error')
-    self.assertEqual(response.json['errors'][0]['description'][0], u"dateSigned is required, when documentType is procurementPlan or projectPlan")
-
-    initial_document_data['dateSigned'] = TZ.localize(datetime.now() + timedelta(10)).isoformat()
-    response = self.app.post_json('/{}/documents'.format(self.resource_id),
-                                  headers=self.access_header,
-                                  params={'data': initial_document_data})
-    self.assertEqual(response.status, '201 Created')
-    self.assertEqual(response.content_type, 'application/json')
-    self.assertEqual(response.json['data']['dateSigned'], initial_document_data['dateSigned'])
-
-    response = self.app.post_json('/{}/documents'.format(self.resource_id),
-                                  headers=self.access_header,
-                                  params={'data': initial_document_data})
-    self.assertEqual(response.status, '201 Created')
-    self.assertEqual(response.content_type, 'application/json')
-    self.assertEqual(response.json['data']['dateSigned'], initial_document_data['dateSigned'])
