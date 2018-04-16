@@ -9,6 +9,7 @@ from openregistry.lots.loki.tests.base import (
 )
 from openregistry.lots.loki.tests.json_data import test_loki_lot_data
 from openregistry.lots.loki.tests.blanks.lot_blanks import (
+    dateModified_resource,
     # LotResourceTest
     change_draft_lot,
     # change_dissolved_lot,
@@ -39,6 +40,7 @@ class LotTest(BaseWebTest):
 class LotResourceTest(BaseLotWebTest, ResourceTestMixin):
     initial_status = 'pending'
 
+    test_05_dateModified_resource = snitch(dateModified_resource)
     test_08_change_draft_lot = snitch(change_draft_lot)
     test_09_change_pending_lot = snitch(change_pending_lot)
     # test_10_check_verification_lot = snitch(change_verification_lot)

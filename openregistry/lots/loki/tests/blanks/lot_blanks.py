@@ -91,6 +91,41 @@ def check_lotIdentifier(self):
     self.assertEqual(response.json['data'], lot)
 
 
+def dateModified_resource(self):
+    response = self.app.get('/')
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(len(response.json['data']), 0)
+
+    response = self.app.post_json('/', {'data': self.initial_data})
+    self.assertEqual(response.status, '201 Created')
+    resource = response.json['data']
+    token = str(response.json['access']['token'])
+    dateModified = resource['dateModified']
+
+    response = self.app.get('/{}'.format(resource['id']))
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['data']['dateModified'], dateModified)
+
+    response = self.app.patch_json('/{}'.format(resource['id']),
+        headers={'X-Access-Token': token}, params={
+            'data': {'status': 'composing'}
+    })
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['data']['status'], 'composing')
+
+    self.assertNotEqual(response.json['data']['dateModified'], dateModified)
+    resource = response.json['data']
+    dateModified = resource['dateModified']
+
+    response = self.app.get('/{}'.format(resource['id']))
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['data'], resource)
+    self.assertEqual(response.json['data']['dateModified'], dateModified)
+
+
 def simple_patch(self):
     data = deepcopy(self.initial_data)
     data['lotIdentifier'] = 'Q24421K222'
@@ -104,6 +139,14 @@ def simple_patch(self):
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(set(response.json['data']), set(lot))
     self.assertEqual(response.json['data'], lot)
+
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'composing', access_header)
+
+
+    self.app.authorization = ('Basic', ('concierge', ''))
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'pending', access_header)
+
+    self.app.authorization = ('Basic', ('broker', ''))
 
     patch_data = {
         'data': {
@@ -125,15 +168,6 @@ def check_lot_assets(self):
     self.assertEqual(set(response.json['data']), set(lot))
     self.assertEqual(response.json['data'], lot)
 
-    # lot with different assets
-    self.initial_data["assets"] = [uuid4().hex, uuid4().hex]
-    lot = create_single_lot(self, self.initial_data).json['data']
-    response = self.app.get('/{}'.format(lot['id']))
-    self.assertEqual(response.status, '200 OK')
-    self.assertEqual(response.content_type, 'application/json')
-    self.assertEqual(set(response.json['data']), set(lot))
-    self.assertEqual(response.json['data'], lot)
-
     # # lot with no assets
     self.initial_data["assets"] = []
     response = self.app.post_json('/', {"data": self.initial_data}, status=422)
@@ -142,16 +176,6 @@ def check_lot_assets(self):
     self.assertEqual(response.json['status'], 'error')
     self.assertEqual(response.json['errors'], [
         {u'description': [u"Please provide at least 1 item."], u'location': u'body', u'name': u'assets'}
-    ])
-    # # lot with equal assets
-    id_ex = uuid4().hex
-    self.initial_data["assets"] = [id_ex, id_ex]
-    response = self.app.post_json('/', {"data": self.initial_data}, status=422)
-    self.assertEqual(response.status, '422 Unprocessable Entity')
-    self.assertEqual(response.content_type, 'application/json')
-    self.assertEqual(response.json['status'], 'error')
-    self.assertEqual(response.json['errors'], [
-        {u'description': [u"Assets should be unique"], u'location': u'body', u'name': u'assets'}
     ])
 
 
@@ -180,7 +204,7 @@ def change_draft_lot(self):
     check_patch_status_200(self, '/{}'.format(lot['id']), 'draft', access_header)
 
     # Move from 'draft' to 'pending' status
-    check_patch_status_200(self, '/{}'.format(lot['id']), 'pending', access_header)
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'composing', access_header)
 
     # Create lot in draft status
     draft_lot = deepcopy(draft_lot)
@@ -240,7 +264,7 @@ def change_draft_lot(self):
     check_patch_status_200(self, '/{}'.format(lot['id']), 'draft')
 
     # Move from 'draft' to 'pending' status
-    check_patch_status_200(self, '/{}'.format(lot['id']), 'pending')
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'composing')
 
 
 def change_pending_lot(self):
@@ -267,7 +291,14 @@ def change_pending_lot(self):
     self.assertEqual(response.json['data'], lot)
 
     # Move from 'draft' to 'pending' status
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'composing', access_header)
+
+    self.app.authorization = ('Basic', ('concierge', ''))
+
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'composing', access_header)
     check_patch_status_200(self, '/{}'.format(lot['id']), 'pending', access_header)
+
+    self.app.authorization = ('Basic', ('broker', ''))
 
     # Move from 'pending' to 'pending' status
     check_patch_status_200(self, '/{}'.format(lot['id']), 'pending', access_header)
@@ -281,11 +312,19 @@ def change_pending_lot(self):
     access_header = {'X-Access-Token': str(token)}
     lot = response.json['data']
 
-    # Move from 'draft' to 'pending' status
+    # Move from 'draft' to 'composing' status
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'composing', access_header)
+
+    self.app.authorization = ('Basic', ('concierge', ''))
+    # Move from 'composing' to 'pending' status
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'composing', access_header)
     check_patch_status_200(self, '/{}'.format(lot['id']), 'pending', access_header)
 
-    # Move from 'pending' to 'verification' status
-    # check_patch_status_200(self, '/{}'.format(lot['id']), 'verification', access_header)
+
+    self.app.authorization = ('Basic', ('broker', ''))
+
+    # Move from 'pending' to 'active.salable' status
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'active.salable', access_header)
 
     # Create lot in 'draft' status and move it to 'pending'
     response = create_single_lot(self, deepcopy(lot_info))
@@ -293,8 +332,13 @@ def change_pending_lot(self):
     access_header = {'X-Access-Token': str(token)}
     lot = response.json['data']
 
-    # Move from 'draft' to 'pending' status
+    # Move from 'draft' to 'composing' status
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'composing', access_header)
+
+    self.app.authorization = ('Basic', ('concierge', ''))
+    # Move from 'composing' to 'pending' status
     check_patch_status_200(self, '/{}'.format(lot['id']), 'pending', access_header)
+
 
     # Move from 'pending' to one of 'blacklist' status
     for status in STATUS_BLACKLIST['pending']['lot_owner']:
@@ -358,9 +402,17 @@ def change_deleted_lot(self):
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(response.json['data'], lot)
 
-    # Move from 'draft' to 'pending'
+
+    # Move from 'draft' to 'composing'
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'composing', access_header)
+
+
+    self.app.authorization = ('Basic', ('concierge', ''))
+    # Move from 'composing' to 'pending' status
     check_patch_status_200(self, '/{}'.format(lot['id']), 'pending', access_header)
 
+
+    self.app.authorization = ('Basic', ('broker', ''))
     # Move from 'pending' to 'deleted'
     check_patch_status_200(self, '/{}'.format(lot['id']), 'deleted', access_header)
 
