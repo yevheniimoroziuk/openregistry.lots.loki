@@ -144,7 +144,7 @@ def simple_patch(self):
 
 
     self.app.authorization = ('Basic', ('concierge', ''))
-    check_patch_status_200(self, '/{}'.format(lot['id']), 'pending', access_header)
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'pending')
 
     self.app.authorization = ('Basic', ('broker', ''))
 
@@ -267,6 +267,77 @@ def change_draft_lot(self):
     check_patch_status_200(self, '/{}'.format(lot['id']), 'composing')
 
 
+def change_composing_lot(self):
+    response = self.app.get('/')
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(len(response.json['data']), 0)
+
+    self.app.authorization = ('Basic', ('broker', ''))
+
+    # Create lot in 'draft' status
+    draft_lot = deepcopy(self.initial_data)
+    draft_lot['assets'] = [uuid4().hex]
+    response = create_single_lot(self, draft_lot)
+    lot = response.json['data']
+    token = response.json['access']['token']
+    access_header = {'X-Access-Token': str(token)}
+    self.assertEqual(lot['status'], 'draft')
+
+    response = self.app.get('/{}'.format(lot['id']))
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['data'], lot)
+
+    # Move from 'draft' to 'draft' status
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'draft', access_header)
+
+    # Move from 'draft' to 'composing' status
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'composing', access_header)
+
+    # Move from 'composing' to one of 'blacklist' status
+    for status in STATUS_BLACKLIST['composing']['lot_owner']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status, access_header)
+
+
+    self.app.authorization = ('Basic', ('convoy', ''))
+    # Move from 'composing' to one of 'blacklist' status
+    for status in STATUS_BLACKLIST['composing']['convoy']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status)
+
+    self.app.authorization = ('Basic', ('concierge', ''))
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'pending')
+
+
+    self.app.authorization = ('Basic', ('broker', ''))
+    response = create_single_lot(self, draft_lot)
+    lot = response.json['data']
+    token = response.json['access']['token']
+    access_header = {'X-Access-Token': str(token)}
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'composing', access_header)
+
+
+    self.app.authorization = ('Basic', ('administrator', ''))
+    # Move from 'composing' to one of 'blacklist' status
+    for status in STATUS_BLACKLIST['composing']['concierge']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status)
+
+    self.app.authorization = ('Basic', ('concierge', ''))
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'pending')
+
+
+    self.app.authorization = ('Basic', ('broker', ''))
+    response = create_single_lot(self, draft_lot)
+    lot = response.json['data']
+    token = response.json['access']['token']
+    access_header = {'X-Access-Token': str(token)}
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'composing', access_header)
+
+    self.app.authorization = ('Basic', ('administrator', ''))
+    # Move from 'composing' to one of 'blacklist' status
+    for status in STATUS_BLACKLIST['composing']['Administrator']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status)
+
+
 def change_pending_lot(self):
 
     response = self.app.get('/')
@@ -295,8 +366,8 @@ def change_pending_lot(self):
 
     self.app.authorization = ('Basic', ('concierge', ''))
 
-    check_patch_status_200(self, '/{}'.format(lot['id']), 'composing', access_header)
-    check_patch_status_200(self, '/{}'.format(lot['id']), 'pending', access_header)
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'composing')
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'pending')
 
     self.app.authorization = ('Basic', ('broker', ''))
 
@@ -317,8 +388,8 @@ def change_pending_lot(self):
 
     self.app.authorization = ('Basic', ('concierge', ''))
     # Move from 'composing' to 'pending' status
-    check_patch_status_200(self, '/{}'.format(lot['id']), 'composing', access_header)
-    check_patch_status_200(self, '/{}'.format(lot['id']), 'pending', access_header)
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'composing')
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'pending')
 
 
     self.app.authorization = ('Basic', ('broker', ''))
@@ -337,7 +408,7 @@ def change_pending_lot(self):
 
     self.app.authorization = ('Basic', ('concierge', ''))
     # Move from 'composing' to 'pending' status
-    check_patch_status_200(self, '/{}'.format(lot['id']), 'pending', access_header)
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'pending')
 
 
     # Move from 'pending' to one of 'blacklist' status
@@ -409,7 +480,7 @@ def change_deleted_lot(self):
 
     self.app.authorization = ('Basic', ('concierge', ''))
     # Move from 'composing' to 'pending' status
-    check_patch_status_200(self, '/{}'.format(lot['id']), 'pending', access_header)
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'pending')
 
 
     self.app.authorization = ('Basic', ('broker', ''))
