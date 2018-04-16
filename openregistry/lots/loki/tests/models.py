@@ -7,16 +7,11 @@ from datetime import timedelta
 from schematics.exceptions import ModelValidationError
 
 from openprocurement.api.utils import get_now
-from openregistry.lots.loki.tests.json_data import (
-    publication_auction_english_data,
-    publication_auction_english_half_data,
-    publication_auction_insider_data
-)
+
 from openregistry.lots.loki.models import (
     StartDateRequiredPeriod,
     AccountDetails,
     Auction,
-    Publication
 )
 
 now = get_now()
@@ -136,63 +131,63 @@ class DummyModelsTest(unittest.TestCase):
         auction.validate()
         self.assertEqual(auction.dutchSteps, data['dutchSteps'])
 
-    def test_Publication(self):
-        publication = Publication()
-
-        self.assertEqual(publication.serialize('create'), None)
-        self.assertEqual(publication.serialize('edit'), None)
-
-        data = {
-            'auctions': [
-                publication_auction_english_data,
-                publication_auction_english_data,
-                publication_auction_insider_data
-            ],
-            'decisions': [{
-                'decisionDate': now.isoformat(),
-                'decisionID': 'decisionID'
-            }]
-        }
-
-        # with self.assertRaises(ModelValidationError) as ex:
-        #     publication.validate()
-        # self.assertEqual(
-        #     ex.exception.messages,
-        #     {'decision': [u'This field is required.']}
-        # )
-
-        publication.import_data(data)
-        with self.assertRaises(ModelValidationError) as ex:
-            publication.validate()
-        self.assertEqual(
-            ex.exception.messages,
-            {'auctions': [u'In second loki.english value.amount must be a half of value.amount first loki.english']}
-        )
-
-        data.update({
-            'auctions': [
-                publication_auction_english_data,
-                publication_auction_english_half_data,
-                publication_auction_english_half_data
-            ]
-        })
-        publication.import_data(data)
-        with self.assertRaises(ModelValidationError) as ex:
-            publication.validate()
-        self.assertEqual(
-            ex.exception.messages,
-            {'auctions': [u'Loki.english and Loki.insider must have same value.amount']}
-        )
-
-        data.update({
-            'auctions': [
-                publication_auction_english_data,
-                publication_auction_english_half_data,
-                publication_auction_insider_data
-            ]
-        })
-        publication.import_data(data)
-        publication.validate()
+    # def test_Publication(self):
+    #     publication = Publication()
+    #
+    #     self.assertEqual(publication.serialize('create'), None)
+    #     self.assertEqual(publication.serialize('edit'), None)
+    #
+    #     data = {
+    #         'auctions': [
+    #             publication_auction_english_data,
+    #             publication_auction_english_data,
+    #             publication_auction_insider_data
+    #         ],
+    #         'decisions': [{
+    #             'decisionDate': now.isoformat(),
+    #             'decisionID': 'decisionID'
+    #         }]
+    #     }
+    #
+    #     # with self.assertRaises(ModelValidationError) as ex:
+    #     #     publication.validate()
+    #     # self.assertEqual(
+    #     #     ex.exception.messages,
+    #     #     {'decision': [u'This field is required.']}
+    #     # )
+    #
+    #     publication.import_data(data)
+    #     with self.assertRaises(ModelValidationError) as ex:
+    #         publication.validate()
+    #     self.assertEqual(
+    #         ex.exception.messages,
+    #         {'auctions': [u'In second loki.english value.amount must be a half of value.amount first loki.english']}
+    #     )
+    #
+    #     data.update({
+    #         'auctions': [
+    #             publication_auction_english_data,
+    #             publication_auction_english_half_data,
+    #             publication_auction_english_half_data
+    #         ]
+    #     })
+    #     publication.import_data(data)
+    #     with self.assertRaises(ModelValidationError) as ex:
+    #         publication.validate()
+    #     self.assertEqual(
+    #         ex.exception.messages,
+    #         {'auctions': [u'Loki.english and Loki.insider must have same value.amount']}
+    #     )
+    #
+    #     data.update({
+    #         'auctions': [
+    #             publication_auction_english_data,
+    #             publication_auction_english_half_data,
+    #             publication_auction_insider_data
+    #         ]
+    #     })
+    #     publication.import_data(data)
+    #     publication.validate()
 
 
 def suite():
