@@ -12,35 +12,8 @@ from openprocurement.api.tests.blanks.json_data import (
 now = get_now()
 test_loki_document_data = deepcopy(test_document_data)
 test_loki_document_data['documentOf'] = 'lot'
-test_loki_lot_data = {
-    "title": u"Тестовий лот",
-    "description": u"Щось там тестове",
-    "lotIdentifier": u"Q81318b19827",
-    "lotType": "loki",
-    "lotCustodian": deepcopy(test_organization).update(
-        {
-            'identifier': {
-              "legalNama": "Legal Name",
-              "id": "identifier-id",
-              "uri": "https://localhost"
-            }
-        }),
-    "assets": [],
-    "lotHolder": {
-        "name": "name",
-        "identifier": {
-            "legalName": "Legal Name",
-            "id": "identifier-id",
-            "uri": "https://localhost"
-        }
-    },
-    "decisionDetails": {
-        "title": "Some Title",
-        "decisionDate": (now + timedelta(days=5)).isoformat(),
-        "decisionID": "ID-DECISION"
-    },
-}
-publication_auction_common = {
+
+auction_common = {
     'auctionPeriod': {
         'startDate': (now + timedelta(days=5)).isoformat(),
         'endDate': (now + timedelta(days=10)).isoformat()
@@ -65,23 +38,49 @@ publication_auction_common = {
         'currency': 'UAH'
     }
 }
-publication_auction_english_data = deepcopy(publication_auction_common)
-publication_auction_english_data.update({'procurementMethodType': 'Loki.english'})
+auction_english_data = deepcopy(auction_common)
+auction_english_data.update({'procurementMethodType': 'Loki.english'})
 
-publication_auction_insider_data = deepcopy(publication_auction_common)
-publication_auction_insider_data.update({'procurementMethodType': 'Loki.insider'})
+auction_half_english_data = deepcopy(auction_common)
+auction_half_english_data['value']['amount'] = auction_english_data['value']['amount'] / 2
+auction_half_english_data['minimalStep']['amount'] = auction_english_data['minimalStep']['amount'] / 2
+auction_half_english_data.update({'procurementMethodType': 'Loki.english'})
 
-test_loki_publication_data = {
-    'auctions': [
-        publication_auction_english_data,
-        publication_auction_english_data,
-        publication_auction_insider_data
+auction_insider_data = deepcopy(auction_common)
+auction_insider_data.update({'procurementMethodType': 'Loki.insider'})
+
+test_loki_lot_data = {
+    "title": u"Тестовий лот",
+    "description": u"Щось там тестове",
+    "lotIdentifier": u"Q81318b19827",
+    "lotType": "loki",
+    "lotCustodian": deepcopy(test_organization).update(
+        {
+            'identifier': {
+              "legalNama": "Legal Name",
+              "id": "identifier-id",
+              "uri": "https://localhost"
+            }
+        }),
+    "assets": [],
+    "auctions": [
+        auction_english_data,
+        auction_half_english_data,
+        auction_insider_data
     ],
-    "decisionDetails": {
+    "lotHolder": {
+        "name": "name",
+        "identifier": {
+            "legalName": "Legal Name",
+            "id": "identifier-id",
+            "uri": "https://localhost"
+        }
+    },
+    "decisions": [{
         "title": "Some Title",
         "decisionDate": (now + timedelta(days=5)).isoformat(),
         "decisionID": "ID-DECISION"
-    }
+    }],
 }
 
 test_loki_item_data = deepcopy(test_item_data)
@@ -97,6 +96,13 @@ test_loki_item_data.update(
             "description": "Description"
         },
         "address": {"countryName": "Ukraine"},
-        "quantity": 5.0001
+        "quantity": 5.0001,
+        "additionalClassifications": [
+            {
+                "scheme": u"UA-EDR",
+                "id": u"111111-4",
+                "description": u"папір і картон гофровані, паперова й картонна тара"
+            }
+        ]
     }
 )
