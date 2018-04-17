@@ -87,6 +87,9 @@ lot_roles = {
     'edit.pending.sold': whitelist(),
     # Sold role
     'sold': view_role,
+    'edit.sold': whitelist(),
+    'invalid': view_role,
+    'edit.invalid': whitelist(),
     'concierge': whitelist('status'),
     'convoy': whitelist('status', 'auctions')
 }
