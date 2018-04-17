@@ -12,24 +12,25 @@ from openregistry.lots.loki.tests.blanks.lot_blanks import (
     dateModified_resource,
     # LotResourceTest
     change_draft_lot,
-    # change_dissolved_lot,
+    change_dissolved_lot,
     check_lot_assets,
     check_lotIdentifier,
     change_pending_lot,
     change_composing_lot,
-    # change_verification_lot,
+    change_active_salable_lot,
     change_deleted_lot,
-    # change_pending_dissolution_lot,
-    # change_active_salable_lot,
-    # change_active_awaiting_lot,
-    # change_active_auction_lot,
-    # change_sold_lot,
-    # change_pending_sold_lot,
-    # change_recomposed_lot,
+    change_pending_dissolution_lot,
+    change_active_salable_lot,
+    change_active_awaiting_lot,
+    change_active_auction_lot,
+    change_active_contracting_lot,
+    change_sold_lot,
+    change_pending_sold_lot,
     # LotTest
     simple_add_lot,
     simple_patch
 )
+from openregistry.lots.loki.models import Lot
 
 
 class LotTest(BaseWebTest):
@@ -40,22 +41,23 @@ class LotTest(BaseWebTest):
 
 class LotResourceTest(BaseLotWebTest, ResourceTestMixin):
     initial_status = 'pending'
+    lot_model = Lot
 
     test_05_dateModified_resource = snitch(dateModified_resource)
     test_08_change_draft_lot = snitch(change_draft_lot)
     test_09_change_pending_lot = snitch(change_pending_lot)
-    # test_10_check_verification_lot = snitch(change_verification_lot)
+    test_10_change_active_salable_lot = snitch(change_active_salable_lot)
     test_11_check_deleted_lot = snitch(change_deleted_lot)
-    # test_12_check_pending_dissolution_lot = snitch(change_pending_dissolution_lot)
-    # test_13_check_active_salable_lot = snitch(change_active_salable_lot)
-    # test_14_check_active_awaiting_lot = snitch(change_active_awaiting_lot)
-    # test_15_check_active_auction_lot = snitch(change_active_auction_lot)
-    # test_16_change_dissolved_lot = snitch(change_dissolved_lot)
-    # test_17_check_sold_lot = snitch(change_sold_lot)
-    test_18_check_lot_assets = snitch(check_lot_assets)
-    test_19_check_lot_lotIdentifier = snitch(check_lotIdentifier)
-    # test_20_check_pending_sold_lot = snitch(change_pending_sold_lot)
-    # test_21_check_recomposed_lot = snitch(change_recomposed_lot)
+    test_12_check_pending_dissolution_lot = snitch(change_pending_dissolution_lot)
+    test_13_check_active_salable_lot = snitch(change_active_salable_lot)
+    test_14_check_active_awaiting_lot = snitch(change_active_awaiting_lot)
+    test_15_check_active_auction_lot = snitch(change_active_auction_lot)
+    test_16_check_active_contracting_lot = snitch(change_active_contracting_lot)
+    test_17_change_dissolved_lot = snitch(change_dissolved_lot)
+    test_18_check_sold_lot = snitch(change_sold_lot)
+    test_19_check_lot_assets = snitch(check_lot_assets)
+    test_20_check_lot_lotIdentifier = snitch(check_lotIdentifier)
+    test_21_check_pending_sold_lot = snitch(change_pending_sold_lot)
     test_22_simple_patch = snitch(simple_patch)
     test_change_composing_lot = snitch(change_composing_lot)
 

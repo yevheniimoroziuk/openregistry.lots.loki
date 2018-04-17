@@ -58,11 +58,29 @@ def check_patch_status_403(self, path, lot_status, headers=None):
     self.assertEqual(response.json['status'], 'error')
 
 
-def create_single_lot(self, data):
+def create_single_lot(self, data, status=None):
     response = self.app.post_json('/', {"data": data})
     self.assertEqual(response.status, '201 Created')
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(response.json['data']['status'], 'draft')
+    token = response.json['access']['token']
+    lot_id = response.json['data']['id']
+
+    if status:
+        fromdb = self.db.get(lot_id)
+        fromdb = self.lot_model(fromdb)
+
+        fromdb.status = status
+        fromdb.store(self.db)
+
+        response = self.app.get('/{}'.format(lot_id))
+        self.assertEqual(response.status, '200 OK')
+        self.assertEqual(response.json['data']['id'], lot_id)
+        self.assertEqual(response.json['data']['status'], status)
+        new_json = deepcopy(response.json)
+        new_json['access'] = {'token': token}
+        return new_json
+
     return response
 
 
@@ -304,6 +322,7 @@ def change_composing_lot(self):
     for status in STATUS_BLACKLIST['composing']['convoy']:
         check_patch_status_403(self, '/{}'.format(lot['id']), status)
 
+    # Move from 'composing' to 'pending' status
     self.app.authorization = ('Basic', ('concierge', ''))
     check_patch_status_200(self, '/{}'.format(lot['id']), 'pending')
 
@@ -315,15 +334,38 @@ def change_composing_lot(self):
     access_header = {'X-Access-Token': str(token)}
     check_patch_status_200(self, '/{}'.format(lot['id']), 'composing', access_header)
 
+    # Move from 'composing' to 'invalid' status
+    self.app.authorization = ('Basic', ('concierge', ''))
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'invalid')
 
-    self.app.authorization = ('Basic', ('administrator', ''))
+
+    self.app.authorization = ('Basic', ('broker', ''))
+    response = create_single_lot(self, draft_lot)
+    lot = response.json['data']
+    token = response.json['access']['token']
+    access_header = {'X-Access-Token': str(token)}
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'composing', access_header)
+
     # Move from 'composing' to one of 'blacklist' status
+    self.app.authorization = ('Basic', ('concierge', ''))
     for status in STATUS_BLACKLIST['composing']['concierge']:
         check_patch_status_403(self, '/{}'.format(lot['id']), status)
 
-    self.app.authorization = ('Basic', ('concierge', ''))
+
+    # Move from 'composing' to 'pending' status
+    self.app.authorization = ('Basic', ('administrator', ''))
     check_patch_status_200(self, '/{}'.format(lot['id']), 'pending')
 
+    self.app.authorization = ('Basic', ('broker', ''))
+    response = create_single_lot(self, draft_lot)
+    lot = response.json['data']
+    token = response.json['access']['token']
+    access_header = {'X-Access-Token': str(token)}
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'composing', access_header)
+
+    # Move from 'composing' to 'invalid' status
+    self.app.authorization = ('Basic', ('administrator', ''))
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'invalid')
 
     self.app.authorization = ('Basic', ('broker', ''))
     response = create_single_lot(self, draft_lot)
@@ -435,12 +477,6 @@ def change_pending_lot(self):
     # Move from 'pending' to 'pending' status
     check_patch_status_200(self, '/{}'.format(lot['id']), 'pending')
 
-    # Move from 'pending' to 'verification'
-    # check_patch_status_200(self, '/{}'.format(lot['id']), 'verification')
-
-    # Move from 'verification' to 'pending'
-    # check_patch_status_200(self, '/{}'.format(lot['id']), 'pending')
-
     # Move from 'pending' to one of 'blacklist' status
     for status in STATUS_BLACKLIST['pending']['Administrator']:
         check_patch_status_403(self, '/{}'.format(lot['id']), status)
@@ -510,4 +546,551 @@ def change_deleted_lot(self):
 
     # Move from 'deleted' to one of 'blacklist' status
     for status in STATUS_BLACKLIST['deleted']['Administrator']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status)
+
+
+def change_active_salable_lot(self):
+    response = self.app.get('/')
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(len(response.json['data']), 0)
+
+
+    self.app.authorization = ('Basic', ('broker', ''))
+
+    lot_info = self.initial_data
+
+    # Create new lot in 'active.salable' status
+    json = create_single_lot(self, lot_info, 'active.salable')
+    lot = json['data']
+    token = json['access']['token']
+    access_header = {'X-Access-Token': str(token)}
+    self.assertEqual(lot['status'], 'active.salable')
+
+    self.app.authorization = ('Basic', ('broker', ''))
+
+    # Move from 'active.salable' to one of 'blacklist' status
+    for status in STATUS_BLACKLIST['active.salable']['lot_owner']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status, access_header)
+
+    self.app.authorization = ('Basic', ('concierge', ''))
+
+    # Move from 'active.salable' to one of 'blacklist' status
+    for status in STATUS_BLACKLIST['active.salable']['concierge']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status)
+
+    self.app.authorization = ('Basic', ('convoy', ''))
+
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'active.awaiting')
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'active.salable')
+
+    # Move from 'active.salable' to one of 'blacklist' status
+    for status in STATUS_BLACKLIST['active.salable']['convoy']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status)
+
+    self.app.authorization = ('Basic', ('administrator', ''))
+
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'active.awaiting')
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'active.salable')
+
+    # Move from 'active.salable' to one of 'blacklist' status
+    for status in STATUS_BLACKLIST['active.salable']['Administrator']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status)
+
+
+
+def change_active_awaiting_lot(self):
+    response = self.app.get('/')
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(len(response.json['data']), 0)
+
+
+    self.app.authorization = ('Basic', ('broker', ''))
+
+    lot_info = self.initial_data
+
+    # Create new lot in 'active.awaiting' status
+    json = create_single_lot(self, lot_info, 'active.awaiting')
+    lot = json['data']
+    token = json['access']['token']
+    access_header = {'X-Access-Token': str(token)}
+    self.assertEqual(lot['status'], 'active.awaiting')
+
+
+    # Move from 'active.awaiting' to one of 'blacklist' status
+    self.app.authorization = ('Basic', ('broker', ''))
+    for status in STATUS_BLACKLIST['active.awaiting']['lot_owner']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status, access_header)
+
+    self.app.authorization = ('Basic', ('concierge', ''))
+
+    # Move from 'active.awaiting' to one of 'blacklist' status
+    for status in STATUS_BLACKLIST['active.awaiting']['concierge']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status)
+
+
+    self.app.authorization = ('Basic', ('convoy', ''))
+
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'active.salable')
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'active.awaiting')
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'active.auction')
+
+    # Create new lot in 'active.awaiting' status
+    self.app.authorization = ('Basic', ('broker', ''))
+    json = create_single_lot(self, lot_info, 'active.awaiting')
+    lot = json['data']
+    token = json['access']['token']
+    self.assertEqual(lot['status'], 'active.awaiting')
+
+    # Move from 'active.awaiting' to one of 'blacklist' status
+    self.app.authorization = ('Basic', ('convoy', ''))
+    for status in STATUS_BLACKLIST['active.awaiting']['convoy']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status)
+
+
+    self.app.authorization = ('Basic', ('administrator', ''))
+
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'active.salable')
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'active.awaiting')
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'active.auction')
+
+    # Create new lot in 'active.awaiting' status
+    self.app.authorization = ('Basic', ('broker', ''))
+    json = create_single_lot(self, lot_info, 'active.awaiting')
+    lot = json['data']
+    token = json['access']['token']
+    self.assertEqual(lot['status'], 'active.awaiting')
+
+    # Move from 'active.awaiting' to one of 'blacklist' status
+    self.app.authorization = ('Basic', ('administrator', ''))
+    for status in STATUS_BLACKLIST['active.awaiting']['Administrator']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status)
+
+
+def change_active_auction_lot(self):
+    response = self.app.get('/')
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(len(response.json['data']), 0)
+
+
+    self.app.authorization = ('Basic', ('broker', ''))
+
+    lot_info = self.initial_data
+
+    # Create new lot in 'active.auction' status
+    json = create_single_lot(self, lot_info, 'active.auction')
+    lot = json['data']
+    token = json['access']['token']
+    access_header = {'X-Access-Token': str(token)}
+    self.assertEqual(lot['status'], 'active.auction')
+
+    # Move from 'active.auction' to one of 'blacklist' status
+    self.app.authorization = ('Basic', ('broker', ''))
+    for status in STATUS_BLACKLIST['active.auction']['lot_owner']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status, access_header)
+
+    # Move from 'active.auction' to one of 'blacklist' status
+    self.app.authorization = ('Basic', ('concierge', ''))
+    for status in STATUS_BLACKLIST['active.auction']['concierge']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status)
+
+
+    self.app.authorization = ('Basic', ('convoy', ''))
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'active.contracting')
+
+
+    # Create new lot in 'active.auction' status
+    self.app.authorization = ('Basic', ('broker', ''))
+    json = create_single_lot(self, lot_info, 'active.auction')
+    lot = json['data']
+    token = json['access']['token']
+    access_header = {'X-Access-Token': str(token)}
+    self.assertEqual(lot['status'], 'active.auction')
+
+
+    self.app.authorization = ('Basic', ('convoy', ''))
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'pending.dissolution')
+
+
+    # Create new lot in 'active.auction' status
+    self.app.authorization = ('Basic', ('broker', ''))
+    json = create_single_lot(self, lot_info, 'active.auction')
+    lot = json['data']
+    token = json['access']['token']
+    self.assertEqual(lot['status'], 'active.auction')
+
+    # Move from 'active.auction' to one of 'blacklist' status
+    self.app.authorization = ('Basic', ('convoy', ''))
+    for status in STATUS_BLACKLIST['active.auction']['convoy']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status)
+
+
+    self.app.authorization = ('Basic', ('administrator', ''))
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'active.contracting')
+
+    # Create new lot in 'active.auction' status
+    self.app.authorization = ('Basic', ('broker', ''))
+    json = create_single_lot(self, lot_info, 'active.auction')
+    lot = json['data']
+    token = json['access']['token']
+    access_header = {'X-Access-Token': str(token)}
+    self.assertEqual(lot['status'], 'active.auction')
+
+    self.app.authorization = ('Basic', ('administrator', ''))
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'pending.dissolution')
+
+
+    # Create new lot in 'active.auction' status
+    self.app.authorization = ('Basic', ('broker', ''))
+    json = create_single_lot(self, lot_info, 'active.auction')
+    lot = json['data']
+    token = json['access']['token']
+    self.assertEqual(lot['status'], 'active.auction')
+
+
+    # Move from 'active.auction' to one of 'blacklist' status
+    self.app.authorization = ('Basic', ('administrator', ''))
+    for status in STATUS_BLACKLIST['active.auction']['Administrator']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status)
+
+
+def change_active_contracting_lot(self):
+    response = self.app.get('/')
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(len(response.json['data']), 0)
+
+
+    self.app.authorization = ('Basic', ('broker', ''))
+
+    lot_info = self.initial_data
+
+    # Create new lot in 'active.contracting' status
+    json = create_single_lot(self, lot_info, 'active.contracting')
+    lot = json['data']
+    token = json['access']['token']
+    access_header = {'X-Access-Token': str(token)}
+    self.assertEqual(lot['status'], 'active.contracting')
+
+    # Move from 'active.contracting' to one of 'blacklist' status
+    self.app.authorization = ('Basic', ('broker', ''))
+    for status in STATUS_BLACKLIST['active.contracting']['lot_owner']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status, access_header)
+
+    # Move from 'active.contracting' to one of 'blacklist' status
+    self.app.authorization = ('Basic', ('concierge', ''))
+    for status in STATUS_BLACKLIST['active.contracting']['concierge']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status)
+
+
+    self.app.authorization = ('Basic', ('convoy', ''))
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'pending.sold')
+
+
+    # Create new lot in 'active.contracting' status
+    self.app.authorization = ('Basic', ('broker', ''))
+    json = create_single_lot(self, lot_info, 'active.contracting')
+    lot = json['data']
+    token = json['access']['token']
+    access_header = {'X-Access-Token': str(token)}
+    self.assertEqual(lot['status'], 'active.contracting')
+
+
+    self.app.authorization = ('Basic', ('convoy', ''))
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'pending.dissolution')
+
+
+    # Create new lot in 'active.contracting' status
+    self.app.authorization = ('Basic', ('broker', ''))
+    json = create_single_lot(self, lot_info, 'active.contracting')
+    lot = json['data']
+    token = json['access']['token']
+    self.assertEqual(lot['status'], 'active.contracting')
+
+    # Move from 'active.contracting' to one of 'blacklist' status
+    self.app.authorization = ('Basic', ('convoy', ''))
+    for status in STATUS_BLACKLIST['active.contracting']['convoy']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status)
+
+
+    self.app.authorization = ('Basic', ('administrator', ''))
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'pending.sold')
+
+    # Create new lot in 'active.contracting' status
+    self.app.authorization = ('Basic', ('broker', ''))
+    json = create_single_lot(self, lot_info, 'active.contracting')
+    lot = json['data']
+    token = json['access']['token']
+    access_header = {'X-Access-Token': str(token)}
+    self.assertEqual(lot['status'], 'active.contracting')
+
+    self.app.authorization = ('Basic', ('administrator', ''))
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'pending.dissolution')
+
+
+    # Create new lot in 'active.contracting' status
+    self.app.authorization = ('Basic', ('broker', ''))
+    json = create_single_lot(self, lot_info, 'active.contracting')
+    lot = json['data']
+    token = json['access']['token']
+    self.assertEqual(lot['status'], 'active.contracting')
+
+
+    # Move from 'active.contracting' to one of 'blacklist' status
+    self.app.authorization = ('Basic', ('administrator', ''))
+    for status in STATUS_BLACKLIST['active.contracting']['Administrator']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status)
+
+
+def change_pending_sold_lot(self):
+    response = self.app.get('/')
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(len(response.json['data']), 0)
+
+
+    self.app.authorization = ('Basic', ('broker', ''))
+
+    lot_info = self.initial_data
+
+    # Create new lot in 'pending.sold' status
+    json = create_single_lot(self, lot_info, 'pending.sold')
+    lot = json['data']
+    token = json['access']['token']
+    access_header = {'X-Access-Token': str(token)}
+    self.assertEqual(lot['status'], 'pending.sold')
+
+    # Move from 'pending.sold' to one of 'blacklist' status
+    self.app.authorization = ('Basic', ('broker', ''))
+    for status in STATUS_BLACKLIST['pending.sold']['lot_owner']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status, access_header)
+
+    self.app.authorization = ('Basic', ('concierge', ''))
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'sold')
+
+
+    # Create new lot in 'pending.sold' status
+    self.app.authorization = ('Basic', ('broker', ''))
+    json = create_single_lot(self, lot_info, 'pending.sold')
+    lot = json['data']
+    token = json['access']['token']
+    self.assertEqual(lot['status'], 'pending.sold')
+
+
+    # Move from 'pending.sold' to one of 'blacklist' status
+    self.app.authorization = ('Basic', ('concierge', ''))
+    for status in STATUS_BLACKLIST['pending.sold']['concierge']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status)
+
+
+    # Move from 'pending.sold' to one of 'blacklist' status
+    self.app.authorization = ('Basic', ('convoy', ''))
+    for status in STATUS_BLACKLIST['pending.sold']['convoy']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status)
+
+
+    self.app.authorization = ('Basic', ('administrator', ''))
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'sold')
+
+
+    # Create new lot in 'pending.sold' status
+    self.app.authorization = ('Basic', ('broker', ''))
+    json = create_single_lot(self, lot_info, 'pending.sold')
+    lot = json['data']
+    token = json['access']['token']
+    self.assertEqual(lot['status'], 'pending.sold')
+
+    # Move from 'pending.sold' to one of 'blacklist' status
+    self.app.authorization = ('Basic', ('convoy', ''))
+    for status in STATUS_BLACKLIST['pending.sold']['Administrator']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status)
+
+
+def change_pending_dissolution_lot(self):
+    response = self.app.get('/')
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(len(response.json['data']), 0)
+
+
+    self.app.authorization = ('Basic', ('broker', ''))
+
+    lot_info = self.initial_data
+
+    # Create new lot in 'pending.dissolution' status
+    json = create_single_lot(self, lot_info, 'pending.dissolution')
+    lot = json['data']
+    token = json['access']['token']
+    access_header = {'X-Access-Token': str(token)}
+    self.assertEqual(lot['status'], 'pending.dissolution')
+
+    # Move from 'pending.dissolution' to one of 'blacklist' status
+    self.app.authorization = ('Basic', ('broker', ''))
+    for status in STATUS_BLACKLIST['pending.dissolution']['lot_owner']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status, access_header)
+
+
+    self.app.authorization = ('Basic', ('concierge', ''))
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'dissolved')
+
+
+    # Create new lot in 'pending.dissolution' status
+    self.app.authorization = ('Basic', ('broker', ''))
+    json = create_single_lot(self, lot_info, 'pending.dissolution')
+    lot = json['data']
+    token = json['access']['token']
+    self.assertEqual(lot['status'], 'pending.dissolution')
+
+    # Move from 'pending.dissolution' to one of 'blacklist' status
+    self.app.authorization = ('Basic', ('concierge', ''))
+    for status in STATUS_BLACKLIST['pending.dissolution']['concierge']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status)
+
+
+    # Move from 'pending.dissolution' to one of 'blacklist' status
+    self.app.authorization = ('Basic', ('convoy', ''))
+    for status in STATUS_BLACKLIST['pending.dissolution']['convoy']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status)
+
+
+    self.app.authorization = ('Basic', ('administrator', ''))
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'dissolved')
+
+
+    # Create new lot in 'pending.dissolution' status
+    self.app.authorization = ('Basic', ('broker', ''))
+    json = create_single_lot(self, lot_info, 'pending.dissolution')
+    lot = json['data']
+    token = json['access']['token']
+    self.assertEqual(lot['status'], 'pending.dissolution')
+
+    # Move from 'pending.dissolution' to one of 'blacklist' status
+    self.app.authorization = ('Basic', ('administrator', ''))
+    for status in STATUS_BLACKLIST['pending.dissolution']['Administrator']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status)
+
+
+
+def change_sold_lot(self):
+    response = self.app.get('/')
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(len(response.json['data']), 0)
+
+
+    self.app.authorization = ('Basic', ('broker', ''))
+
+    lot_info = self.initial_data
+
+    # Create new lot in 'sold' status
+    json = create_single_lot(self, lot_info, 'sold')
+    lot = json['data']
+    token = json['access']['token']
+    access_header = {'X-Access-Token': str(token)}
+    self.assertEqual(lot['status'], 'sold')
+
+    # Move from 'sold' to one of 'blacklist' status
+    for status in STATUS_BLACKLIST['sold']['lot_owner']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status, access_header)
+
+
+    self.app.authorization = ('Basic', ('convoy', ''))
+
+    # Move from 'sold' to one of 'blacklist' status
+    for status in STATUS_BLACKLIST['sold']['convoy']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status)
+
+
+    self.app.authorization = ('Basic', ('concierge', ''))
+
+    # Move from 'sold' to one of 'blacklist' status
+    for status in STATUS_BLACKLIST['sold']['concierge']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status)
+
+
+    self.app.authorization = ('Basic', ('administrator', ''))
+
+    # Move from 'sold' to one of 'blacklist' status
+    for status in STATUS_BLACKLIST['sold']['Administrator']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status)
+
+
+def change_dissolved_lot(self):
+    response = self.app.get('/')
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(len(response.json['data']), 0)
+
+
+    self.app.authorization = ('Basic', ('broker', ''))
+
+    lot_info = self.initial_data
+
+    # Create new lot in 'dissolved' status
+    json = create_single_lot(self, lot_info, 'dissolved')
+    lot = json['data']
+    token = json['access']['token']
+    access_header = {'X-Access-Token': str(token)}
+    self.assertEqual(lot['status'], 'dissolved')
+
+    # Move from 'dissolved' to one of 'blacklist' status
+    for status in STATUS_BLACKLIST['sold']['lot_owner']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status, access_header)
+
+
+    self.app.authorization = ('Basic', ('convoy', ''))
+
+    # Move from 'dissolved' to one of 'blacklist' status
+    for status in STATUS_BLACKLIST['sold']['convoy']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status)
+
+
+    self.app.authorization = ('Basic', ('concierge', ''))
+
+    # Move from 'dissolved' to one of 'blacklist' status
+    for status in STATUS_BLACKLIST['sold']['concierge']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status)
+
+
+    self.app.authorization = ('Basic', ('administrator', ''))
+
+    # Move from 'dissolved' to one of 'blacklist' status
+    for status in STATUS_BLACKLIST['sold']['Administrator']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status)
+
+
+def change_invalid_lot(self):
+    response = self.app.get('/')
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(len(response.json['data']), 0)
+
+
+    self.app.authorization = ('Basic', ('broker', ''))
+
+    lot_info = self.initial_data
+
+    # Create new lot in 'dissolved' status
+    json = create_single_lot(self, lot_info, 'invalid')
+    lot = json['data']
+    token = json['access']['token']
+    access_header = {'X-Access-Token': str(token)}
+    self.assertEqual(lot['status'], 'invalid')
+
+    # Move from 'invalid' to one of 'blacklist' status
+    for status in STATUS_BLACKLIST['invalid']['lot_owner']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status, access_header)
+
+
+    self.app.authorization = ('Basic', ('convoy', ''))
+
+    # Move from 'invalid' to one of 'blacklist' status
+    for status in STATUS_BLACKLIST['invalid']['convoy']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status)
+
+
+    self.app.authorization = ('Basic', ('concierge', ''))
+
+    # Move from 'invalid' to one of 'blacklist' status
+    for status in STATUS_BLACKLIST['invalid']['concierge']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status)
+
+
+    self.app.authorization = ('Basic', ('administrator', ''))
+
+    # Move from 'invalid' to one of 'blacklist' status
+    for status in STATUS_BLACKLIST['invalid']['Administrator']:
         check_patch_status_403(self, '/{}'.format(lot['id']), status)
