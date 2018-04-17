@@ -54,33 +54,12 @@ test_loki_lot_data = {
     "description": u"Щось там тестове",
     "lotIdentifier": u"Q81318b19827",
     "lotType": "loki",
-    "lotCustodian": deepcopy(test_organization).update(
-        {
-            'identifier': {
-              "legalNama": "Legal Name",
-              "id": "identifier-id",
-              "uri": "https://localhost"
-            }
-        }),
     "assets": [],
     "auctions": [
         auction_english_data,
         auction_half_english_data,
         auction_insider_data
-    ],
-    "lotHolder": {
-        "name": "name",
-        "identifier": {
-            "legalName": "Legal Name",
-            "id": "identifier-id",
-            "uri": "https://localhost"
-        }
-    },
-    "decisions": [{
-        "title": "Some Title",
-        "decisionDate": (now + timedelta(days=5)).isoformat(),
-        "decisionID": "ID-DECISION"
-    }],
+    ]
 }
 
 test_loki_item_data = deepcopy(test_item_data)

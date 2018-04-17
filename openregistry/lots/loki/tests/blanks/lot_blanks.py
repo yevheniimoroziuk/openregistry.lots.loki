@@ -109,6 +109,119 @@ def check_lotIdentifier(self):
     self.assertEqual(response.json['data'], lot)
 
 
+def check_decisions(self):
+    self.app.authorization = ('Basic', ('broker', ''))
+
+    response = create_single_lot(self, self.initial_data)
+    lot = response.json['data']
+    token = response.json['access']['token']
+    access_header = {'X-Access-Token': str(token)}
+
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'composing', access_header)
+
+    self.app.authorization = ('Basic', ('concierge', ''))
+
+    data_with_decisions = {
+        "decisions": [{
+            'decisionDate': get_now().isoformat(),
+            'decisionID': 'decisionID'
+        }],
+        'status': 'pending'
+    }
+    response = self.app.patch_json('/{}'.format(lot['id']), params={'data': data_with_decisions})
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['data']['status'], 'pending')
+    self.assertEqual(response.json['data']['decisions'], data_with_decisions['decisions'])
+
+    self.app.authorization = ('Basic', ('broker', ''))
+    lot_data_with_decisions = {
+        "decisions": [{
+            'decisionDate': get_now().isoformat(),
+            'decisionID': 'wrong'
+        }, {
+            'decisionDate': get_now().isoformat(),
+            'decisionID': 'anotherDecisionID'
+        }
+        ]
+    }
+
+    response = self.app.patch_json(
+        '/{}'.format(lot['id']),
+        headers=access_header,
+        params={'data': lot_data_with_decisions},
+        status=403
+    )
+    self.assertEqual(response.status, '403 Forbidden')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(
+        response.json['errors'][0]['description'],
+        'Can\'t update decision that was created from asset'
+    )
+
+    lot_data_with_decisions = {
+        "decisions": []
+    }
+
+    response = self.app.patch_json(
+        '/{}'.format(lot['id']),
+        headers=access_header,
+        params={'data': lot_data_with_decisions},
+        status=403
+    )
+    self.assertEqual(response.status, '403 Forbidden')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(
+        response.json['errors'][0]['description'],
+        'Can\'t update decision that was created from asset'
+    )
+
+    lot_data_with_decisions = {
+        "decisions": deepcopy(data_with_decisions['decisions'])
+    }
+    lot_data_with_decisions['decisions'][0]['decisionID'] = 'wrong'
+
+    response = self.app.patch_json(
+        '/{}'.format(lot['id']),
+        headers=access_header,
+        params={'data': lot_data_with_decisions},
+        status=403
+    )
+    self.assertEqual(response.status, '403 Forbidden')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(
+        response.json['errors'][0]['description'],
+        'Can\'t update decision that was created from asset'
+    )
+
+    lot_data_with_decisions = {
+        "decisions": data_with_decisions['decisions']
+    }
+    response = self.app.patch_json(
+        '/{}'.format(lot['id']),
+        headers=access_header,
+        params={'data': lot_data_with_decisions},
+    )
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['data']['decisions'], lot_data_with_decisions['decisions'])
+
+
+    lot_data_with_decisions['decisions'].append({
+        'decisionDate': get_now().isoformat(),
+        'decisionID': 'anotherDecisionID'
+    })
+
+    response = self.app.patch_json(
+        '/{}'.format(lot['id']),
+        headers=access_header,
+        params={'data': lot_data_with_decisions},
+    )
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['data']['decisions'], lot_data_with_decisions['decisions'])
+
+
 def dateModified_resource(self):
     response = self.app.get('/')
     self.assertEqual(response.status, '200 OK')
