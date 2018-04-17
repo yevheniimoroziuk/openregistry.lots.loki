@@ -16,10 +16,13 @@ from openregistry.lots.core.validation import (
     validate_patch_lot_data,
 )
 from openregistry.lots.loki.events import PublicationInitializeEvent
+from openregistry.lots.loki.validation import validate_decision
 
 patch_lot_validators = (
     validate_patch_lot_data,
-    validate_change_status
+    validate_change_status,
+    validate_decision
+
 )
 
 
@@ -28,6 +31,7 @@ patch_lot_validators = (
                 lotType='loki',
                 description="Open Contracting compatible data exchange format.")
 class LotResource(APIResource):
+
 
     @json_view(permission='view_lot')
     def get(self):

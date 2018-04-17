@@ -23,3 +23,15 @@ def validate_publication_data(request, error_handler, **kwargs):
     context = request.context if 'publications' in request.context else request.context.__parent__
     model = type(context).publications.model_class
     validate_data(request, model)
+
+
+def validate_decision(request, error_handler, **kwargs):
+    is_decision_patched_wrong = bool(
+        request.context.decisions and (
+            len(request.json['data'].get('decisions', [])) == 0 or
+            request.context.decisions[0].serialize() != request.json['data']['decisions'][0]
+        )
+    )
+    if is_decision_patched_wrong:
+        raise_operation_error(request, error_handler,
+                              'Can\'t update decision that was created from asset')
