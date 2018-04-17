@@ -18,8 +18,8 @@ from openprocurement.api.models.models import (
 
 from openprocurement.api.models.registry_models.ocds import (
     Classification,
-    lokiDocument as Document,
-    lokiItem as Item,
+    LokiDocument as Document,
+    LokiItem as Item,
     Decision,
     AssetCustodian,
     AssetHolder
@@ -34,8 +34,6 @@ from openregistry.lots.core.models import ILot, Lot as BaseLot
 
 from .constants import LOT_STATUSES
 from .roles import (
-    item_roles,
-    publication_roles,
     lot_roles
 )
 
