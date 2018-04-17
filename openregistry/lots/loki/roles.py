@@ -32,17 +32,20 @@ publication_roles = {
 }
 
 
-lot_create_role = (blacklist('owner_token', 'owner', '_attachments', 'revisions',
-                         'date', 'dateModified', 'lotID', 'documents', 'publications'
-                         'status', 'doc_id', 'items', 'publications') + schematics_embedded_role)
+# lot_create_role = (blacklist('owner_token', 'owner', '_attachments', 'revisions',
+#                          'date', 'dateModified', 'lotID', 'documents', 'publications'
+#                          'status', 'doc_id', 'items') + schematics_embedded_role)
+lot_create_role = (whitelist('status', 'auctions', 'assets', 'lotType', 'lotIdentifier', 'mode'))
 lot_edit_role = (blacklist('owner_token', 'owner', '_attachments',
-                       'revisions', 'date', 'dateModified', 'documents', 'publications'
-                       'lotID', 'mode', 'doc_id', 'items', 'publications') + schematics_embedded_role)
+                       'revisions', 'date', 'dateModified', 'documents',
+                       'lotID', 'mode', 'doc_id', 'items') + schematics_embedded_role)
 view_role = (blacklist('owner_token',
                        '_attachments', 'revisions') + schematics_embedded_role)
 
 Administrator_role = whitelist('status', 'mode')
-
+concierge_role = (blacklist(
+    'owner_token', 'owner', '_attachments', 'revisions', 'date', 'dateModified',
+    'lotID', 'mode', 'doc_id') + schematics_embedded_role)
 
 lot_roles = {
     'create': lot_create_role,
@@ -90,6 +93,6 @@ lot_roles = {
     'edit.sold': whitelist(),
     'invalid': view_role,
     'edit.invalid': whitelist(),
-    'concierge': whitelist('status'),
+    'concierge': whitelist('status', 'decisions', 'title_ru'),
     'convoy': whitelist('status', 'auctions')
 }

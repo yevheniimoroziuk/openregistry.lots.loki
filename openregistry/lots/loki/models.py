@@ -82,10 +82,11 @@ class Lot(BaseLot):
     class Options:
         roles = lot_roles
 
+    title = StringType()
     status = StringType(choices=LOT_STATUSES, default='draft')
-    description = StringType(required=True)
+    description = StringType()
     lotType = StringType(default="loki")
-    # rectificationPeriod
+    rectificationPeriod = ModelType(Period)
     lotCustodian = ModelType(AssetCustodian, serialize_when_none=False)
     lotHolder = ModelType(AssetHolder, serialize_when_none=False)
     officialRegistrationID = StringType(serialize_when_none=True)
