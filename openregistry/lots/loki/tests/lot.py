@@ -43,6 +43,7 @@ class LotTest(BaseWebTest):
 
 class LotResourceTest(BaseLotWebTest, ResourceTestMixin):
     initial_status = 'pending'
+    docservice = True
     lot_model = Lot
 
     test_05_dateModified_resource = snitch(dateModified_resource)

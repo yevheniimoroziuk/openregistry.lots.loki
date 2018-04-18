@@ -38,6 +38,36 @@ def simple_add_lot(self):
     u.delete_instance(self.db)
 
 
+def add_cancellationDetails_document(self, lot, access_header):
+    # Add cancellationDetails document
+    test_document_data = {
+        # 'url': self.generate_docservice_url(),
+        'title': u'укр.doc',
+        'hash': 'md5:' + '0' * 32,
+        'format': 'application/msword',
+        'documentType': 'cancellationDetails'
+    }
+    test_document_data['url'] = self.generate_docservice_url()
+
+    response = self.app.post_json('/{}/documents'.format(lot['id']),
+                                  headers=access_header,
+                                  params={'data': test_document_data})
+    self.assertEqual(response.status, '201 Created')
+    self.assertEqual(response.content_type, 'application/json')
+    doc_id = response.json["data"]['id']
+    self.assertIn(doc_id, response.headers['Location'])
+    self.assertEqual(u'укр.doc', response.json["data"]["title"])
+    self.assertIn('Signature=', response.json["data"]["url"])
+    self.assertIn('KeyID=', response.json["data"]["url"])
+    self.assertNotIn('Expires=', response.json["data"]["url"])
+    key = response.json["data"]["url"].split('/')[-1].split('?')[0]
+    tender = self.db.get(lot['id'])
+    self.assertIn(key, tender['documents'][-1]["url"])
+    self.assertIn('Signature=', tender['documents'][-1]["url"])
+    self.assertIn('KeyID=', tender['documents'][-1]["url"])
+    self.assertNotIn('Expires=', tender['documents'][-1]["url"])
+
+
 def check_patch_status_200(self, path, lot_status, headers=None):
     response = self.app.patch_json(path,
                                    headers=headers,
@@ -259,7 +289,7 @@ def rectificationPeriod_workflow(self):
     self.assertNotEqual(response.json['data']['title'], 'PATCHED')
     self.assertEqual(lot['title'], response.json['data']['title'])
 
-    # add_cancellationDetails_document(self, asset)
+    add_cancellationDetails_document(self, lot, access_header)
     check_patch_status_200(self, '/{}'.format(lot['id']), 'deleted', access_header)
 
 
@@ -434,7 +464,7 @@ def change_draft_lot(self):
     # Move from 'draft' to 'draft' status
     check_patch_status_200(self, '/{}'.format(lot['id']), 'draft')
 
-    # Move from 'draft' to 'pending' status
+    # Move from 'draft' to 'composing' status
     check_patch_status_200(self, '/{}'.format(lot['id']), 'composing')
 
 
@@ -570,6 +600,7 @@ def change_pending_lot(self):
     check_patch_status_200(self, '/{}'.format(lot['id']), 'pending', access_header)
 
     # Move from 'pending' to 'deleted' status
+    add_cancellationDetails_document(self, lot, access_header)
     check_patch_status_200(self, '/{}'.format(lot['id']), 'deleted', access_header)
 
     # Create lot in 'draft' status and move it to 'pending'
@@ -635,6 +666,10 @@ def change_pending_lot(self):
         check_patch_status_403(self, '/{}'.format(lot['id']), status)
 
     # Move from 'pending' to 'deleted'
+    self.app.authorization = ('Basic', ('broker', ''))
+    add_cancellationDetails_document(self, lot, access_header)
+    self.app.authorization = ('Basic', ('administrator', ''))
+
     check_patch_status_200(self, '/{}'.format(lot['id']), 'deleted')
 
 
@@ -674,6 +709,7 @@ def change_deleted_lot(self):
 
     self.app.authorization = ('Basic', ('broker', ''))
     # Move from 'pending' to 'deleted'
+    add_cancellationDetails_document(self, lot, access_header)
     check_patch_status_200(self, '/{}'.format(lot['id']), 'deleted', access_header)
 
     # Move from 'deleted' to one of 'blacklist' status
