@@ -28,6 +28,7 @@ from openregistry.lots.loki.tests.blanks.lot_blanks import (
     change_active_contracting_lot,
     change_sold_lot,
     change_pending_sold_lot,
+    check_auctions,
     # LotTest
     simple_add_lot,
     simple_patch
@@ -65,6 +66,7 @@ class LotResourceTest(BaseLotWebTest, ResourceTestMixin):
     test_change_composing_lot = snitch(change_composing_lot)
     test_check_decisions = snitch(check_decisions)
     test_rectificationPeriod_workflow = snitch(rectificationPeriod_workflow)
+    test_check_auctions = snitch(check_auctions)
 
 def suite():
     tests = unittest.TestSuite()

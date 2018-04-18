@@ -84,7 +84,6 @@ class DummyModelsTest(unittest.TestCase):
             'value': [u'This field is required.'],
             'minimalStep': [u'This field is required.'],
             'guarantee': [u'This field is required.'],
-            'tenderingDuration': [u'This field is required.'],
              }
         )
         auction.import_data(data)

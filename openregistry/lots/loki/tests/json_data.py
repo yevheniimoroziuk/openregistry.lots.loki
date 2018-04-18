@@ -18,7 +18,6 @@ auction_common = {
         'startDate': (now + timedelta(days=5)).isoformat(),
         'endDate': (now + timedelta(days=10)).isoformat()
     },
-    'tenderingDuration': 'P25DT12H',
     'value': {
         'amount': 3000,
         'currency': 'UAH',
@@ -39,15 +38,12 @@ auction_common = {
     }
 }
 auction_english_data = deepcopy(auction_common)
-auction_english_data.update({'procurementMethodType': 'Loki.english'})
 
 auction_half_english_data = deepcopy(auction_common)
-auction_half_english_data['value']['amount'] = auction_english_data['value']['amount'] / 2
-auction_half_english_data['minimalStep']['amount'] = auction_english_data['minimalStep']['amount'] / 2
-auction_half_english_data.update({'procurementMethodType': 'Loki.english'})
+auction_half_english_data['tenderingDuration'] = 'P25DT12H'
 
 auction_insider_data = deepcopy(auction_common)
-auction_insider_data.update({'procurementMethodType': 'Loki.insider'})
+auction_insider_data['tenderingDuration'] = 'P25DT12H'
 
 test_loki_lot_data = {
     "title": u"Тестовий лот",

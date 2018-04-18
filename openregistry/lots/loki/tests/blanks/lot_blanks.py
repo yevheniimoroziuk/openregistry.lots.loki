@@ -141,6 +141,77 @@ def check_lotIdentifier(self):
     self.assertEqual(response.json['data'], lot)
 
 
+def check_auctions(self):
+    self.app.authorization = ('Basic', ('broker', ''))
+    data = deepcopy(self.initial_data)
+    data['auctions'][0]['tenderingDuration'] = 'P25DT12H'
+
+    response = self.app.post_json('/', {"data": data}, status=422)
+    self.assertEqual(response.status, '422 Unprocessable Entity')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+    self.assertEqual(response.json['errors'][0]['description'], ["First loki.english have no tenderingDuration."])
+
+    del data['auctions'][0]['tenderingDuration']
+    data['auctions'][1]['tenderingDuration'] = 'P30DT12H'
+
+    response = self.app.post_json('/', {"data": data}, status=422)
+    self.assertEqual(response.status, '422 Unprocessable Entity')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+    self.assertEqual(response.json['errors'][0]['description'], ["tenderingDuration for second loki.english and loki.insider should be the same."])
+
+    duration = data['auctions'][2]['tenderingDuration']
+
+    # Delete tenderingDuration in second loki.english
+    del data['auctions'][1]['tenderingDuration']
+    response = self.app.post_json('/', {"data": data}, status=422)
+    self.assertEqual(response.status, '422 Unprocessable Entity')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+    self.assertEqual(response.json['errors'][0]['description'], ["tenderingDuration is required for second loki.english and loki.insider."])
+
+    # Delete tenderingDuration in both second loki.english and loki.insider
+    del data['auctions'][2]['tenderingDuration']
+    response = self.app.post_json('/', {"data": data}, status=422)
+    self.assertEqual(response.status, '422 Unprocessable Entity')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+    self.assertEqual(response.json['errors'][0]['description'], ["tenderingDuration is required for second loki.english and loki.insider."])
+
+    # Delete tenderingDuration in loki.insider
+    data['auctions'][1]['tenderingDuration'] = duration
+    response = self.app.post_json('/', {"data": data}, status=422)
+    self.assertEqual(response.status, '422 Unprocessable Entity')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+    self.assertEqual(response.json['errors'][0]['description'], ["tenderingDuration is required for second loki.english and loki.insider."])
+
+    response = create_single_lot(self, self.initial_data)
+    lot = response.json['data']
+    self.assertEqual(len(lot['auctions']), 3)
+
+    self.assertEqual(lot['auctions'][0]['procurementMethodType'], 'Loki.english')
+    self.assertEqual(lot['auctions'][0]['value']['amount'], self.initial_data['auctions'][0]['value']['amount'])
+    self.assertEqual(lot['auctions'][0]['registrationFee']['amount'], self.initial_data['auctions'][0]['registrationFee']['amount'])
+    self.assertEqual(lot['auctions'][0]['minimalStep']['amount'], self.initial_data['auctions'][0]['minimalStep']['amount'])
+    self.assertEqual(lot['auctions'][0]['guarantee']['amount'], lot['auctions'][0]['guarantee']['amount'])
+    self.assertNotIn('tenderingDuration', lot['auctions'][0])
+
+    self.assertEqual(lot['auctions'][1]['procurementMethodType'], 'Loki.english')
+    self.assertEqual(lot['auctions'][1]['value']['amount'], lot['auctions'][0]['value']['amount'] / 2)
+    self.assertEqual(lot['auctions'][1]['registrationFee']['amount'], lot['auctions'][0]['registrationFee']['amount'] / 2)
+    self.assertEqual(lot['auctions'][1]['minimalStep']['amount'], lot['auctions'][0]['minimalStep']['amount'] / 2)
+    self.assertEqual(lot['auctions'][1]['guarantee']['amount'], lot['auctions'][0]['guarantee']['amount'] / 2)
+
+    self.assertEqual(lot['auctions'][2]['procurementMethodType'], 'Loki.insider')
+    self.assertEqual(lot['auctions'][2]['value']['amount'], lot['auctions'][0]['value']['amount'] / 2)
+    self.assertEqual(lot['auctions'][2]['registrationFee']['amount'], lot['auctions'][0]['registrationFee']['amount'] / 2)
+    self.assertEqual(lot['auctions'][2]['minimalStep']['amount'], lot['auctions'][0]['minimalStep']['amount'] / 2)
+    self.assertEqual(lot['auctions'][2]['guarantee']['amount'], lot['auctions'][0]['guarantee']['amount'] / 2)
+
+
+
 def check_decisions(self):
     self.app.authorization = ('Basic', ('broker', ''))
 
@@ -301,6 +372,7 @@ def dateModified_resource(self):
     response = self.app.post_json('/', {'data': self.initial_data})
     self.assertEqual(response.status, '201 Created')
     resource = response.json['data']
+
     token = str(response.json['access']['token'])
     dateModified = resource['dateModified']
 
@@ -322,6 +394,7 @@ def dateModified_resource(self):
     dateModified = resource['dateModified']
 
     response = self.app.get('/{}'.format(resource['id']))
+
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(response.json['data'], resource)
