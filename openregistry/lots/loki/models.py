@@ -83,6 +83,7 @@ class Auction(Model):
         if data['procurementMethodType'] == 'Loki.insider' and not value:
             data['dutchSteps'] = 99 if data.get('dutchSteps') is None else data['dutchSteps']
 
+
 @implementer(ILokiLot)
 class Lot(BaseLot):
     class Options:
@@ -129,6 +130,12 @@ class Lot(BaseLot):
             self.rectificationPeriod.startDate = get_now()
             self.rectificationPeriod.endDate = calculate_business_date(self.rectificationPeriod.startDate,
                                                                        RECTIFICATION_PERIOD_DURATION)
+
+    def validate_status(self, data, value):
+        can_be_deleted = any([doc.documentType == 'cancellationDetails' for doc in data['documents']])
+        if value == 'deleted' and not can_be_deleted:
+            raise ValidationError(u"You can set deleted status "
+                                  u"only when asset have at least one document with \'cancellationDetails\' documentType")
 
     def __acl__(self):
         acl = [

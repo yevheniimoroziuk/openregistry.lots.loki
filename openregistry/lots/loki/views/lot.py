@@ -19,8 +19,8 @@ from openregistry.lots.loki.events import PublicationInitializeEvent
 from openregistry.lots.loki.validation import validate_decision
 
 patch_lot_validators = (
-    validate_patch_lot_data,
     validate_change_status,
+    validate_patch_lot_data,
     validate_decision
 
 )
