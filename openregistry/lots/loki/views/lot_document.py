@@ -5,9 +5,9 @@ from openregistry.lots.core.utils import (
     json_view,
     context_unpack,
     APIResource,
-)
-from openregistry.lots.core.utils import (
-    save_lot, oplotsresource, apply_patch,
+    save_lot,
+    oplotsresource,
+    apply_patch,
 )
 
 from openregistry.lots.core.validation import (

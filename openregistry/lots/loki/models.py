@@ -9,13 +9,6 @@ from schematics.types.compound import ModelType, ListType
 from schematics.types.serializable import serializable
 from zope.interface import implementer
 
-from openregistry.lots.core.models import (
-    Value
-)
-from openregistry.lots.core.models import (
-    Guarantee,
-    Period
-)
 
 from openregistry.lots.core.models import (
     Classification,
@@ -23,13 +16,16 @@ from openregistry.lots.core.models import (
     LokiItem as Item,
     Decision,
     AssetCustodian,
-    AssetHolder
-)
-from openregistry.lots.core.models import (
+    AssetHolder,
     Model,
     IsoDateTimeType,
     IsoDurationType,
+    Guarantee,
+    Period,
+    Value
+
 )
+
 from openregistry.lots.core.constants import IDENTIFIER_CODES
 from openregistry.lots.core.models import ILot, Lot as BaseLot
 from openregistry.lots.core.utils import (
