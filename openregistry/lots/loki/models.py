@@ -68,7 +68,7 @@ class Auction(Model):
     auctionID = StringType()
     procurementMethodType = StringType(choices=['Loki.english', 'Loki.insider'])
     auctionPeriod = ModelType(StartDateRequiredPeriod, required=True)
-    tenderingDuration = IsoDurationType(required=True)
+    tenderingDuration = IsoDurationType()
     documents = ListType(ModelType(Document))
     value = ModelType(Value, required=True)
     minimalStep = ModelType(Value, required=True)
@@ -113,15 +113,27 @@ class Lot(BaseLot):
     def validate_auctions(self, data, value):
         if not value:
             return
-        full_price = value[0].value.amount
-        price_range = (round(full_price/2), full_price/2) if round(full_price/2) < full_price/2 else (full_price/2, round(full_price/2))
-        if not (value[1].value.amount >= price_range[0] and value[1].value.amount <= price_range[1]):
-            raise ValidationError('In second loki.english value.amount must be a half of value.amount first loki.english')
-        if value[0].value.amount != value[2].value.amount:
-            raise ValidationError('Loki.english and Loki.insider must have same value.amount')
-        data['auctions'][0]['procurementMethodType'] = 'Loki.english'
-        data['auctions'][1]['procurementMethodType'] = 'Loki.english'
-        data['auctions'][2]['procurementMethodType'] = 'Loki.insider'
+        if value[0].tenderingDuration:
+            raise ValidationError('First loki.english have no tenderingDuration.')
+        if not all(auction.tenderingDuration for auction in value[1:]):
+            raise ValidationError('tenderingDuration is required for second loki.english and loki.insider.')
+        if value[1].tenderingDuration != value[2].tenderingDuration:
+            raise ValidationError('tenderingDuration for second loki.english and loki.insider should be the same.')
+
+    @serializable(serialized_name='auctions', serialize_when_none=False)
+    def serialize_auctions(self):
+        if self.auctions:
+            self.auctions[0]['procurementMethodType'] = 'Loki.english'
+            self.auctions[1]['procurementMethodType'] = 'Loki.english'
+            self.auctions[2]['procurementMethodType'] = 'Loki.insider'
+
+            auto_calculated_fields = ['value', 'minimalStep', 'registrationFee', 'guarantee']
+            for i in range(1, 3):
+                for key in auto_calculated_fields:
+                    object_class = self.auctions[0][key].__class__
+                    self.auctions[i][key] = object_class(self.auctions[0][key].serialize())
+                    self.auctions[i][key]['amount'] = self.auctions[0][key]['amount'] / 2
+
 
     @serializable(serialized_name='rectificationPeriod', serialize_when_none=False)
     def serialize_rectificationPeriod(self):
