@@ -9,7 +9,11 @@ from openregistry.lots.core.constants import ROUTE_PREFIX
 from openregistry.lots.core.tests.base import create_blacklist
 
 from openregistry.lots.loki.models import Lot
-from openregistry.lots.loki.constants import STATUS_CHANGES, LOT_STATUSES
+from openregistry.lots.loki.constants import (
+    STATUS_CHANGES,
+    LOT_STATUSES,
+    DEFAULT_DUTCH_STEPS
+)
 
 
 ROLES = ['lot_owner', 'Administrator', 'concierge', 'convoy']
@@ -191,24 +195,58 @@ def check_auctions(self):
     lot = response.json['data']
     self.assertEqual(len(lot['auctions']), 3)
 
+    # Test first Loki.english
     self.assertEqual(lot['auctions'][0]['procurementMethodType'], 'Loki.english')
     self.assertEqual(lot['auctions'][0]['value']['amount'], self.initial_data['auctions'][0]['value']['amount'])
     self.assertEqual(lot['auctions'][0]['registrationFee']['amount'], self.initial_data['auctions'][0]['registrationFee']['amount'])
     self.assertEqual(lot['auctions'][0]['minimalStep']['amount'], self.initial_data['auctions'][0]['minimalStep']['amount'])
     self.assertEqual(lot['auctions'][0]['guarantee']['amount'], lot['auctions'][0]['guarantee']['amount'])
+    self.assertEqual(lot['auctions'][0]['auctionParameters']['type'], 'english')
+    self.assertNotIn('dutchSteps', lot['auctions'][0]['auctionParameters'])
     self.assertNotIn('tenderingDuration', lot['auctions'][0])
 
+    # Test second Loki.english(half values)
     self.assertEqual(lot['auctions'][1]['procurementMethodType'], 'Loki.english')
     self.assertEqual(lot['auctions'][1]['value']['amount'], lot['auctions'][0]['value']['amount'] / 2)
     self.assertEqual(lot['auctions'][1]['registrationFee']['amount'], lot['auctions'][0]['registrationFee']['amount'] / 2)
     self.assertEqual(lot['auctions'][1]['minimalStep']['amount'], lot['auctions'][0]['minimalStep']['amount'] / 2)
     self.assertEqual(lot['auctions'][1]['guarantee']['amount'], lot['auctions'][0]['guarantee']['amount'] / 2)
+    self.assertEqual(lot['auctions'][1]['auctionParameters']['type'], 'english')
+    self.assertNotIn('dutchSteps', lot['auctions'][1]['auctionParameters'])
 
+    # Test second Loki.insider(half values)
     self.assertEqual(lot['auctions'][2]['procurementMethodType'], 'Loki.insider')
     self.assertEqual(lot['auctions'][2]['value']['amount'], lot['auctions'][0]['value']['amount'] / 2)
     self.assertEqual(lot['auctions'][2]['registrationFee']['amount'], lot['auctions'][0]['registrationFee']['amount'] / 2)
     self.assertEqual(lot['auctions'][2]['minimalStep']['amount'], lot['auctions'][0]['minimalStep']['amount'] / 2)
     self.assertEqual(lot['auctions'][2]['guarantee']['amount'], lot['auctions'][0]['guarantee']['amount'] / 2)
+    self.assertEqual(lot['auctions'][2]['auctionParameters']['type'], 'insider')
+    self.assertEqual(lot['auctions'][2]['auctionParameters']['dutchSteps'], DEFAULT_DUTCH_STEPS)
+
+    # Test dutch steps validation
+    data = deepcopy(self.initial_data)
+    data['auctions'][0]['auctionParameters'] = {'dutchSteps': 66}
+    response = self.app.post_json('/', {"data": data}, status=422)
+    self.assertEqual(response.status, '422 Unprocessable Entity')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+    self.assertEqual(response.json['errors'][0]['description'], ["dutchSteps can be filled only when procurementMethodType is Loki.insider."])
+
+    data = deepcopy(self.initial_data)
+    data['auctions'][1]['auctionParameters'] = {'dutchSteps': 66}
+    response = self.app.post_json('/', {"data": data}, status=422)
+    self.assertEqual(response.status, '422 Unprocessable Entity')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+    self.assertEqual(response.json['errors'][0]['description'], ["dutchSteps can be filled only when procurementMethodType is Loki.insider."])
+
+    data = deepcopy(self.initial_data)
+    data['auctions'][2]['auctionParameters'] = {'dutchSteps': 66}
+    response = create_single_lot(self, data)
+    lot = response.json['data']
+    self.assertEqual(len(lot['auctions']), 3)
+
+    self.assertEqual(lot['auctions'][2]['auctionParameters']['dutchSteps'], data['auctions'][2]['auctionParameters']['dutchSteps'])
 
 
 

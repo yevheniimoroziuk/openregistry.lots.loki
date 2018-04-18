@@ -89,46 +89,34 @@ class DummyModelsTest(unittest.TestCase):
         auction.import_data(data)
         auction.validate()
 
-        data['dutchSteps'] = 69
+        data['auctionParameters'] = {'dutchSteps': -3}
         auction.import_data(data)
         with self.assertRaises(ModelValidationError) as ex:
             auction.validate()
         self.assertEqual(
             ex.exception.messages,
-            {'dutchSteps': [u'Field dutchSteps is allowed only when procuremenentMethodType is Loki.insider']}
+            {'auctionParameters':
+                 {'dutchSteps': [u'Int value should be greater than 1.']}
+            }
+        )
+
+        data['auctionParameters'] = {'dutchSteps': 132}
+        auction.import_data(data)
+        with self.assertRaises(ModelValidationError) as ex:
+            auction.validate()
+        self.assertEqual(
+            ex.exception.messages,
+            {'auctionParameters':
+                 {'dutchSteps': [u'Int value should be less than 100.']}
+            }
         )
 
         auction = Auction()
-        del data['dutchSteps']
+        data['auctionParameters'] = {'dutchSteps': 55}
         data['procurementMethodType'] = 'Loki.insider'
         auction.import_data(data)
         auction.validate()
-        self.assertEqual(auction.dutchSteps, 99)
-
-        data['dutchSteps'] = -3
-        auction.import_data(data)
-        with self.assertRaises(ModelValidationError) as ex:
-            auction.validate()
-        self.assertEqual(
-            ex.exception.messages,
-            {'dutchSteps': [u'Int value should be greater than 1.']}
-        )
-
-        data['dutchSteps'] = 132
-        auction.import_data(data)
-        with self.assertRaises(ModelValidationError) as ex:
-            auction.validate()
-        self.assertEqual(
-            ex.exception.messages,
-            {'dutchSteps': [u'Int value should be less than 100.']}
-        )
-
-        auction = Auction()
-        data['dutchSteps'] = 55
-        data['procurementMethodType'] = 'Loki.insider'
-        auction.import_data(data)
-        auction.validate()
-        self.assertEqual(auction.dutchSteps, data['dutchSteps'])
+        self.assertEqual(auction.auctionParameters.dutchSteps, data['auctionParameters']['dutchSteps'])
 
     # def test_Publication(self):
     #     publication = Publication()
