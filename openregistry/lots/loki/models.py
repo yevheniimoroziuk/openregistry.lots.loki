@@ -33,7 +33,11 @@ from openregistry.lots.core.utils import (
     calculate_business_date
 )
 
-from .constants import LOT_STATUSES, RECTIFICATION_PERIOD_DURATION
+from .constants import (
+    LOT_STATUSES,
+    RECTIFICATION_PERIOD_DURATION,
+    DEFAULT_DUTCH_STEPS
+)
 from .roles import (
     lot_roles,
     lot_edit_role
@@ -59,6 +63,11 @@ class AccountDetails(Model):
     additionalClassifications = ListType(ModelType(UAEDRAndMFOClassification), default=list())
 
 
+class AuctionParameters(Model):
+    type = StringType(choices=['english', 'insider'])
+    dutchSteps = IntType(default=None, min_value=1, max_value=100)
+
+
 class Auction(Model):
     id = StringType()
     auctionID = StringType()
@@ -71,13 +80,7 @@ class Auction(Model):
     guarantee = ModelType(Guarantee, required=True)
     registrationFee = ModelType(Guarantee)
     accountDetails = ModelType(AccountDetails)
-    dutchSteps = IntType(default=None, min_value=1, max_value=100)
-
-    def validate_dutchSteps(self, data, value):
-        if value and data['procurementMethodType'] != 'Loki.insider':
-            raise ValidationError('Field dutchSteps is allowed only when procuremenentMethodType is Loki.insider')
-        if data['procurementMethodType'] == 'Loki.insider' and not value:
-            data['dutchSteps'] = 99 if data.get('dutchSteps') is None else data['dutchSteps']
+    auctionParameters = ModelType(AuctionParameters)
 
 
 @implementer(ILokiLot)
@@ -109,6 +112,13 @@ class Lot(BaseLot):
     def validate_auctions(self, data, value):
         if not value:
             return
+
+        # Use the first two auction because they must be english auctions
+        # because of strict order(english, english, insider)
+        for auction in value[:2]:
+            if auction.auctionParameters and auction.auctionParameters.dutchSteps:
+                raise ValidationError('dutchSteps can be filled only when procurementMethodType is Loki.insider.')
+
         if value[0].tenderingDuration:
             raise ValidationError('First loki.english have no tenderingDuration.')
         if not all(auction.tenderingDuration for auction in value[1:]):
@@ -118,17 +128,16 @@ class Lot(BaseLot):
 
     @serializable(serialized_name='auctions', serialize_when_none=False)
     def serialize_auctions(self):
-        if self.auctions:
-            self.auctions[0]['procurementMethodType'] = 'Loki.english'
-            self.auctions[1]['procurementMethodType'] = 'Loki.english'
-            self.auctions[2]['procurementMethodType'] = 'Loki.insider'
+        self.auctions[0]['procurementMethodType'] = 'Loki.english'
+        self.auctions[1]['procurementMethodType'] = 'Loki.english'
+        self.auctions[2]['procurementMethodType'] = 'Loki.insider'
 
-            auto_calculated_fields = ['value', 'minimalStep', 'registrationFee', 'guarantee']
-            for i in range(1, 3):
-                for key in auto_calculated_fields:
-                    object_class = self.auctions[0][key].__class__
-                    self.auctions[i][key] = object_class(self.auctions[0][key].serialize())
-                    self.auctions[i][key]['amount'] = self.auctions[0][key]['amount'] / 2
+        auto_calculated_fields = ['value', 'minimalStep', 'registrationFee', 'guarantee']
+        for i in range(1, 3):
+            for key in auto_calculated_fields:
+                object_class = self.auctions[0][key].__class__
+                self.auctions[i][key] = object_class(self.auctions[0][key].serialize())
+                self.auctions[i][key]['amount'] = self.auctions[0][key]['amount'] / 2
 
 
     @serializable(serialized_name='rectificationPeriod', serialize_when_none=False)
