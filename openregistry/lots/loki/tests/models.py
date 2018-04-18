@@ -6,7 +6,7 @@ from datetime import timedelta
 
 from schematics.exceptions import ModelValidationError
 
-from openprocurement.api.utils import get_now
+from openregistry.lots.core.utils import get_now
 
 from openregistry.lots.loki.models import (
     StartDateRequiredPeriod,

@@ -2,8 +2,8 @@
 import unittest
 from copy import deepcopy
 
-from openprocurement.api.tests.base import snitch
-from openprocurement.api.tests.blanks.document import (
+from openregistry.lots.core.tests.base import snitch
+from openregistry.lots.core.tests.blanks.document import (
     not_found,
     create_document_in_forbidden_resource_status,
     put_resource_document_invalid,
@@ -17,10 +17,11 @@ from openregistry.lots.loki.tests.base import (
     LotContentWebTest
 )
 from openregistry.lots.loki.tests.json_data import test_loki_document_data
-from openprocurement.api.models.registry_models.ocds import LOKI_DOCUMENT_TYPES
+from openregistry.lots.core.constants import LOKI_DOCUMENT_TYPES
 from openregistry.lots.loki.tests.blanks.document_blanks import (
     patch_resource_document,
-    model_validation
+    model_validation,
+    rectificationPeriod_document_workflow
 )
 
 class LotDocumentWithDSResourceTest(LotContentWebTest):
@@ -36,6 +37,7 @@ class LotDocumentWithDSResourceTest(LotContentWebTest):
     test_07_create_resource_document_json = snitch(create_resource_document_json)
     test_08_put_resource_document_json = snitch(put_resource_document_json)
     test_09_model_validation = snitch(model_validation)
+    test_10_rectificationPeriod_document_workflow = snitch(rectificationPeriod_document_workflow)
 
 
     # status, in which operations with lot documents (adding, updating) are forbidden

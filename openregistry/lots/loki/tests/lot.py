@@ -2,8 +2,8 @@
 import os
 import unittest
 
-from openprocurement.api.tests.base import BaseWebTest, snitch
-from openprocurement.api.tests.blanks.mixins import ResourceTestMixin
+from openregistry.lots.core.tests.base import BaseWebTest, snitch
+from openregistry.lots.core.tests.blanks.mixins import ResourceTestMixin
 from openregistry.lots.loki.tests.base import (
     BaseLotWebTest
 )
@@ -15,6 +15,7 @@ from openregistry.lots.loki.tests.blanks.lot_blanks import (
     change_dissolved_lot,
     check_lot_assets,
     check_lotIdentifier,
+    rectificationPeriod_workflow,
     check_decisions,
     change_pending_lot,
     change_composing_lot,
@@ -62,6 +63,7 @@ class LotResourceTest(BaseLotWebTest, ResourceTestMixin):
     test_22_simple_patch = snitch(simple_patch)
     test_change_composing_lot = snitch(change_composing_lot)
     test_check_decisions = snitch(check_decisions)
+    test_rectificationPeriod_workflow = snitch(rectificationPeriod_workflow)
 
 def suite():
     tests = unittest.TestSuite()

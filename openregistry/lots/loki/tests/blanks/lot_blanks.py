@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 from copy import deepcopy
 from uuid import uuid4
+from datetime import timedelta
 
-from openprocurement.api.utils import get_now
-from openprocurement.api.constants import ROUTE_PREFIX
-from openprocurement.api.tests.base import create_blacklist
+from openregistry.lots.core.utils import get_now, calculate_business_date
+from openregistry.lots.core.models import Period
+from openregistry.lots.core.constants import ROUTE_PREFIX
+from openregistry.lots.core.tests.base import create_blacklist
 
 from openregistry.lots.loki.models import Lot
 from openregistry.lots.loki.constants import STATUS_CHANGES, LOT_STATUSES
@@ -222,6 +224,45 @@ def check_decisions(self):
     self.assertEqual(response.json['data']['decisions'], lot_data_with_decisions['decisions'])
 
 
+def rectificationPeriod_workflow(self):
+    rectificationPeriod = Period()
+    rectificationPeriod.startDate = get_now() - timedelta(3)
+    rectificationPeriod.endDate = calculate_business_date(rectificationPeriod.startDate, timedelta(1))
+
+    response = create_single_lot(self, self.initial_data)
+    lot = response.json['data']
+    token = response.json['access']['token']
+    access_header = {'X-Access-Token': str(token)}
+
+    response = self.app.get('/{}'.format(lot['id']))
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(response.json['data']['id'], lot['id'])
+
+    # Change rectification period in db
+    fromdb = self.db.get(lot['id'])
+    fromdb = self.lot_model(fromdb)
+
+    fromdb.status = 'pending'
+    fromdb.title = 'title'
+    fromdb.rectificationPeriod = rectificationPeriod
+    fromdb = fromdb.store(self.db)
+    lot = fromdb
+    self.assertEqual(fromdb.id, lot['id'])
+
+    response = self.app.get('/{}'.format(lot['id']))
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(response.json['data']['id'], lot['id'])
+
+    response = self.app.patch_json('/{}'.format(lot['id']),
+                                   headers=access_header,
+                                   params={'data': {'title': ' PATCHED'}})
+    self.assertNotEqual(response.json['data']['title'], 'PATCHED')
+    self.assertEqual(lot['title'], response.json['data']['title'])
+
+    # add_cancellationDetails_document(self, asset)
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'deleted', access_header)
+
+
 def dateModified_resource(self):
     response = self.app.get('/')
     self.assertEqual(response.status, '200 OK')
@@ -278,7 +319,6 @@ def simple_patch(self):
     check_patch_status_200(self, '/{}'.format(lot['id']), 'pending')
 
     self.app.authorization = ('Basic', ('broker', ''))
-
     patch_data = {
         'data': {
             'officialRegistrationID': u'Інформація про державну реєстрацію'
