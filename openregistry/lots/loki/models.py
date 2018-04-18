@@ -1,22 +1,23 @@
 # -*- coding: utf-8 -*-
 from uuid import uuid4
-
+from copy import deepcopy
 from pyramid.security import Allow
 from schematics.exceptions import ValidationError
-from schematics.transforms import blacklist
+from schematics.transforms import blacklist, whitelist
 from schematics.types import StringType, IntType, URLType, MD5Type
 from schematics.types.compound import ModelType, ListType
+from schematics.types.serializable import serializable
 from zope.interface import implementer
 
-from openprocurement.api.models.auction_models.models import (
+from openregistry.lots.core.models import (
     Value
 )
-from openprocurement.api.models.models import (
+from openregistry.lots.core.models import (
     Guarantee,
     Period
 )
 
-from openprocurement.api.models.registry_models.ocds import (
+from openregistry.lots.core.models import (
     Classification,
     LokiDocument as Document,
     LokiItem as Item,
@@ -24,17 +25,22 @@ from openprocurement.api.models.registry_models.ocds import (
     AssetCustodian,
     AssetHolder
 )
-from openprocurement.api.models.schematics_extender import (
+from openregistry.lots.core.models import (
     Model,
     IsoDateTimeType,
     IsoDurationType,
 )
-from openprocurement.api.constants import IDENTIFIER_CODES
+from openregistry.lots.core.constants import IDENTIFIER_CODES
 from openregistry.lots.core.models import ILot, Lot as BaseLot
+from openregistry.lots.core.utils import (
+    get_now,
+    calculate_business_date
+)
 
-from .constants import LOT_STATUSES
+from .constants import LOT_STATUSES, RECTIFICATION_PERIOD_DURATION
 from .roles import (
-    lot_roles
+    lot_roles,
+    lot_edit_role
 )
 
 
@@ -89,12 +95,19 @@ class Lot(BaseLot):
     rectificationPeriod = ModelType(Period)
     lotCustodian = ModelType(AssetCustodian, serialize_when_none=False)
     lotHolder = ModelType(AssetHolder, serialize_when_none=False)
-    officialRegistrationID = StringType(serialize_when_none=True)
+    officialRegistrationID = StringType(serialize_when_none=False)
     items = ListType(ModelType(Item), default=list())
     documents = ListType(ModelType(Document), default=list())
     decisions = ListType(ModelType(Decision), default=list(), max_size=2)
     assets = ListType(MD5Type(), required=True, min_size=1, max_size=1)
     auctions = ListType(ModelType(Auction), max_size=3, min_size=3, required=True)
+
+    def __init__(self, *args, **kwargs):
+        super(Lot, self).__init__(*args, **kwargs)
+        if self.rectificationPeriod and self.rectificationPeriod.endDate < get_now():
+            self._options.roles['edit_pending'] = whitelist('status')
+        else:
+            self._options.roles['edit_pending'] = lot_edit_role
 
     def validate_auctions(self, data, value):
         if not value:
@@ -108,6 +121,14 @@ class Lot(BaseLot):
         data['auctions'][0]['procurementMethodType'] = 'Loki.english'
         data['auctions'][1]['procurementMethodType'] = 'Loki.english'
         data['auctions'][2]['procurementMethodType'] = 'Loki.insider'
+
+    @serializable(serialized_name='rectificationPeriod', serialize_when_none=False)
+    def serialize_rectificationPeriod(self):
+        if self.status == 'pending' and not self.rectificationPeriod:
+            self.rectificationPeriod = type(self).rectificationPeriod.model_class()
+            self.rectificationPeriod.startDate = get_now()
+            self.rectificationPeriod.endDate = calculate_business_date(self.rectificationPeriod.startDate,
+                                                                       RECTIFICATION_PERIOD_DURATION)
 
     def __acl__(self):
         acl = [

@@ -5,7 +5,7 @@ from openregistry.lots.core.models import (
     plain_role,
     listing_role
 )
-from openprocurement.api.models.registry_models.roles import (
+from openregistry.lots.core.models import (
     schematics_default_role,
     schematics_embedded_role
 )
@@ -38,7 +38,7 @@ publication_roles = {
 lot_create_role = (whitelist('status', 'auctions', 'assets', 'lotType', 'lotIdentifier', 'mode'))
 lot_edit_role = (blacklist('owner_token', 'owner', '_attachments',
                        'revisions', 'date', 'dateModified', 'documents',
-                       'lotID', 'mode', 'doc_id', 'items') + schematics_embedded_role)
+                       'lotID', 'mode', 'doc_id', 'items', 'rectificationPeriod') + schematics_embedded_role)
 view_role = (blacklist('owner_token',
                        '_attachments', 'revisions') + schematics_embedded_role)
 
