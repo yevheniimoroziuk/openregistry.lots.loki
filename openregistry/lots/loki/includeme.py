@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from pyramid.interfaces import IRequest
 
-from openprocurement.api.interfaces import IContentConfigurator
+from openregistry.lots.core.interfaces import IContentConfigurator
 from .models import Lot, ILokiLot
 from .adapters import BasicLotConfigurator
 

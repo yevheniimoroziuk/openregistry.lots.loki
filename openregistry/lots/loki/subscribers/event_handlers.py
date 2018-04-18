@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from pyramid.events import subscriber
 from openregistry.lots.loki.events import PublicationInitializeEvent, ItemInitializeEvent
-from openprocurement.api.utils import get_now
+from openregistry.lots.core.utils import get_now
 
 
 @subscriber(PublicationInitializeEvent, lotType="loki")

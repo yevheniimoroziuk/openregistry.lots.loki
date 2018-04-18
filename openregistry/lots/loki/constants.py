@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from datetime import timedelta
 
 LOT_STATUSES = [
     "draft", "composing", "pending", "deleted", "active.salable", "active.awaiting", "active.auction",
@@ -81,3 +82,5 @@ STATUS_CHANGES = {
         "next_status": {}
     },
 }
+
+RECTIFICATION_PERIOD_DURATION = timedelta(days=1)
