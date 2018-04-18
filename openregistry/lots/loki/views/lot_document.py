@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openprocurement.api.utils import (
+from openregistry.lots.core.utils import (
     get_file,
     update_file_content_type,
     json_view,
@@ -10,7 +10,7 @@ from openregistry.lots.core.utils import (
     save_lot, oplotsresource, apply_patch,
 )
 
-from openprocurement.api.validation import (
+from openregistry.lots.core.validation import (
     validate_file_upload,
     validate_document_data,
     validate_patch_document_data,
@@ -19,8 +19,28 @@ from openregistry.lots.core.validation import (
     validate_lot_document_update_not_by_author_or_lot_owner
 )
 from openregistry.lots.loki.validation import (
-    validate_document_operation_in_not_allowed_lot_status
+    validate_document_operation_in_not_allowed_lot_status,
+    rectificationPeriod_document_validation
 )
+
+post_validators = (
+    validate_file_upload,
+    validate_document_operation_in_not_allowed_lot_status,
+    rectificationPeriod_document_validation
+)
+put_validators = (
+    validate_document_data,
+    validate_document_operation_in_not_allowed_lot_status,
+    validate_lot_document_update_not_by_author_or_lot_owner,
+    rectificationPeriod_document_validation
+)
+patch_validators = (
+    validate_patch_document_data,
+    validate_document_operation_in_not_allowed_lot_status,
+    validate_lot_document_update_not_by_author_or_lot_owner,
+    rectificationPeriod_document_validation
+)
+
 
 
 @oplotsresource(name='loki:Lot Documents',
@@ -42,7 +62,7 @@ class LotDocumentResource(APIResource):
             ]).values(), key=lambda i: i['dateModified'])
         return {'data': collection_data}
 
-    @json_view(content_type="application/json", permission='upload_lot_documents', validators=(validate_file_upload, validate_document_operation_in_not_allowed_lot_status))
+    @json_view(content_type="application/json", permission='upload_lot_documents', validators=post_validators)
     def collection_post(self):
         """Lot Document Upload"""
         document = self.request.validated['document']
@@ -70,8 +90,7 @@ class LotDocumentResource(APIResource):
         ]
         return {'data': document_data}
 
-    @json_view(content_type="application/json", permission='upload_lot_documents', validators=(validate_document_data, validate_document_operation_in_not_allowed_lot_status,
-               validate_lot_document_update_not_by_author_or_lot_owner))
+    @json_view(content_type="application/json", permission='upload_lot_documents', validators=put_validators)
     def put(self):
         """Lot Document Update"""
         document = self.request.validated['document']
@@ -81,8 +100,7 @@ class LotDocumentResource(APIResource):
                         extra=context_unpack(self.request, {'MESSAGE_ID': 'lot_document_put'}))
             return {'data': document.serialize("view")}
 
-    @json_view(content_type="application/json", permission='upload_lot_documents', validators=(validate_patch_document_data,
-               validate_document_operation_in_not_allowed_lot_status, validate_lot_document_update_not_by_author_or_lot_owner))
+    @json_view(content_type="application/json", permission='upload_lot_documents', validators=patch_validators)
     def patch(self):
         """Lot Document Update"""
         if apply_patch(self.request, src=self.request.context.serialize()):
