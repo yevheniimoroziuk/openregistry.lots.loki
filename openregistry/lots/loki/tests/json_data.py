@@ -51,6 +51,10 @@ test_loki_lot_data = {
     "lotIdentifier": u"Q81318b19827",
     "lotType": "loki",
     "assets": [],
+    "decisions": [{
+        'decisionDate': get_now().isoformat(),
+        'decisionID': 'decisionLotID'
+    }],
     "auctions": [
         auction_english_data,
         auction_half_english_data,
