@@ -94,10 +94,9 @@ class Lot(BaseLot):
     officialRegistrationID = StringType(serialize_when_none=False)
     items = ListType(ModelType(Item), default=list())
     documents = ListType(ModelType(Document), default=list())
-    decisions = ListType(ModelType(Decision), default=list(), max_size=2)
+    decisions = ListType(ModelType(Decision), default=list(), min_size=1, max_size=2, required=True)
     assets = ListType(MD5Type(), required=True, min_size=1, max_size=1)
     auctions = ListType(ModelType(Auction), max_size=3, min_size=3, required=True)
-
 
     def get_role(self):
         root = self.__parent__

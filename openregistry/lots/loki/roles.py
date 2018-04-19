@@ -35,9 +35,9 @@ publication_roles = {
 # lot_create_role = (blacklist('owner_token', 'owner', '_attachments', 'revisions',
 #                          'date', 'dateModified', 'lotID', 'documents', 'publications'
 #                          'status', 'doc_id', 'items') + schematics_embedded_role)
-lot_create_role = (whitelist('status', 'auctions', 'assets', 'lotType', 'lotIdentifier', 'mode'))
+lot_create_role = (whitelist('status', 'auctions', 'assets', 'decisions', 'lotType', 'lotIdentifier', 'mode'))
 lot_edit_role = (blacklist('owner_token', 'owner', '_attachments',
-                       'revisions', 'date', 'dateModified', 'documents',
+                       'revisions', 'date', 'dateModified', 'documents', 'decisions',
                        'lotID', 'mode', 'doc_id', 'items', 'rectificationPeriod') + schematics_embedded_role)
 view_role = (blacklist('owner_token',
                        '_attachments', 'revisions') + schematics_embedded_role)
