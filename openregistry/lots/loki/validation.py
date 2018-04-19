@@ -29,16 +29,34 @@ def validate_publication_data(request, error_handler, **kwargs):
     validate_data(request, model)
 
 
-def validate_decision(request, error_handler, **kwargs):
-    is_decision_patched_wrong = bool(
-        request.context.decisions and (
-            len(request.json['data'].get('decisions', [])) == 0 or
-            request.context.decisions[0].serialize() != request.json['data']['decisions'][0]
+def validate_decision_post(request, error_handler, **kwargs):
+    if len(request.context.decisions) > 1:
+        raise_operation_error(request, error_handler,
+                              'Can\'t add more than one decisions to lot')
+
+
+def validate_decision_patch(request, error_handler, **kwargs):
+    # Validate second decision because second decision come from asset and can be changed
+    is_decisions_available = bool(
+        len(request.context.decisions) == 2 or
+        len(request.json['data'].get('decisions', [])) == 2
+    )
+    if request.json['data'].get('status') == 'pending' and not is_decisions_available:
+        raise_operation_error(request, error_handler,
+                                  'Can\'t switch to pending while decisions not available.')
+
+    is_asset_decision_patched_wrong = bool(
+        len(request.context.decisions) < 2 or
+        (
+            request.json['data'].get('decisions') and (
+                len(request.json['data']['decisions']) < 2 or
+                request.context.decisions[1].serialize() != request.json['data']['decisions'][1]
+            )
         )
     )
-    if is_decision_patched_wrong:
+    if request.context.status == 'pending' and is_asset_decision_patched_wrong:
         raise_operation_error(request, error_handler,
-                              'Can\'t update decision that was created from asset')
+                                  'Can\'t update decision that was created from asset')
 
 
 def rectificationPeriod_item_validation(request, error_handler, **kwargs):
