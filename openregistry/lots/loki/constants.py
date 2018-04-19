@@ -13,10 +13,10 @@ STATUS_CHANGES = {
         }
     },
     "composing": {
-        "editing_permissions": ["Administrator", "concierge"],
+        "editing_permissions": ["concierge"],
         "next_status": {
-            "pending": ["concierge", "Administrator"],
-            "invalid": ["concierge", "Administrator"],
+            "pending": ["concierge"],
+            "invalid": ["concierge"],
         }
     },
     "pending": {
