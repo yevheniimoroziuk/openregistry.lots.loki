@@ -94,6 +94,6 @@ lot_roles = {
     'edit.sold': whitelist(),
     'invalid': view_role,
     'edit.invalid': whitelist(),
-    'concierge': whitelist('status', 'decisions', 'title_ru'),
+    'concierge': whitelist('status', 'decisions', 'title', 'lotCustodian', 'description', 'lotHolder', 'items'),
     'convoy': whitelist('status', 'auctions')
 }
