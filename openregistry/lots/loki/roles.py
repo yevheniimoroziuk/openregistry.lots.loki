@@ -64,6 +64,7 @@ lot_roles = {
     # Pending role
     'pending': view_role,
     'edit_pending': lot_edit_role,
+    'edit_pendingAfterRectificationPeriod': whitelist('status'),
     # Deleted role
     'deleted': view_role,
     'edit_deleted': whitelist(),
