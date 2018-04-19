@@ -249,7 +249,6 @@ def check_auctions(self):
     self.assertEqual(lot['auctions'][2]['auctionParameters']['dutchSteps'], data['auctions'][2]['auctionParameters']['dutchSteps'])
 
 
-
 def check_decisions(self):
     self.app.authorization = ('Basic', ('broker', ''))
 
@@ -710,6 +709,19 @@ def change_pending_lot(self):
     # Move from 'pending' to 'pending' status
     check_patch_status_200(self, '/{}'.format(lot['id']), 'pending', access_header)
 
+    # Move status from Pending to Deleted 403
+    response = self.app.patch_json('/{}'.format(lot['id']),
+                                   headers=access_header,
+                                   params={'data': {'status': 'deleted'}},
+                                   status=403)
+    self.assertEqual(response.status, '403 Forbidden')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+    self.assertEqual(response.json['errors'][0]['description'],
+                    u"You can set deleted status"
+                    u"only when asset have at least one document with \'cancellationDetails\' documentType")
+
+
     # Move from 'pending' to 'deleted' status
     add_cancellationDetails_document(self, lot, access_header)
     check_patch_status_200(self, '/{}'.format(lot['id']), 'deleted', access_header)
@@ -776,6 +788,18 @@ def change_pending_lot(self):
     for status in STATUS_BLACKLIST['pending']['Administrator']:
         check_patch_status_403(self, '/{}'.format(lot['id']), status)
 
+    # Move status from Pending to Deleted 403
+    response = self.app.patch_json('/{}'.format(lot['id']),
+                                   params={'data': {'status': 'deleted'}},
+                                   status=403)
+    self.assertEqual(response.status, '403 Forbidden')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+    self.assertEqual(response.json['errors'][0]['description'],
+                    u"You can set deleted status"
+                    u"only when asset have at least one document with \'cancellationDetails\' documentType")
+
+
     # Move from 'pending' to 'deleted'
     self.app.authorization = ('Basic', ('broker', ''))
     add_cancellationDetails_document(self, lot, access_header)
@@ -819,6 +843,7 @@ def change_deleted_lot(self):
 
 
     self.app.authorization = ('Basic', ('broker', ''))
+
     # Move from 'pending' to 'deleted'
     add_cancellationDetails_document(self, lot, access_header)
     check_patch_status_200(self, '/{}'.format(lot['id']), 'deleted', access_header)

@@ -3,8 +3,7 @@ from uuid import uuid4
 from copy import deepcopy
 from pyramid.security import Allow
 from schematics.exceptions import ValidationError
-from schematics.transforms import blacklist, whitelist
-from schematics.types import StringType, IntType, URLType, MD5Type
+from schematics.types import StringType, IntType, MD5Type
 from schematics.types.compound import ModelType, ListType
 from schematics.types.serializable import serializable
 from zope.interface import implementer
@@ -26,7 +25,6 @@ from openregistry.lots.core.models import (
 
 )
 
-from openregistry.lots.core.constants import IDENTIFIER_CODES
 from openregistry.lots.core.models import ILot, Lot as BaseLot
 from openregistry.lots.core.utils import (
     get_now,
@@ -36,11 +34,9 @@ from openregistry.lots.core.utils import (
 from .constants import (
     LOT_STATUSES,
     RECTIFICATION_PERIOD_DURATION,
-    DEFAULT_DUTCH_STEPS
 )
 from .roles import (
     lot_roles,
-    lot_edit_role
 )
 
 
@@ -102,12 +98,25 @@ class Lot(BaseLot):
     assets = ListType(MD5Type(), required=True, min_size=1, max_size=1)
     auctions = ListType(ModelType(Auction), max_size=3, min_size=3, required=True)
 
-    def __init__(self, *args, **kwargs):
-        super(Lot, self).__init__(*args, **kwargs)
-        if self.rectificationPeriod and self.rectificationPeriod.endDate < get_now():
-            self._options.roles['edit_pending'] = whitelist('status')
+
+    def get_role(self):
+        root = self.__parent__
+        request = root.request
+        if request.authenticated_role == 'Administrator':
+            role = 'Administrator'
+        elif request.authenticated_role == 'concierge':
+            role = 'concierge'
+        elif request.authenticated_role == 'convoy':
+            role = 'convoy'
         else:
-            self._options.roles['edit_pending'] = lot_edit_role
+            after_rectificationPeriod = bool(
+                request.context.rectificationPeriod and
+                request.context.rectificationPeriod.endDate < get_now()
+            )
+            if request.context.status == 'pending' and after_rectificationPeriod:
+                return 'edit_pendingAfterRectificationPeriod'
+            role = 'edit_{}'.format(request.context.status)
+        return role
 
     def validate_auctions(self, data, value):
         if not value:
@@ -147,12 +156,6 @@ class Lot(BaseLot):
             self.rectificationPeriod.startDate = get_now()
             self.rectificationPeriod.endDate = calculate_business_date(self.rectificationPeriod.startDate,
                                                                        RECTIFICATION_PERIOD_DURATION)
-
-    def validate_status(self, data, value):
-        can_be_deleted = any([doc.documentType == 'cancellationDetails' for doc in data['documents']])
-        if value == 'deleted' and not can_be_deleted:
-            raise ValidationError(u"You can set deleted status "
-                                  u"only when asset have at least one document with \'cancellationDetails\' documentType")
 
     def __acl__(self):
         acl = [

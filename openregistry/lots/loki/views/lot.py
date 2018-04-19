@@ -15,13 +15,13 @@ from openregistry.lots.core.utils import (
 from openregistry.lots.core.validation import (
     validate_patch_lot_data,
 )
-from openregistry.lots.loki.events import PublicationInitializeEvent
-from openregistry.lots.loki.validation import validate_decision
+from openregistry.lots.loki.validation import validate_decision, validate_deleted_status
 
 patch_lot_validators = (
     validate_change_status,
     validate_patch_lot_data,
-    validate_decision
+    validate_decision,
+    validate_deleted_status
 
 )
 
