@@ -1,18 +1,17 @@
 Overview
 ========
 
-openregistry.lots.basic contains the description of the Registry Data Base.
+openregistry.lots.loki contains the description of the Lots Registry.
 
 Features
 --------
 
-* Lots are formed by DGF.
-* Several assets (or the one only) may be included in one lot.
-* Assets which are included in lot, will be marked as attached to it, after that lot is finally formed.
-* In case of at least one asset, which is going to be included in a lot, has 
-  already been attached to another one, such a lot will be marked as invalid.
-* After lot has been successfully created, it becomes available for auction.
-
+* Lot represents the finalized object to be privatized within the process .
+* One asset only may be included in a single lot.
+* Asset which is included in lot, marked as attached to it and can't be used for other lots formation.
+* Lot can be deleted only in case of `documentType: cancellationDetails` has been attached.
+* Time for the lot to be edited is `rectificationPeriod`. 
+* Lots in `status: active.salable` are available for further usage with a meaning of a procedure creation.
 
 Conventions
 -----------
@@ -45,7 +44,7 @@ Project status
 The project has pre alpha status.
 
 The source repository for this project is on GitHub: 
-https://github.com/openprocurement/openregistry.api  
+https://github.com/openprocurement/openregistry.lots.loki  
 
 Documentation of related packages
 ---------------------------------
