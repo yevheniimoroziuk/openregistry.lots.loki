@@ -14,11 +14,8 @@ from openregistry.lots.core.utils import (
 
 from openregistry.lots.core.validation import (
     validate_patch_lot_data,
-    validate_lot_data,
-    validate_post_lot_role,
-
 )
-from openregistry.lots.loki.validation import validate_decision_post, validate_decision_patch, validate_deleted_status
+from openregistry.lots.loki.validation import validate_decision_patch, validate_deleted_status
 
 patch_lot_validators = (
     validate_patch_lot_data,
@@ -26,11 +23,6 @@ patch_lot_validators = (
     validate_decision_patch,
     validate_deleted_status
 
-)
-post_lot_validators = (
-    validate_lot_data,
-    validate_post_lot_role,
-    validate_decision_post
 )
 
 
@@ -45,10 +37,6 @@ class LotResource(APIResource):
     def get(self):
         lot_data = self.context.serialize(self.context.status)
         return {'data': lot_data}
-
-    @json_view(content_type="application/json", permission='create_lot', validators=post_lot_validators)
-    def post(self):
-        return super(LotResource, self).post()
 
     @json_view(content_type="application/json", validators=patch_lot_validators,
                permission='edit_lot')

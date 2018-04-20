@@ -30,7 +30,7 @@ def validate_publication_data(request, error_handler, **kwargs):
 
 
 def validate_decision_post(request, error_handler, **kwargs):
-    if len(request.context.decisions) > 1:
+    if len(request.validated['lot'].decisions) > 1:
         raise_operation_error(request, error_handler,
                               'Can\'t add more than one decisions to lot')
 
