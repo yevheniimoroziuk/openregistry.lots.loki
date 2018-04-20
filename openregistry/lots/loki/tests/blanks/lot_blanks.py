@@ -269,6 +269,23 @@ def check_auctions(self):
 def check_decisions(self):
     self.app.authorization = ('Basic', ('broker', ''))
 
+    data_with_two_decisions = deepcopy(self.initial_data)
+    data_with_two_decisions['decisions'].append({
+        'decisionDate': get_now().isoformat(),
+        'decisionID': 'secondDecisionID'
+    })
+    response = self.app.post_json(
+        '/',
+        params={'data': data_with_two_decisions},
+        status=403
+    )
+    self.assertEqual(response.status, '403 Forbidden')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(
+        response.json['errors'][0]['description'],
+        'Can\'t add more than one decisions to lot'
+    )
+
     response = create_single_lot(self, self.initial_data)
     lot = response.json['data']
     token = response.json['access']['token']
