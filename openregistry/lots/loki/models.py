@@ -7,7 +7,9 @@ from schematics.types import StringType, IntType, MD5Type
 from schematics.types.compound import ModelType, ListType
 from schematics.types.serializable import serializable
 from zope.interface import implementer
-
+from openregistry.lots.core.constants import (
+    SANDBOX_MODE
+)
 
 from openregistry.lots.core.models import (
     Classification,
@@ -62,6 +64,8 @@ class AccountDetails(Model):
 class AuctionParameters(Model):
     type = StringType(choices=['english', 'insider'])
     dutchSteps = IntType(default=None, min_value=1, max_value=100)
+    if SANDBOX_MODE:
+        procurementMethodDetails = StringType()
 
 
 class Auction(Model):

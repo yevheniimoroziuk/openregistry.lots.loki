@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from pyramid.events import subscriber
 from openregistry.lots.core.events import LotInitializeEvent
+from openregistry.lots.core.constants import SANDBOX_MODE
 from openprocurement.api.utils import get_now
 
 from openregistry.lots.loki.constants import DEFAULT_DUTCH_STEPS
@@ -18,3 +19,6 @@ def tender_init_handler(event):
         if auction.procurementMethodType == 'Loki.insider':
             auction.auctionParameters.type = 'insider'
             auction.auctionParameters.dutchSteps = DEFAULT_DUTCH_STEPS if auction.auctionParameters.dutchSteps is None else auction.auctionParameters.dutchSteps
+    if SANDBOX_MODE:
+        for auction in event.lot.auctions[1:]:
+            auction.auctionParameters.procurementMethodDetails = event.lot.auctions[0].auctionParameters.procurementMethodDetails
