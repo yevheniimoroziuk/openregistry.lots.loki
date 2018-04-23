@@ -9,13 +9,13 @@
     :google-site-verification: kmqHGqhpzgef4t5OVKoQCPa5v-CK14HOLmVrZV2QgmQ
 
 
-Welcome to openregistry.lots.basic's documentation!
+Welcome to openregistry.lots.loki's documentation!
 ========================================================
 
 Please report any problems or suggestions for improvement either via the
 `mailing list <http://groups.google.com/group/open-procurement-general>`_ or
 the `issue tracker
-<https://github.com/openprocurement/openregistry.lots.basic/issues>`_.
+<https://github.com/openprocurement/openregistry.lots.loki/issues>`_.
 
 Contents:
 
