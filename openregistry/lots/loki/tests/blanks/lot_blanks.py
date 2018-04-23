@@ -1,11 +1,13 @@
  # -*- coding: utf-8 -*-
+import unittest
+
 from copy import deepcopy
 from uuid import uuid4
 from datetime import timedelta
 
 from openregistry.lots.core.utils import get_now, calculate_business_date
 from openregistry.lots.core.models import Period
-from openregistry.lots.core.constants import ROUTE_PREFIX
+from openregistry.lots.core.constants import ROUTE_PREFIX, SANDBOX_MODE
 from openregistry.lots.core.tests.base import create_blacklist
 
 from openregistry.lots.loki.models import Lot
@@ -135,6 +137,50 @@ def create_single_lot(self, data, status=None):
         return new_json
 
     return response
+
+
+@unittest.skipIf(not SANDBOX_MODE, 'If sandbox mode is enabled auctionParameters has additional field procurementMethodDetails')
+def procurementMethodDetails_check_with_sandbox(self):
+    data = deepcopy(self.initial_data)
+    data['auctions'][0]['auctionParameters'] = {'procurementMethodDetails': 'quick'}
+    response = create_single_lot(self, data)
+    self.assertEqual(
+        response.json['data']['auctions'][0]['auctionParameters']['procurementMethodDetails'],
+        data['auctions'][0]['auctionParameters']['procurementMethodDetails']
+    )
+    self.assertEqual(
+        response.json['data']['auctions'][1]['auctionParameters']['procurementMethodDetails'],
+        data['auctions'][0]['auctionParameters']['procurementMethodDetails']
+    )
+    self.assertEqual(
+        response.json['data']['auctions'][2]['auctionParameters']['procurementMethodDetails'],
+        data['auctions'][0]['auctionParameters']['procurementMethodDetails']
+    )
+
+
+@unittest.skipIf(SANDBOX_MODE, 'If sandbox mode is disabled auctionParameters has not procurementMethodDetails field')
+def procurementMethodDetails_check_without_sandbox(self):
+    data = deepcopy(self.initial_data)
+    data['auctions'][0]['auctionParameters'] = {'procurementMethodDetails': 'quick'}
+    response = self.app.post_json('/', {"data": data}, status=422)
+    self.assertEqual(response.status, '422 Unprocessable Entity')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['errors'][0]['description']['auctionParameters']['procurementMethodDetails'], u'Rogue field')
+
+    response = create_single_lot(self, self.initial_data)
+    lot = response.json['data']
+    token = response.json['access']['token']
+    access_header = {'X-Access-Token': str(token)}
+
+    response = self.app.patch_json(
+        '/{}'.format(lot['id']),
+        params={'data': data},
+        headers=access_header,
+        status=422
+    )
+    self.assertEqual(response.status, '422 Unprocessable Entity')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['errors'][0]['description']['auctionParameters']['procurementMethodDetails'], u'Rogue field')
 
 
 def check_lotIdentifier(self):
