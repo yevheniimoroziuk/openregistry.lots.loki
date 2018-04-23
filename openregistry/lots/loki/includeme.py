@@ -6,7 +6,7 @@ from .models import Lot, ILokiLot
 from .adapters import BasicLotConfigurator, LokiLotManagerAdapter
 
 
-def includeme(config):
+def includeme(config, plugin_config=None):
     config.add_lotType(Lot)
     config.scan("openregistry.lots.loki.views")
     config.scan("openregistry.lots.loki.subscribers")
