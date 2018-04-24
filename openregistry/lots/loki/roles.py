@@ -47,7 +47,9 @@ lot_roles = {
     'edit_draft': whitelist('status'),
     # Composing role
     'composing': view_role,
-    'edit_composing': whitelist(),
+    'edit_composing': whitelist('status', 'auctions'),
+    'verification': view_role,
+    'edit_verification': whitelist(),
     # Pending role
     'pending': view_role,
     'edit_pending': lot_edit_role,

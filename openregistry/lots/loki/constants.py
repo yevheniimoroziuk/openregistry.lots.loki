@@ -2,7 +2,7 @@
 from datetime import timedelta
 
 LOT_STATUSES = [
-    "draft", "composing", "pending", "deleted", "active.salable", "active.awaiting", "active.auction",
+    "draft", "composing", "verification",  "pending", "deleted", "active.salable", "active.awaiting", "active.auction",
     "active.contracting", "pending.sold", "pending.dissolution", "sold", "dissolved", "invalid"]
 
 STATUS_CHANGES = {
@@ -13,6 +13,12 @@ STATUS_CHANGES = {
         }
     },
     "composing": {
+        "editing_permissions": ["lot_owner", "Administrator"],
+        "next_status": {
+            "verification": ["lot_owner", "Administrator"]
+        }
+    },
+    "verification": {
         "editing_permissions": ["concierge"],
         "next_status": {
             "pending": ["concierge"],
