@@ -32,7 +32,6 @@ patch_lot_validators = (
                 description="Open Contracting compatible data exchange format.")
 class LotResource(APIResource):
 
-
     @json_view(permission='view_lot')
     def get(self):
         lot_data = self.context.serialize(self.context.status)

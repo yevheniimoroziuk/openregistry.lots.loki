@@ -10,9 +10,7 @@ def includeme(config, plugin_config=None):
     config.add_lotType(Lot)
     config.scan("openregistry.lots.loki.views")
     config.scan("openregistry.lots.loki.subscribers")
-    config.registry.registerAdapter(BasicLotConfigurator,
-                                    (ILokiLot, IRequest),
-                                    IContentConfigurator)
-    config.registry.registerAdapter(LokiLotManagerAdapter,
-                                    (ILokiLot,),
-                                    ILotManager)
+    configurator = (BasicLotConfigurator, (ILokiLot, IRequest), IContentConfigurator)
+    manager = (LokiLotManagerAdapter, (ILokiLot,), ILotManager)
+    for adapter in (configurator, manager):
+        config.registry.registerAdapter(*adapter)

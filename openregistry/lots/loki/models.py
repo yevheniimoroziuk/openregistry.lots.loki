@@ -165,6 +165,5 @@ class Lot(BaseLot):
             (Allow, '{}_{}'.format(self.owner, self.owner_token), 'edit_lot'),
             (Allow, '{}_{}'.format(self.owner, self.owner_token), 'upload_lot_documents'),
             (Allow, '{}_{}'.format(self.owner, self.owner_token), 'upload_lot_items'),
-            (Allow, '{}_{}'.format(self.owner, self.owner_token), 'upload_lot_publications'),
         ]
         return acl

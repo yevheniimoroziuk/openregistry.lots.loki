@@ -22,13 +22,6 @@ def validate_item_data(request, error_handler, **kwargs):
     validate_data(request, model)
 
 
-def validate_publication_data(request, error_handler, **kwargs):
-    update_logging_context(request, {'publication_id': '__new__'})
-    context = request.context if 'publications' in request.context else request.context.__parent__
-    model = type(context).publications.model_class
-    validate_data(request, model)
-
-
 def validate_decision_post(request, error_handler, **kwargs):
     if len(request.validated['lot'].decisions) > 1:
         raise_operation_error(request, error_handler,
