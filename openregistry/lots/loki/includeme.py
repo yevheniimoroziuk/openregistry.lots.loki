@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from pyramid.interfaces import IRequest
 
-from openregistry.lots.core.interfaces import IContentConfigurator
+from openregistry.lots.core.interfaces import IContentConfigurator, ILotManager
 from .models import Lot, ILokiLot
-from .adapters import BasicLotConfigurator
+from .adapters import BasicLotConfigurator, LokiLotManagerAdapter
 
 
 def includeme(config, plugin_config=None):
@@ -13,3 +13,6 @@ def includeme(config, plugin_config=None):
     config.registry.registerAdapter(BasicLotConfigurator,
                                     (ILokiLot, IRequest),
                                     IContentConfigurator)
+    config.registry.registerAdapter(LokiLotManagerAdapter,
+                                    (ILokiLot,),
+                                    ILotManager)

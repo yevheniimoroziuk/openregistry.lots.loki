@@ -3,4 +3,4 @@ api:
   plugins:
     lots.core:
       plugins:
-        lots.basic:
+        lots.loki:

@@ -2,7 +2,7 @@
 
 import unittest
 
-from openregistry.lots.loki.tests import lot, document, publication, item
+from openregistry.lots.loki.tests import lot, document, item
 
 
 def suite():
@@ -10,7 +10,6 @@ def suite():
     tests.addTest(document.suite())  # TODO: find out where tests interfere between each other
     tests.addTest(lot.suite())
     tests.addTest(item.suite())
-    tests.addTest(publication.suite())
     return tests
 
 
