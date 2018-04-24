@@ -118,64 +118,6 @@ class DummyModelsTest(unittest.TestCase):
         auction.validate()
         self.assertEqual(auction.auctionParameters.dutchSteps, data['auctionParameters']['dutchSteps'])
 
-    # def test_Publication(self):
-    #     publication = Publication()
-    #
-    #     self.assertEqual(publication.serialize('create'), None)
-    #     self.assertEqual(publication.serialize('edit'), None)
-    #
-    #     data = {
-    #         'auctions': [
-    #             publication_auction_english_data,
-    #             publication_auction_english_data,
-    #             publication_auction_insider_data
-    #         ],
-    #         'decisions': [{
-    #             'decisionDate': now.isoformat(),
-    #             'decisionID': 'decisionID'
-    #         }]
-    #     }
-    #
-    #     # with self.assertRaises(ModelValidationError) as ex:
-    #     #     publication.validate()
-    #     # self.assertEqual(
-    #     #     ex.exception.messages,
-    #     #     {'decision': [u'This field is required.']}
-    #     # )
-    #
-    #     publication.import_data(data)
-    #     with self.assertRaises(ModelValidationError) as ex:
-    #         publication.validate()
-    #     self.assertEqual(
-    #         ex.exception.messages,
-    #         {'auctions': [u'In second loki.english value.amount must be a half of value.amount first loki.english']}
-    #     )
-    #
-    #     data.update({
-    #         'auctions': [
-    #             publication_auction_english_data,
-    #             publication_auction_english_half_data,
-    #             publication_auction_english_half_data
-    #         ]
-    #     })
-    #     publication.import_data(data)
-    #     with self.assertRaises(ModelValidationError) as ex:
-    #         publication.validate()
-    #     self.assertEqual(
-    #         ex.exception.messages,
-    #         {'auctions': [u'Loki.english and Loki.insider must have same value.amount']}
-    #     )
-    #
-    #     data.update({
-    #         'auctions': [
-    #             publication_auction_english_data,
-    #             publication_auction_english_half_data,
-    #             publication_auction_insider_data
-    #         ]
-    #     })
-    #     publication.import_data(data)
-    #     publication.validate()
-
 
 def suite():
     tests = unittest.TestSuite()

@@ -50,9 +50,8 @@ class LotItemResource(APIResource):
     @json_view(permission='view_lot')
     def get(self):
         """Lot Item Read"""
-        publication = self.request.validated['publication']
-        publication_data = publication.serialize("view")
-        return {'data': publication_data}
+        item = self.request.validated['item']
+        return {'data': item.serialize("view")}
 
     @json_view(content_type="application/json", permission='upload_lot_items', validators=(validate_item_data, rectificationPeriod_item_validation))
     def patch(self):

@@ -15,9 +15,6 @@ item_create_role = blacklist('id')
 item_edit_role = blacklist('id')
 item_view_role = (schematics_default_role + blacklist())
 
-publication_create_role = blacklist('id', 'date', 'dateModified', 'documents')
-publication_edit_role = blacklist('id', 'date', 'dateModified', 'documents')
-publication_view_role = (schematics_default_role + blacklist())
 
 item_roles = {
     'create': item_create_role,
@@ -25,16 +22,6 @@ item_roles = {
     'view': item_view_role,
 }
 
-publication_roles = {
-    'create': publication_create_role,
-    'edit': publication_edit_role,
-    'view': publication_view_role,
-}
-
-
-# lot_create_role = (blacklist('owner_token', 'owner', '_attachments', 'revisions',
-#                          'date', 'dateModified', 'lotID', 'documents', 'publications'
-#                          'status', 'doc_id', 'items') + schematics_embedded_role)
 lot_create_role = (whitelist('status', 'auctions', 'assets', 'decisions', 'lotType', 'lotIdentifier', 'mode'))
 lot_edit_role = (blacklist('owner_token', 'owner', '_attachments',
                        'revisions', 'date', 'dateModified', 'documents', 'decisions',
