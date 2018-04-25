@@ -4,6 +4,7 @@ from openregistry.lots.core.utils import (
     context_unpack,
     APIResource
 )
+from openregistry.lots.core.interfaces import ILotManager
 from openregistry.lots.core.validation import (
     validate_change_status,
 )
@@ -45,6 +46,7 @@ class LotResource(APIResource):
     @json_view(content_type="application/json", validators=patch_lot_validators,
                permission='edit_lot')
     def patch(self):
+        self.request.registry.getAdapter(self.context, ILotManager).change_lot(self.request)
         lot = self.context
         apply_patch(self.request, src=self.request.validated['lot_src'])
         self.LOGGER.info(
