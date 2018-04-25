@@ -56,7 +56,7 @@ class DummyModelsTest(unittest.TestCase):
 
     def test_Auction(self):
         data = {
-            "procurementMethodType": "Loki.english",
+            "procurementMethodType": "sellout.english",
             "auctionPeriod": {
                 "startDate": now.isoformat(),
                 "endDate": (now + timedelta(days=5)).isoformat()
@@ -76,16 +76,6 @@ class DummyModelsTest(unittest.TestCase):
             },
         }
         auction = Auction()
-        with self.assertRaises(ModelValidationError) as ex:
-            auction.validate()
-        self.assertEqual(
-            ex.exception.messages,
-            {'auctionPeriod': [u'This field is required.'],
-            'value': [u'This field is required.'],
-            'minimalStep': [u'This field is required.'],
-            'guarantee': [u'This field is required.'],
-             }
-        )
         auction.import_data(data)
         auction.validate()
 
@@ -113,7 +103,7 @@ class DummyModelsTest(unittest.TestCase):
 
         auction = Auction()
         data['auctionParameters'] = {'dutchSteps': 55}
-        data['procurementMethodType'] = 'Loki.insider'
+        data['procurementMethodType'] = 'sellout.insider'
         auction.import_data(data)
         auction.validate()
         self.assertEqual(auction.auctionParameters.dutchSteps, data['auctionParameters']['dutchSteps'])
