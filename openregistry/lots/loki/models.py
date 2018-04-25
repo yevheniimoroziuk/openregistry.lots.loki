@@ -160,14 +160,6 @@ class Lot(BaseLot):
 
             insider.tenderingDuration = half_english.tenderingDuration
 
-    @serializable(serialized_name='rectificationPeriod', serialize_when_none=False)
-    def serialize_rectificationPeriod(self):
-        if self.status == 'pending' and not self.rectificationPeriod:
-            self.rectificationPeriod = type(self).rectificationPeriod.model_class()
-            self.rectificationPeriod.startDate = get_now()
-            self.rectificationPeriod.endDate = calculate_business_date(self.rectificationPeriod.startDate,
-                                                                       RECTIFICATION_PERIOD_DURATION)
-
     def __acl__(self):
         acl = [
             (Allow, '{}_{}'.format(self.owner, self.owner_token), 'edit_lot'),
