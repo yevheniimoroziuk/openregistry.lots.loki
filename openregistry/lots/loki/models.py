@@ -52,14 +52,14 @@ class StartDateRequiredPeriod(Period):
 
 
 class UAEDRAndMFOClassification(Classification):
-    scheme = StringType(choices=['UA-EDR', 'MFO'], required=True)
+    scheme = StringType(choices=['UA-EDR', 'MFO', 'accountNumber'], required=True)
 
 
 class AccountDetails(Model):
     description = StringType()
     bankName = StringType()
     accountNumber = StringType()
-    additionalClassifications = ListType(ModelType(UAEDRAndMFOClassification), default=list())
+    accountCodes = ListType(ModelType(UAEDRAndMFOClassification), default=list())
 
 
 class AuctionParameters(Model):

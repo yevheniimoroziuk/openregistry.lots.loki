@@ -53,6 +53,33 @@ class DummyModelsTest(unittest.TestCase):
 
         account_details.import_data(data)
         account_details.validate()
+        data['accountCodes'] = [
+            {
+                'scheme': 'wrong',
+                'id': '1231232'
+            }
+        ]
+        account_details.import_data(data)
+        with self.assertRaises(ModelValidationError) as ex:
+            account_details.validate()
+        self.assertEqual(
+            ex.exception.messages,
+            {'accountCodes': [{
+                 'scheme': [u"Value must be one of ['UA-EDR', 'MFO', 'accountNumber']."],
+                 'description': [u"This field is required."]
+                }]
+            }
+        )
+
+        data['accountCodes'] = [
+            {
+                'scheme': 'MFO',
+                'id': '1231232',
+                'description': 'just description'
+            }
+        ]
+        account_details.import_data(data)
+        account_details.validate()
 
     def test_Auction(self):
         data = {
