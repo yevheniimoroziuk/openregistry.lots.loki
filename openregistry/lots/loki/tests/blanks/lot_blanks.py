@@ -4,6 +4,7 @@ import unittest
 from copy import deepcopy
 from uuid import uuid4
 from datetime import timedelta
+from isodate import parse_datetime
 
 from openregistry.lots.core.utils import get_now, calculate_business_date
 from openregistry.lots.core.models import Period
@@ -18,7 +19,8 @@ from openregistry.lots.loki.tests.json_data import (
 from openregistry.lots.loki.constants import (
     STATUS_CHANGES,
     LOT_STATUSES,
-    DEFAULT_DUTCH_STEPS
+    DEFAULT_DUTCH_STEPS,
+    RECTIFICATION_PERIOD_DURATION
 )
 
 
@@ -452,6 +454,36 @@ def check_decisions(self):
 
 
 def rectificationPeriod_workflow(self):
+    response = create_single_lot(self, self.initial_data)
+    lot = response.json['data']
+    token = response.json['access']['token']
+    access_header = {'X-Access-Token': str(token)}
+
+    self.assertNotIn('rectificationPeriod', response.json['data'])
+
+    response = self.app.patch_json('/{}'.format(lot['id']),
+                                   headers=access_header,
+                                   params={'data': {'status': 'composing'}})
+    self.assertNotIn('rectificationPeriod', response.json['data'])
+
+    add_auctions(self, lot, access_header)
+    response = self.app.patch_json('/{}'.format(lot['id']),
+                                   headers=access_header,
+                                   params={'data': {'status': 'verification'}})
+    self.assertNotIn('rectificationPeriod', response.json['data'])
+
+    self.app.authorization = ('Basic', ('concierge', ''))
+    add_decisions(self, lot)
+    response = self.app.patch_json('/{}'.format(lot['id']),
+                                   params={'data': {'status': 'pending'}})
+    self.assertIn('rectificationPeriod', response.json['data'])
+    startDate = parse_datetime(response.json['data']['rectificationPeriod']['startDate'])
+    endDate = parse_datetime(response.json['data']['rectificationPeriod']['endDate'])
+    self.assertEqual(endDate - startDate, RECTIFICATION_PERIOD_DURATION)
+
+    self.app.authorization = ('Basic', ('broker', ''))
+
+
     rectificationPeriod = Period()
     rectificationPeriod.startDate = get_now() - timedelta(3)
     rectificationPeriod.endDate = calculate_business_date(rectificationPeriod.startDate, timedelta(1))
