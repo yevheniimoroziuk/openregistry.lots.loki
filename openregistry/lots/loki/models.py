@@ -39,6 +39,7 @@ from .constants import (
 )
 from .roles import (
     lot_roles,
+    auction_roles
 )
 
 
@@ -67,20 +68,41 @@ class AuctionParameters(Model):
     if SANDBOX_MODE:
         procurementMethodDetails = StringType()
 
+    def validate_dutchSteps(self, data, value):
+        if data['type'] == 'english' and value:
+            raise ValidationError('dutchSteps can be filled only when type is insider.')
+
 
 class Auction(Model):
-    id = StringType()
+    class Options:
+        roles = auction_roles
+
+    id = StringType(required=True, min_length=1, default=lambda: uuid4().hex)
     auctionID = StringType()
-    procurementMethodType = StringType(choices=['Loki.english', 'Loki.insider'])
-    auctionPeriod = ModelType(StartDateRequiredPeriod, required=True)
-    tenderingDuration = IsoDurationType()
-    documents = ListType(ModelType(Document))
-    value = ModelType(Value, required=True)
-    minimalStep = ModelType(Value, required=True)
-    guarantee = ModelType(Guarantee, required=True)
+    status = StringType()
+    procurementMethodType = StringType(choices=['sellout.english', 'sellout.insider'])
+    tenderAttempts = IntType(max_value=3)
+    auctionPeriod = ModelType(StartDateRequiredPeriod) # req
+    value = ModelType(Value) # req
+    minimalStep = ModelType(Value) # req
+    guarantee = ModelType(Guarantee) # req
     registrationFee = ModelType(Guarantee)
     accountDetails = ModelType(AccountDetails)
     auctionParameters = ModelType(AuctionParameters)
+    tenderingDuration = IsoDurationType()
+
+    def get_role(self):
+        root = self.__parent__.__parent__
+        request = root.request
+        if request.authenticated_role == 'Administrator':
+            role = 'Administrator'
+        elif request.authenticated_role == 'concierge':
+            role = 'concierge'
+        elif request.authenticated_role == 'convoy':
+            role = 'convoy'
+        else:
+            role = 'edit_{}.{}'.format(request.context.tenderAttempts, request.context.procurementMethodType)
+        return role
 
 
 @implementer(ILokiLot)
@@ -100,7 +122,7 @@ class Lot(BaseLot):
     documents = ListType(ModelType(Document), default=list())
     decisions = ListType(ModelType(Decision), default=list(), min_size=1, max_size=2, required=True)
     assets = ListType(MD5Type(), required=True, min_size=1, max_size=1)
-    auctions = ListType(ModelType(Auction), max_size=3, min_size=3, required=True)
+    auctions = ListType(ModelType(Auction), default=list(), serialize_when_none=False)
 
     def get_role(self):
         root = self.__parent__
@@ -121,36 +143,22 @@ class Lot(BaseLot):
             role = 'edit_{}'.format(request.context.status)
         return role
 
-    def validate_auctions(self, data, value):
-        if not value:
-            return
+    @serializable(serialize_when_none=False, serialized_name='some')
+    def auctions_serialize(self):
+        if self.auctions:
+            auto_calculated_fields = ['value', 'minimalStep', 'registrationFee', 'guarantee']
+            auctions = sorted(self.auctions, key=lambda a: a.tenderAttempts)
+            english = auctions[0]
+            half_english = auctions[1]
+            insider = auctions[2]
+            for auction in (half_english, insider):
+                for key in auto_calculated_fields:
+                    object_class = getattr(self.__class__.auctions.model_class, key)
+                    if english[key]:
+                        auction[key] = object_class(english[key].serialize())
+                        auction[key]['amount'] = english[key]['amount'] / 2
 
-        # Use the first two auction because they must be english auctions
-        # because of strict order(english, english, insider)
-        for auction in value[:2]:
-            if auction.auctionParameters and auction.auctionParameters.dutchSteps:
-                raise ValidationError('dutchSteps can be filled only when procurementMethodType is Loki.insider.')
-
-        if value[0].tenderingDuration:
-            raise ValidationError('First loki.english have no tenderingDuration.')
-        if not all(auction.tenderingDuration for auction in value[1:]):
-            raise ValidationError('tenderingDuration is required for second loki.english and loki.insider.')
-        if value[1].tenderingDuration != value[2].tenderingDuration:
-            raise ValidationError('tenderingDuration for second loki.english and loki.insider should be the same.')
-
-    @serializable(serialized_name='auctions', serialize_when_none=False)
-    def serialize_auctions(self):
-        self.auctions[0]['procurementMethodType'] = 'Loki.english'
-        self.auctions[1]['procurementMethodType'] = 'Loki.english'
-        self.auctions[2]['procurementMethodType'] = 'Loki.insider'
-
-        auto_calculated_fields = ['value', 'minimalStep', 'registrationFee', 'guarantee']
-        for i in range(1, 3):
-            for key in auto_calculated_fields:
-                object_class = self.auctions[0][key].__class__
-                self.auctions[i][key] = object_class(self.auctions[0][key].serialize())
-                self.auctions[i][key]['amount'] = self.auctions[0][key]['amount'] / 2
-
+            insider.tenderingDuration = half_english.tenderingDuration
 
     @serializable(serialized_name='rectificationPeriod', serialize_when_none=False)
     def serialize_rectificationPeriod(self):
@@ -165,5 +173,6 @@ class Lot(BaseLot):
             (Allow, '{}_{}'.format(self.owner, self.owner_token), 'edit_lot'),
             (Allow, '{}_{}'.format(self.owner, self.owner_token), 'upload_lot_documents'),
             (Allow, '{}_{}'.format(self.owner, self.owner_token), 'upload_lot_items'),
+            (Allow, '{}_{}'.format(self.owner, self.owner_token), 'upload_lot_auctions'),
         ]
         return acl
