@@ -15,6 +15,8 @@ from openregistry.lots.loki.tests.blanks.auction_blanks import (
     rectificationPeriod_auction_workflow,
     procurementMethodDetails_check_with_sandbox,
     procurementMethodDetails_check_without_sandbox,
+    submissionMethodDetails_check_with_sandbox,
+    submissionMethodDetails_check_without_sandbox
 
 )
 
@@ -27,6 +29,8 @@ class LotAuctionResourceTest(LotContentWebTest):
     test_rectificationPeriod_auction_workflow = snitch(rectificationPeriod_auction_workflow)
     test_procurementMethodDetails_check_with_sandbox = snitch(procurementMethodDetails_check_with_sandbox)
     test_procurementMethodDetails_check_without_sandbox = snitch(procurementMethodDetails_check_without_sandbox)
+    test_submissionMethodDetails_check_with_sandbox = snitch(submissionMethodDetails_check_with_sandbox)
+    submissionMethodDetails_check_without_sandbox = snitch(submissionMethodDetails_check_without_sandbox)
 
 
 def suite():
