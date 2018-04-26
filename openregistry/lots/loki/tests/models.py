@@ -88,6 +88,7 @@ class DummyModelsTest(unittest.TestCase):
                 "startDate": now.isoformat(),
                 "endDate": (now + timedelta(days=5)).isoformat()
             },
+            "tenderAttempts": 3,
             "tenderingDuration": 'P4DT5H',
             "guarantee": {
                 "amount": 30.54,
@@ -101,12 +102,15 @@ class DummyModelsTest(unittest.TestCase):
                 "amount": 1500.54,
                 "currency": "UAH"
             },
+            "auctionParameters": {
+                "type": "insider",
+            }
         }
         auction = Auction()
         auction.import_data(data)
         auction.validate()
 
-        data['auctionParameters'] = {'dutchSteps': -3}
+        data['auctionParameters'] = {'dutchSteps': -3, 'type': 'insider'}
         auction.import_data(data)
         with self.assertRaises(ModelValidationError) as ex:
             auction.validate()
@@ -117,7 +121,7 @@ class DummyModelsTest(unittest.TestCase):
             }
         )
 
-        data['auctionParameters'] = {'dutchSteps': 132}
+        data['auctionParameters'] = {'dutchSteps': 132, 'type': 'insider'}
         auction.import_data(data)
         with self.assertRaises(ModelValidationError) as ex:
             auction.validate()
@@ -129,7 +133,7 @@ class DummyModelsTest(unittest.TestCase):
         )
 
         auction = Auction()
-        data['auctionParameters'] = {'dutchSteps': 55}
+        data['auctionParameters'] = {'dutchSteps': 55, 'type': 'insider'}
         data['procurementMethodType'] = 'sellout.insider'
         auction.import_data(data)
         auction.validate()
