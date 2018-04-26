@@ -143,7 +143,7 @@ class Lot(BaseLot):
             role = 'edit_{}'.format(request.context.status)
         return role
 
-    @serializable(serialize_when_none=False, serialized_name='some')
+    @serializable(serialize_when_none=False, serialized_name='auctions')
     def auctions_serialize(self):
         if self.auctions:
             auto_calculated_fields = ['value', 'minimalStep', 'registrationFee', 'guarantee']
@@ -159,6 +159,9 @@ class Lot(BaseLot):
                         auction[key]['amount'] = english[key]['amount'] / 2
 
             insider.tenderingDuration = half_english.tenderingDuration
+            if SANDBOX_MODE:
+                for auction in (half_english, insider):
+                    auction.auctionParameters.procurementMethodDetails = english.auctionParameters.procurementMethodDetails
 
     def __acl__(self):
         acl = [

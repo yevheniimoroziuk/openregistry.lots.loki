@@ -7,7 +7,7 @@ from openprocurement.api.utils import get_now
 from openregistry.lots.loki.constants import DEFAULT_DUTCH_STEPS
 
 @subscriber(LotInitializeEvent, lotType="loki")
-def tender_init_handler(event):
+def lot_init_handler(event):
     """ initialization handler for basic lots """
     event.lot.date = get_now()
     auction_types = ['sellout.english', 'sellout.english', 'sellout.insider']
