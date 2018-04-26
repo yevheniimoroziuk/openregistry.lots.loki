@@ -65,15 +65,14 @@ class AccountDetails(Model):
 
 
 class AuctionParameters(Model):
+    class Options:
+        roles = auctionParameters_roles
+
     type = StringType(choices=['english', 'insider'])
     dutchSteps = IntType(default=None, min_value=1, max_value=100)
     if SANDBOX_MODE:
         procurementMethodDetails = StringType()
         submissionMethodDetails = StringType()
-
-    def validate_dutchSteps(self, data, value):
-        if data['type'] == 'english' and value:
-            raise ValidationError('dutchSteps can be filled only when type is insider.')
 
 
 class Auction(Model):
@@ -104,15 +103,6 @@ class Auction(Model):
         else:
             role = 'edit_{}.{}'.format(request.context.tenderAttempts, request.context.procurementMethodType)
         return role
-
-    def validate_auctionParameters(self, data, auctionParameters):
-        tenderAttempts_to_type = {
-            1: 'english',
-            2: 'english',
-            3: 'insider'
-        }
-        if tenderAttempts_to_type[data['tenderAttempts']] != auctionParameters.type:
-            raise ValidationError('You can\'t change type of auctionParameters')
 
 
 @implementer(ILokiLot)

@@ -19,16 +19,13 @@ from openregistry.lots.core.validation import (
 from openregistry.lots.loki.validation import (
     validate_decision_patch,
     validate_deleted_status,
-    validate_verification_status
 )
 
 patch_lot_validators = (
     validate_patch_lot_data,
     validate_change_status,
     validate_decision_patch,
-    validate_deleted_status,
-    validate_verification_status
-
+    validate_deleted_status
 )
 
 
