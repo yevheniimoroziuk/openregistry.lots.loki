@@ -17,7 +17,10 @@ from .constants import (
     ITEM_EDITING_STATUSES,
     DEFAULT_DUTCH_STEPS
 )
-from .validation import validate_decision_post
+from .validation import (
+    validate_decision_post,
+    validate_verification_status,
+)
 
 
 class LokiLotConfigurator(LotConfigurator):
@@ -33,6 +36,9 @@ class LokiLotManagerAdapter(LotManagerAdapter):
     create_validation = (
         validate_post_lot_role,
         validate_decision_post,
+    )
+    change_validation = (
+        validate_verification_status,
     )
 
     def _set_rectificationPeriod(self, request):
@@ -65,5 +71,6 @@ class LokiLotManagerAdapter(LotManagerAdapter):
         self._create_auctions(request)
 
     def change_lot(self, request):
+        self._validate(request, self.change_validation)
         if request.validated['data'].get('status') == 'pending' and not request.context.rectificationPeriod:
             self._set_rectificationPeriod(request)

@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from schematics.exceptions import ValidationError
+
 from openregistry.lots.core.utils import (
     raise_operation_error,
     update_logging_context,
@@ -122,12 +124,22 @@ def validate_verification_status(request, error_handler, **kwargs):
 
         required_fields = ['value', 'minimalStep', 'auctionPeriod', 'guarantee',]
         if not all(english[field] for field in required_fields):
-            raise_operation_error(request, error_handler,
-                                 'Can\'t move lot to status verification until '
-                                 'this fields are not filled {} in auctions'.format(required_fields))
+            request.errors.add(
+                'body',
+                'data',
+                'Can\'t move lot to status verification until '
+                'this fields are not filled {} in auctions'.format(required_fields)
+            )
+            request.errors.status = 422
+            raise error_handler(request)
 
         required_fields = ['tenderingDuration']
         if not all(second_english[field] for field in required_fields):
-            raise_operation_error(request, error_handler,
-                                 'Can\'t move lot to status verification until '
-                                 'this fields are not filled {} in second english auction'.format(required_fields))
+            request.errors.add(
+                'body',
+                'data',
+                'Can\'t move lot to status verification until '
+                'this fields are not filled {} in second english auction'.format(required_fields)
+            )
+            request.errors.status = 422
+            raise error_handler(request)
