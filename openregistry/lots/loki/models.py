@@ -67,6 +67,7 @@ class AuctionParameters(Model):
     dutchSteps = IntType(default=None, min_value=1, max_value=100)
     if SANDBOX_MODE:
         procurementMethodDetails = StringType()
+        submissionMethodDetails = StringType()
 
     def validate_dutchSteps(self, data, value):
         if data['type'] == 'english' and value:
@@ -162,6 +163,7 @@ class Lot(BaseLot):
             if SANDBOX_MODE:
                 for auction in (half_english, insider):
                     auction.auctionParameters.procurementMethodDetails = english.auctionParameters.procurementMethodDetails
+                    auction.auctionParameters.submissionMethodDetails = english.auctionParameters.submissionMethodDetails
 
     def __acl__(self):
         acl = [
