@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import unittest
 from copy import deepcopy
 from datetime import timedelta
 
@@ -8,6 +9,7 @@ from openregistry.lots.core.utils import (
 )
 from openregistry.lots.core.models import Period
 from openregistry.lots.loki.models import Lot
+from openregistry.lots.core.constants import SANDBOX_MODE
 from openregistry.lots.loki.constants import DEFAULT_DUTCH_STEPS
 
 
@@ -208,3 +210,178 @@ def rectificationPeriod_auction_workflow(self):
     self.assertEqual(response.json['errors'][0]['description'], 'You can\'t change auctions after rectification period')
 
 
+@unittest.skipIf(not SANDBOX_MODE, 'If sandbox mode is enabled auctionParameters has additional field procurementMethodDetails')
+def procurementMethodDetails_check_with_sandbox(self):
+    data = deepcopy(self.initial_data)
+
+    # Test procurementMethodDetails after creating lot
+    response = self.app.get('/{}'.format(self.resource_id))
+    lot = response.json['data']
+    english = response.json['data']['auctions'][0]
+    half_english = response.json['data']['auctions'][1]
+    insider = response.json['data']['auctions'][2]
+
+    self.assertNotIn(
+        'procurementMethodDetails',
+        english['auctionParameters']
+    )
+    self.assertNotIn(
+        'procurementMethodDetails',
+         half_english['auctionParameters']
+    )
+    self.assertNotIn(
+        'procurementMethodDetails',
+        insider['auctionParameters']
+    )
+
+    auction_param_with_procurementMethodDetails = {
+        'auctionParameters': {'procurementMethodDetails': 'quick'}
+    }
+
+    # Test procurementMethodDetails after update half english
+    response = self.app.patch_json(
+        '/{}/auctions/{}'.format(lot['id'], half_english['id']),
+        {"data": auction_param_with_procurementMethodDetails},
+        headers=self.access_header
+    )
+    self.assertNotIn(
+        'procurementMethodDetails',
+        response.json['data']['auctionParameters']
+    )
+
+    response = self.app.get('/{}'.format(lot['id']))
+    english = response.json['data']['auctions'][0]
+    half_english = response.json['data']['auctions'][1]
+    insider = response.json['data']['auctions'][2]
+    self.assertNotIn(
+        'procurementMethodDetails',
+        english['auctionParameters']
+    )
+    self.assertNotIn(
+        'procurementMethodDetails',
+         half_english['auctionParameters']
+    )
+    self.assertNotIn(
+        'procurementMethodDetails',
+        insider['auctionParameters']
+    )
+
+    # Test procurementMethodDetails after update insider
+    response = self.app.patch_json(
+        '/{}/auctions/{}'.format(lot['id'], insider['id']),
+        {"data": auction_param_with_procurementMethodDetails},
+        headers=self.access_header
+    )
+    self.assertNotIn(
+        'procurementMethodDetails',
+        response.json['data']['auctionParameters']
+    )
+
+    response = self.app.get('/{}'.format(lot['id']))
+    english = response.json['data']['auctions'][0]
+    half_english = response.json['data']['auctions'][1]
+    insider = response.json['data']['auctions'][2]
+    self.assertNotIn(
+        'procurementMethodDetails',
+        english['auctionParameters']
+    )
+    self.assertNotIn(
+        'procurementMethodDetails',
+         half_english['auctionParameters']
+    )
+    self.assertNotIn(
+        'procurementMethodDetails',
+        insider['auctionParameters']
+    )
+
+    # Test procurementMethodDetails after update english
+    response = self.app.patch_json(
+        '/{}/auctions/{}'.format(lot['id'], english['id']),
+        {"data": auction_param_with_procurementMethodDetails},
+        headers=self.access_header
+    )
+    self.assertEqual(
+        response.json['data']['auctionParameters']['procurementMethodDetails'],
+        auction_param_with_procurementMethodDetails['auctionParameters']['procurementMethodDetails']
+    )
+
+    response = self.app.get('/{}'.format(lot['id']))
+    english = response.json['data']['auctions'][0]
+    half_english = response.json['data']['auctions'][1]
+    insider = response.json['data']['auctions'][2]
+
+    self.assertEqual(
+        english['auctionParameters']['procurementMethodDetails'],
+        auction_param_with_procurementMethodDetails['auctionParameters']['procurementMethodDetails']
+    )
+    self.assertEqual(
+        half_english['auctionParameters']['procurementMethodDetails'],
+        auction_param_with_procurementMethodDetails['auctionParameters']['procurementMethodDetails']
+    )
+    self.assertEqual(
+        insider['auctionParameters']['procurementMethodDetails'],
+        auction_param_with_procurementMethodDetails['auctionParameters']['procurementMethodDetails']
+    )
+
+
+@unittest.skipIf(SANDBOX_MODE, 'If sandbox mode is disabled auctionParameters has not procurementMethodDetails field')
+def procurementMethodDetails_check_without_sandbox(self):
+
+    # Test procurementMethodDetails after creating lot
+    data = deepcopy(self.initial_data)
+    response = self.app.get('/{}'.format(self.resource_id))
+    lot = response.json['data']
+    english = response.json['data']['auctions'][0]
+    half_english = response.json['data']['auctions'][1]
+    insider = response.json['data']['auctions'][2]
+
+    self.assertNotIn(
+        'procurementMethodDetails',
+        response.json['data']['auctions'][0]['auctionParameters'],
+    )
+    self.assertNotIn(
+        'procurementMethodDetails',
+        response.json['data']['auctions'][1]['auctionParameters'],
+    )
+    self.assertNotIn(
+        'procurementMethodDetails',
+        response.json['data']['auctions'][2]['auctionParameters'],
+    )
+
+
+    auction_param_with_procurementMethodDetails = {
+        'auctionParameters': {'procurementMethodDetails': 'quick'}
+    }
+
+    # Test procurementMethodDetails error while updating english
+    response = self.app.patch_json(
+        '/{}/auctions/{}'.format(lot['id'], english['id']),
+        {"data": auction_param_with_procurementMethodDetails},
+        headers=self.access_header,
+        status=422
+    )
+    self.assertEqual(response.status, '422 Unprocessable Entity')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['errors'][0]['description']['procurementMethodDetails'], u'Rogue field')
+
+    # Test procurementMethodDetails error while updating english
+    response = self.app.patch_json(
+        '/{}/auctions/{}'.format(lot['id'], half_english['id']),
+        {"data": auction_param_with_procurementMethodDetails},
+        headers=self.access_header,
+        status=422
+    )
+    self.assertEqual(response.status, '422 Unprocessable Entity')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['errors'][0]['description']['procurementMethodDetails'], u'Rogue field')
+
+    # Test procurementMethodDetails error while updating english
+    response = self.app.patch_json(
+        '/{}/auctions/{}'.format(lot['id'], insider['id']),
+        {"data": auction_param_with_procurementMethodDetails},
+        headers=self.access_header,
+        status=422
+    )
+    self.assertEqual(response.status, '422 Unprocessable Entity')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['errors'][0]['description']['procurementMethodDetails'], u'Rogue field')
