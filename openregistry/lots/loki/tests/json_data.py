@@ -39,15 +39,15 @@ auction_common = {
 }
 auction_english_data = deepcopy(auction_common)
 
-auction_half_english_data = {}
-auction_half_english_data['tenderingDuration'] = 'P25DT12H'
+auction_second_english_data = {}
+auction_second_english_data['tenderingDuration'] = 'P25DT12H'
 
 # auction_insider_data = deepcopy(auction_common)
 
 
 test_lot_auctions_data = {
     'english': auction_english_data,
-    'half.english': auction_half_english_data,
+    'second.english': auction_second_english_data,
     # 'insider': auction_insider_data
 }
 

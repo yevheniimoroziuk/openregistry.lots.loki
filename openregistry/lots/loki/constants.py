@@ -5,6 +5,8 @@ LOT_STATUSES = [
     "draft", "composing", "verification",  "pending", "deleted", "active.salable", "active.awaiting", "active.auction",
     "active.contracting", "pending.sold", "pending.dissolution", "sold", "dissolved", "invalid"]
 
+ITEM_EDITING_STATUSES = ['draft', 'composing', 'pending']
+
 STATUS_CHANGES = {
     "draft": {
         "editing_permissions": ["lot_owner", "Administrator"],

@@ -48,8 +48,6 @@ class LotAuctionResource(APIResource):
     def patch(self):
         """Lot Auction Update"""
         if apply_patch(self.request, src=self.request.context.serialize()):
-            update_file_content_type(self.request)
-            self.LOGGER.info('Updated lot item {}'.format(self.request.context.id),
+            self.LOGGER.info('Updated lot auction {}'.format(self.request.context.id),
                         extra=context_unpack(self.request, {'MESSAGE_ID': 'lot_auction_patch'}))
             return {'data': self.request.context.serialize("view")}
-        return {'data': self.request.context.serialize("view")}

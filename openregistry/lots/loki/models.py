@@ -82,7 +82,7 @@ class Auction(Model):
     auctionID = StringType()
     status = StringType()
     procurementMethodType = StringType(choices=['sellout.english', 'sellout.insider'])
-    tenderAttempts = IntType(max_value=3)
+    tenderAttempts = IntType(min_value=1, max_value=3)
     auctionPeriod = ModelType(StartDateRequiredPeriod) # req
     value = ModelType(Value) # req
     minimalStep = ModelType(Value) # req
@@ -97,8 +97,6 @@ class Auction(Model):
         request = root.request
         if request.authenticated_role == 'Administrator':
             role = 'Administrator'
-        elif request.authenticated_role == 'concierge':
-            role = 'concierge'
         elif request.authenticated_role == 'convoy':
             role = 'convoy'
         else:
@@ -150,20 +148,16 @@ class Lot(BaseLot):
             auto_calculated_fields = ['value', 'minimalStep', 'registrationFee', 'guarantee']
             auctions = sorted(self.auctions, key=lambda a: a.tenderAttempts)
             english = auctions[0]
-            half_english = auctions[1]
+            second_english = auctions[1]
             insider = auctions[2]
-            for auction in (half_english, insider):
+            auto_calculated_fields = filter(lambda f: english[f], auto_calculated_fields)
+            for auction in (second_english, insider):
                 for key in auto_calculated_fields:
                     object_class = getattr(self.__class__.auctions.model_class, key)
-                    if english[key]:
-                        auction[key] = object_class(english[key].serialize())
-                        auction[key]['amount'] = english[key]['amount'] / 2
+                    auction[key] = object_class(english[key].serialize())
+                    auction[key]['amount'] = english[key]['amount'] / 2
 
-            insider.tenderingDuration = half_english.tenderingDuration
-            if SANDBOX_MODE:
-                for auction in (half_english, insider):
-                    auction.auctionParameters.procurementMethodDetails = english.auctionParameters.procurementMethodDetails
-                    auction.auctionParameters.submissionMethodDetails = english.auctionParameters.submissionMethodDetails
+            insider.tenderingDuration = second_english.tenderingDuration
 
     def __acl__(self):
         acl = [

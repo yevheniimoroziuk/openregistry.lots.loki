@@ -88,13 +88,6 @@ def validate_deleted_status(request, error_handler, **kwargs):
         raise error_handler(request)
 
 
-def validate_update_item_in_not_allowed_status(request, error_handler, **kwargs):
-    status = request.validated['lot_status']
-    if status not in ['draft', 'composing', 'pending']:
-        raise_operation_error(request, error_handler,
-                              'Can\'t update item in current ({}) lot status'.format(status))
-
-
 def rectificationPeriod_auction_validation(request, error_handler, **kwargs):
     is_rectificationPeriod_finished = bool(
         request.validated['lot'].rectificationPeriod and
@@ -114,28 +107,27 @@ def validate_auction_data(request, error_handler, **kwargs):
 
 
 def validate_update_auction_in_not_allowed_status(request, error_handler, **kwargs):
-    is_convoy = bool(request.authenticated_role != 'convoy')
+    is_convoy = bool(request.authenticated_role == 'convoy')
     if not is_convoy and request.validated['lot_status'] not in ['draft', 'composing', 'pending']:
             raise_operation_error(request, error_handler,
                                   'Can\'t update item in current ({}) lot status'.format(request.validated['lot_status']))
 
 
 def validate_verification_status(request, error_handler, **kwargs):
-    if request.validated['data'].get('status') != 'verification':
-        return
-    lot = request.validated['lot']
-    auctions = sorted(lot.auctions, key=lambda a: a.tenderAttempts)
-    english = auctions[0]
-    half_english = auctions[1]
+    if request.validated['data'].get('status') == 'verification' and request.context.status == 'composing':
+        lot = request.validated['lot']
+        auctions = sorted(lot.auctions, key=lambda a: a.tenderAttempts)
+        english = auctions[0]
+        second_english = auctions[1]
 
-    required_fields = ['value', 'minimalStep', 'auctionPeriod', 'guarantee',]
-    if not all(english[field] for field in required_fields):
-        raise_operation_error(request, error_handler,
-                             'Can\'t move lot to status verification until '
-                             'this fields are not filled {} if first english auction'.format(required_fields))
+        required_fields = ['value', 'minimalStep', 'auctionPeriod', 'guarantee',]
+        if not all(english[field] for field in required_fields):
+            raise_operation_error(request, error_handler,
+                                 'Can\'t move lot to status verification until '
+                                 'this fields are not filled {} in auctions'.format(required_fields))
 
-    required_fields = ['tenderingDuration']
-    if not all(half_english[field] for field in required_fields):
-        raise_operation_error(request, error_handler,
-                             'Can\'t move lot to status verification until '
-                             'this fields are not filled {} if second english auction'.format(required_fields))
+        required_fields = ['tenderingDuration']
+        if not all(second_english[field] for field in required_fields):
+            raise_operation_error(request, error_handler,
+                                 'Can\'t move lot to status verification until '
+                                 'this fields are not filled {} in second english auction'.format(required_fields))

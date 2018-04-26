@@ -11,7 +11,7 @@ from openregistry.lots.core.tests.base import create_blacklist
 from openregistry.lots.loki.models import Lot
 from openregistry.lots.loki.tests.json_data import (
     auction_english_data,
-    auction_half_english_data
+    auction_second_english_data
 )
 from openregistry.lots.loki.constants import (
     STATUS_CHANGES,
@@ -98,7 +98,7 @@ def add_auctions(self, lot, access_header):
     response = self.app.get('/{}/auctions'.format(lot['id']))
     auctions = sorted(response.json['data'], key=lambda a: a['tenderAttempts'])
     english = auctions[0]
-    half_english = auctions[1]
+    second_english = auctions[1]
 
     response = self.app.patch_json(
         '/{}/auctions/{}'.format(lot['id'], english['id']),
@@ -107,8 +107,8 @@ def add_auctions(self, lot, access_header):
     self.assertEqual(response.content_type, 'application/json')
 
     response = self.app.patch_json(
-        '/{}/auctions/{}'.format(lot['id'], half_english['id']),
-        params={'data': auction_half_english_data}, headers=access_header)
+        '/{}/auctions/{}'.format(lot['id'], second_english['id']),
+        params={'data': auction_second_english_data}, headers=access_header)
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(response.content_type, 'application/json')
 
@@ -171,16 +171,16 @@ def auction_autocreation(self):
     self.assertEqual(len(response.json['data']['auctions']), 3)
     auctions = sorted(response.json['data']['auctions'], key=lambda a: a['tenderAttempts'])
     english = auctions[0]
-    half_english = auctions[1]
+    second_english = auctions[1]
     insider = auctions[2]
 
     self.assertEqual(english['procurementMethodType'], 'sellout.english')
     self.assertEqual(english['tenderAttempts'], 1)
     self.assertEqual(english['auctionParameters']['type'], 'english')
 
-    self.assertEqual(half_english['procurementMethodType'], 'sellout.english')
-    self.assertEqual(half_english['tenderAttempts'], 2)
-    self.assertEqual(half_english['auctionParameters']['type'], 'english')
+    self.assertEqual(second_english['procurementMethodType'], 'sellout.english')
+    self.assertEqual(second_english['tenderAttempts'], 2)
+    self.assertEqual(second_english['auctionParameters']['type'], 'english')
 
     self.assertEqual(insider['procurementMethodType'], 'sellout.insider')
     self.assertEqual(insider['tenderAttempts'], 3)
@@ -201,7 +201,7 @@ def check_change_to_verification(self):
     response = self.app.get('/{}/auctions'.format(lot['id']))
     auctions = sorted(response.json['data'], key=lambda a: a['tenderAttempts'])
     english = auctions[0]
-    half_english = auctions[1]
+    second_english = auctions[1]
 
 
     response = self.app.get('/{}'.format(lot['id']))
@@ -226,7 +226,7 @@ def check_change_to_verification(self):
     self.assertEqual(
         response.json['errors'][0]['description'],
         "Can\'t move lot to status verification until "
-        "this fields are not filled ['value', 'minimalStep', 'auctionPeriod', 'guarantee'] if first english auction"
+        "this fields are not filled ['value', 'minimalStep', 'auctionPeriod', 'guarantee'] in auctions"
     )
 
     response = self.app.patch_json(
@@ -246,12 +246,12 @@ def check_change_to_verification(self):
     self.assertEqual(
         response.json['errors'][0]['description'],
         "Can\'t move lot to status verification until "
-        "this fields are not filled ['tenderingDuration'] if second english auction"
+        "this fields are not filled ['tenderingDuration'] in second english auction"
     )
 
     response = self.app.patch_json(
-        '/{}/auctions/{}'.format(lot['id'], half_english['id']),
-        params={'data': auction_half_english_data}, headers=access_header)
+        '/{}/auctions/{}'.format(lot['id'], second_english['id']),
+        params={'data': auction_second_english_data}, headers=access_header)
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(response.content_type, 'application/json')
 
