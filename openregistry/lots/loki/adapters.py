@@ -4,7 +4,6 @@ from openregistry.lots.core.adapters import (
     LotManagerAdapter
 )
 from openregistry.lots.core.validation import (
-    validate_lot_data,
     validate_post_lot_role,
 
 )
@@ -12,7 +11,12 @@ from openregistry.lots.core.utils import (
     get_now,
     calculate_business_date
 )
-from .constants import STATUS_CHANGES, RECTIFICATION_PERIOD_DURATION, ITEM_EDITING_STATUSES
+from .constants import (
+    STATUS_CHANGES,
+    RECTIFICATION_PERIOD_DURATION,
+    ITEM_EDITING_STATUSES,
+    DEFAULT_DUTCH_STEPS
+)
 from .validation import validate_decision_post
 
 
@@ -27,6 +31,7 @@ class LokiLotConfigurator(LotConfigurator):
 class LokiLotManagerAdapter(LotManagerAdapter):
     name = 'Loki Lot Manager'
     create_validation = (
+        validate_post_lot_role,
         validate_decision_post,
     )
 
@@ -37,8 +42,27 @@ class LokiLotManagerAdapter(LotManagerAdapter):
                                                                    RECTIFICATION_PERIOD_DURATION)
         request.context.rectificationPeriod = rectificationPeriod
 
+    def _create_auctions(self, request):
+        lot = request.validated['lot']
+        lot.date = get_now()
+        auction_types = ['sellout.english', 'sellout.english', 'sellout.insider']
+        auction_class = lot.__class__.auctions.model_class
+        auctionParameters_class = lot.__class__.auctions.model_class.auctionParameters.model_class
+        for tenderAttempts, auction_type in enumerate(auction_types, 1):
+            auction = auction_class()
+            auction.procurementMethodType = auction_type
+            auction.tenderAttempts = tenderAttempts
+            auction.auctionParameters = auctionParameters_class()
+            if auction_type == 'sellout.english':
+                auction.auctionParameters.type = 'english'
+            if auction_type == 'sellout.insider':
+                auction.auctionParameters.type = 'insider'
+                auction.auctionParameters.dutchSteps = DEFAULT_DUTCH_STEPS
+            lot.auctions.append(auction)
+
     def create_lot(self, request):
         self._validate(request, self.create_validation)
+        self._create_auctions(request)
 
     def change_lot(self, request):
         if request.validated['data'].get('status') == 'pending' and not request.context.rectificationPeriod:

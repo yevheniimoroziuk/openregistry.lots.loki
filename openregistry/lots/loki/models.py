@@ -39,7 +39,8 @@ from .constants import (
 )
 from .roles import (
     lot_roles,
-    auction_roles
+    auction_roles,
+    auctionParameters_roles
 )
 
 
@@ -103,6 +104,15 @@ class Auction(Model):
             role = 'edit_{}.{}'.format(request.context.tenderAttempts, request.context.procurementMethodType)
         return role
 
+    def validate_auctionParameters(self, data, auctionParameters):
+        tenderAttempts_to_type = {
+            1: 'english',
+            2: 'english',
+            3: 'insider'
+        }
+        if tenderAttempts_to_type[data['tenderAttempts']] != auctionParameters.type:
+            raise ValidationError('You can\'t change type of auctionParameters')
+
 
 @implementer(ILokiLot)
 class Lot(BaseLot):
@@ -121,7 +131,7 @@ class Lot(BaseLot):
     documents = ListType(ModelType(Document), default=list())
     decisions = ListType(ModelType(Decision), default=list(), min_size=1, max_size=2, required=True)
     assets = ListType(MD5Type(), required=True, min_size=1, max_size=1)
-    auctions = ListType(ModelType(Auction), default=list(), serialize_when_none=False)
+    auctions = ListType(ModelType(Auction), default=list(), max_size=3)
 
     def get_role(self):
         root = self.__parent__

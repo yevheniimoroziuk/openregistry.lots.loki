@@ -10,18 +10,3 @@ from openregistry.lots.loki.constants import DEFAULT_DUTCH_STEPS
 def lot_init_handler(event):
     """ initialization handler for basic lots """
     event.lot.date = get_now()
-    auction_types = ['sellout.english', 'sellout.english', 'sellout.insider']
-    auction_class = event.lot.__class__.auctions.model_class
-    auctionParameters_class = event.lot.__class__.auctions.model_class.auctionParameters.model_class
-
-    for tenderAttempts, auction_type in enumerate(auction_types, 1):
-        auction = auction_class()
-        auction.procurementMethodType = auction_type
-        auction.tenderAttempts = tenderAttempts
-        auction.auctionParameters = auctionParameters_class()
-        if auction_type == 'sellout.english':
-            auction.auctionParameters.type = 'english'
-        if auction_type == 'sellout.insider':
-            auction.auctionParameters.type = 'insider'
-            auction.auctionParameters.dutchSteps = DEFAULT_DUTCH_STEPS
-        event.lot.auctions.append(auction)

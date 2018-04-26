@@ -80,7 +80,7 @@ def patch_english_auction(self):
     self.assertEqual(insider['auctionParameters']['type'], 'insider')
     self.assertEqual(insider['auctionParameters']['dutchSteps'], DEFAULT_DUTCH_STEPS)
 
-    # Test dutch steps validation
+    # Test change steps validation
     data = deepcopy(self.initial_auctions_data)
     data['english']['auctionParameters'] = {'dutchSteps': 66}
     response = self.app.patch_json(
@@ -98,6 +98,23 @@ def patch_english_auction(self):
         ["dutchSteps can be filled only when type is insider."]
     )
 
+    # Test type validation
+    data = deepcopy(self.initial_auctions_data)
+    data['english']['auctionParameters'] = {'type': 'insider'}
+    response = self.app.patch_json(
+        '/{}/auctions/{}'.format(self.resource_id, english['id']),
+        headers=self.access_header, params={
+            "data": data['english']
+            },
+        status=422
+    )
+    self.assertEqual(response.status, '422 Unprocessable Entity')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['status'], 'error')
+    self.assertEqual(
+        response.json['errors'][0]['description'],
+        ["You can\'t change type of auctionParameters"]
+    )
 
 def patch_second_english_auction(self):
     data = deepcopy(self.initial_auctions_data)
