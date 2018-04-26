@@ -34,6 +34,7 @@ def patch_english_auction(self):
     self.assertEqual(response.json["data"]["guarantee"], data['english']['guarantee'])
     self.assertEqual(response.json["data"]["registrationFee"], data['english']['registrationFee'])
     self.assertNotIn('dutchSteps', response.json["data"]["auctionParameters"])
+    default_type = response.json['data']['auctionParameters']['type']
 
     data['english']['minimalStep']['amount'] = 100
     data['english']['tenderingDuration'] = 'P2YT3H'
@@ -81,40 +82,45 @@ def patch_english_auction(self):
     self.assertEqual(insider['auctionParameters']['dutchSteps'], DEFAULT_DUTCH_STEPS)
 
     # Test change steps validation
-    data = deepcopy(self.initial_auctions_data)
     data['english']['auctionParameters'] = {'dutchSteps': 66}
     response = self.app.patch_json(
         '/{}/auctions/{}'.format(self.resource_id, english['id']),
         headers=self.access_header, params={
             "data": data['english']
             },
-        status=422
     )
-    self.assertEqual(response.status, '422 Unprocessable Entity')
+    self.assertEqual(response.status, '200 OK')
     self.assertEqual(response.content_type, 'application/json')
-    self.assertEqual(response.json['status'], 'error')
-    self.assertEqual(
-        response.json['errors'][0]['description']['dutchSteps'],
-        ["dutchSteps can be filled only when type is insider."]
+    self.assertEqual(response.json, None)
+
+    response = self.app.get(
+        '/{}/auctions/{}'.format(self.resource_id, english['id']),
+        headers=self.access_header,
     )
+    self.assertNotIn('dutchSteps', response.json['data']['auctionParameters'])
 
     # Test type validation
-    data = deepcopy(self.initial_auctions_data)
     data['english']['auctionParameters'] = {'type': 'insider'}
     response = self.app.patch_json(
         '/{}/auctions/{}'.format(self.resource_id, english['id']),
         headers=self.access_header, params={
             "data": data['english']
             },
-        status=422
     )
-    self.assertEqual(response.status, '422 Unprocessable Entity')
+    self.assertEqual(response.status, '200 OK')
     self.assertEqual(response.content_type, 'application/json')
-    self.assertEqual(response.json['status'], 'error')
-    self.assertEqual(
-        response.json['errors'][0]['description'],
-        ["You can\'t change type of auctionParameters"]
+    self.assertEqual(response.json, None)
+
+
+    response = self.app.get(
+        '/{}/auctions/{}'.format(self.resource_id, english['id']),
+        headers=self.access_header
     )
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertNotEqual(response.json['data']['auctionParameters']['type'], data['english']['auctionParameters']['type'])
+    self.assertEqual(response.json['data']['auctionParameters']['type'], default_type)
+
 
 def patch_second_english_auction(self):
     data = deepcopy(self.initial_auctions_data)
@@ -122,6 +128,7 @@ def patch_second_english_auction(self):
     auctions = sorted(response.json['data'], key=lambda a: a['tenderAttempts'])
     second_english = auctions[1]
     second_english['tenderingDuration'] = 'P2YT3H'
+    default_type = second_english['auctionParameters']['type']
 
     response = self.app.patch_json('/{}/auctions/{}'.format(self.resource_id, second_english['id']),
         headers=self.access_header, params={
@@ -150,21 +157,47 @@ def patch_second_english_auction(self):
 
     # Test dutch steps validation
     data = deepcopy(self.initial_auctions_data)
-    data['english']['auctionParameters'] = {'dutchSteps': 66}
+    data['second.english']['auctionParameters'] = {'dutchSteps': 66}
     response = self.app.patch_json(
         '/{}/auctions/{}'.format(self.resource_id, second_english['id']),
         headers=self.access_header, params={
             "data": data['english']
             },
-        status=422
     )
-    self.assertEqual(response.status, '422 Unprocessable Entity')
+    self.assertEqual(response.status, '200 OK')
     self.assertEqual(response.content_type, 'application/json')
-    self.assertEqual(response.json['status'], 'error')
-    self.assertEqual(
-        response.json['errors'][0]['description']['dutchSteps'],
-        ["dutchSteps can be filled only when type is insider."]
+    self.assertEqual(response.json, None)
+
+    response = self.app.get(
+        '/{}/auctions/{}'.format(self.resource_id, second_english['id']),
+        headers=self.access_header,
     )
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertNotIn('dutchSteps', response.json['data']['auctionParameters'])
+
+    # Test type validation
+    data = deepcopy(self.initial_auctions_data)
+    data['second.english']['auctionParameters'] = {'type': 'insider'}
+    response = self.app.patch_json(
+        '/{}/auctions/{}'.format(self.resource_id, insider['id']),
+        headers=self.access_header, params={
+            "data": data['second.english']
+            },
+    )
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json, None)
+
+    response = self.app.get(
+        '/{}/auctions/{}'.format(self.resource_id, second_english['id']),
+        headers=self.access_header,
+    )
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertNotEqual(response.json['data']['auctionParameters']['type'],
+                        data['second.english']['auctionParameters']['type'])
+    self.assertEqual(response.json['data']['auctionParameters']['type'], default_type)
 
 
 def patch_insider_auction(self):
@@ -183,6 +216,7 @@ def patch_insider_auction(self):
     self.assertEqual(response.json['data']['auctionParameters']['dutchSteps'], data_dutch_steps['auctionParameters']['dutchSteps'])
     self.assertNotIn('tenderingDuration', response.json['data'])
     self.assertEqual(response.json["data"]["tenderAttempts"], 3)
+    default_type = response.json['data']['auctionParameters']['type']
 
     data_with_tenderingDuration = {
         'tenderingDuration': 'P2YT3H',
@@ -196,6 +230,30 @@ def patch_insider_auction(self):
     self.assertEqual(response.content_type, 'application/json')
     self.assertNotIn('tenderingDuration', response.json['data'])
     self.assertEqual(response.json["data"]["tenderAttempts"], 3)
+
+    # Test type validation
+    data = deepcopy(self.initial_auctions_data)
+    data['insider'] = {}
+    data['insider']['auctionParameters'] = {'type': 'english'}
+    response = self.app.patch_json(
+        '/{}/auctions/{}'.format(self.resource_id, insider['id']),
+        headers=self.access_header, params={
+            "data": data['english']
+            },
+    )
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json, None)
+
+    response = self.app.get(
+        '/{}/auctions/{}'.format(self.resource_id, insider['id']),
+        headers=self.access_header
+    )
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertNotEqual(response.json['data']['auctionParameters']['type'],
+                        data['insider']['auctionParameters']['type'])
+    self.assertEqual(response.json['data']['auctionParameters']['type'], default_type)
 
 
 def rectificationPeriod_auction_workflow(self):

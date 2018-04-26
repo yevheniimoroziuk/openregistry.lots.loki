@@ -218,10 +218,10 @@ def check_change_to_verification(self):
     response = self.app.patch_json(
         '/{}'.format(lot['id']),
         {"data": {'status': 'verification'}},
-        status=403,
+        status=422,
         headers=access_header
     )
-    self.assertEqual(response.status, '403 Forbidden')
+    self.assertEqual(response.status, '422 Unprocessable Entity')
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(
         response.json['errors'][0]['description'],
@@ -238,10 +238,10 @@ def check_change_to_verification(self):
     response = self.app.patch_json(
         '/{}'.format(lot['id']),
         {"data": {'status': 'verification'}},
-        status=403,
+        status=422,
         headers=access_header
     )
-    self.assertEqual(response.status, '403 Forbidden')
+    self.assertEqual(response.status, '422 Unprocessable Entity')
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(
         response.json['errors'][0]['description'],
