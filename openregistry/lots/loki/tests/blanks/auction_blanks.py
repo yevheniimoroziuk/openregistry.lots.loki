@@ -36,6 +36,41 @@ def patch_english_auction(self):
     self.assertNotIn('dutchSteps', response.json["data"]["auctionParameters"])
     default_type = response.json['data']['auctionParameters']['type']
 
+    response = self.app.get('/{}/auctions'.format(self.resource_id))
+    auctions = sorted(response.json['data'], key=lambda a: a['tenderAttempts'])
+    english = auctions[0]
+    second_english = auctions[1]
+    insider = auctions[2]
+
+    # Test first sellout.english
+    self.assertEqual(english['procurementMethodType'], 'sellout.english')
+    self.assertEqual(english['value']['amount'], data['english']['value']['amount'])
+    self.assertEqual(english['registrationFee']['amount'], data['english']['registrationFee']['amount'])
+    self.assertEqual(english['minimalStep']['amount'], data['english']['minimalStep']['amount'])
+    self.assertEqual(english['guarantee']['amount'], data['english']['guarantee']['amount'])
+    self.assertEqual(english['auctionParameters']['type'], 'english')
+    self.assertNotIn('dutchSteps', english['auctionParameters'])
+    self.assertNotIn('tenderingDuration', english)
+
+    # Test second sellout.english(half values)
+    self.assertEqual(second_english['procurementMethodType'], 'sellout.english')
+    self.assertEqual(second_english['value']['amount'], english['value']['amount'] / 2)
+    self.assertEqual(second_english['registrationFee']['amount'], english['registrationFee']['amount'] / 2)
+    self.assertEqual(second_english['minimalStep']['amount'], english['minimalStep']['amount'] / 2)
+    self.assertEqual(second_english['guarantee']['amount'], english['guarantee']['amount'] / 2)
+    self.assertEqual(second_english['auctionParameters']['type'], 'english')
+    self.assertNotIn('dutchSteps', second_english['auctionParameters'])
+
+    # Test second sellout.insider(half values)
+    self.assertEqual(insider['procurementMethodType'], 'sellout.insider')
+    self.assertEqual(insider['value']['amount'], english['value']['amount'] / 2)
+    self.assertEqual(insider['registrationFee']['amount'], english['registrationFee']['amount'] / 2)
+    self.assertEqual(insider['minimalStep']['amount'], english['minimalStep']['amount'] / 2)
+    self.assertEqual(insider['guarantee']['amount'], english['guarantee']['amount'] / 2)
+    self.assertEqual(insider['auctionParameters']['type'], 'insider')
+    self.assertEqual(insider['auctionParameters']['dutchSteps'], DEFAULT_DUTCH_STEPS)
+
+    # Test change tenderingDuration
     data['english']['minimalStep']['amount'] = 100
     data['english']['tenderingDuration'] = 'P2YT3H'
     response = self.app.patch_json('/{}/auctions/{}'.format(self.resource_id, english['id']),
@@ -304,20 +339,19 @@ def procurementMethodDetails_check_with_sandbox(self):
 
     self.assertNotIn(
         'procurementMethodDetails',
-        english['auctionParameters']
+        english
     )
     self.assertNotIn(
         'procurementMethodDetails',
-         second_english['auctionParameters']
+        second_english
     )
     self.assertNotIn(
         'procurementMethodDetails',
-        insider['auctionParameters']
+        insider
     )
 
-    auction_param_with_procurementMethodDetails = {
-        'auctionParameters': {'procurementMethodDetails': 'quick'}
-    }
+    auction_param_with_procurementMethodDetails = {'procurementMethodDetails': 'quick'}
+
 
     # Test procurementMethodDetails after update second english
     response = self.app.patch_json(
@@ -326,8 +360,8 @@ def procurementMethodDetails_check_with_sandbox(self):
         headers=self.access_header
     )
     self.assertEqual(
-        response.json['data']['auctionParameters']['procurementMethodDetails'],
-        auction_param_with_procurementMethodDetails['auctionParameters']['procurementMethodDetails']
+        response.json['data']['procurementMethodDetails'],
+        auction_param_with_procurementMethodDetails['procurementMethodDetails']
     )
 
 
@@ -338,8 +372,8 @@ def procurementMethodDetails_check_with_sandbox(self):
         headers=self.access_header
     )
     self.assertEqual(
-        response.json['data']['auctionParameters']['procurementMethodDetails'],
-        auction_param_with_procurementMethodDetails['auctionParameters']['procurementMethodDetails']
+        response.json['data']['procurementMethodDetails'],
+        auction_param_with_procurementMethodDetails['procurementMethodDetails']
     )
 
 
@@ -351,8 +385,8 @@ def procurementMethodDetails_check_with_sandbox(self):
         headers=self.access_header
     )
     self.assertEqual(
-        response.json['data']['auctionParameters']['procurementMethodDetails'],
-        auction_param_with_procurementMethodDetails['auctionParameters']['procurementMethodDetails']
+        response.json['data']['procurementMethodDetails'],
+        auction_param_with_procurementMethodDetails['procurementMethodDetails']
     )
 
 
@@ -369,21 +403,19 @@ def procurementMethodDetails_check_without_sandbox(self):
 
     self.assertNotIn(
         'procurementMethodDetails',
-        response.json['data']['auctions'][0]['auctionParameters'],
+        response.json['data']['auctions'][0],
     )
     self.assertNotIn(
         'procurementMethodDetails',
-        response.json['data']['auctions'][1]['auctionParameters'],
+        response.json['data']['auctions'][1],
     )
     self.assertNotIn(
         'procurementMethodDetails',
-        response.json['data']['auctions'][2]['auctionParameters'],
+        response.json['data']['auctions'][2],
     )
 
 
-    auction_param_with_procurementMethodDetails = {
-        'auctionParameters': {'procurementMethodDetails': 'quick'}
-    }
+    auction_param_with_procurementMethodDetails = {'procurementMethodDetails': 'quick'}
 
     # Test procurementMethodDetails error while updating english
     response = self.app.patch_json(
@@ -394,7 +426,8 @@ def procurementMethodDetails_check_without_sandbox(self):
     )
     self.assertEqual(response.status, '422 Unprocessable Entity')
     self.assertEqual(response.content_type, 'application/json')
-    self.assertEqual(response.json['errors'][0]['description']['procurementMethodDetails'], u'Rogue field')
+    self.assertEqual(response.json['errors'][0]['description'], u'Rogue field')
+    self.assertEqual(response.json['errors'][0]['name'], 'procurementMethodDetails')
 
     # Test procurementMethodDetails error while updating english
     response = self.app.patch_json(
@@ -405,7 +438,8 @@ def procurementMethodDetails_check_without_sandbox(self):
     )
     self.assertEqual(response.status, '422 Unprocessable Entity')
     self.assertEqual(response.content_type, 'application/json')
-    self.assertEqual(response.json['errors'][0]['description']['procurementMethodDetails'], u'Rogue field')
+    self.assertEqual(response.json['errors'][0]['description'], u'Rogue field')
+    self.assertEqual(response.json['errors'][0]['name'], 'procurementMethodDetails')
 
     # Test procurementMethodDetails error while updating english
     response = self.app.patch_json(
@@ -416,7 +450,8 @@ def procurementMethodDetails_check_without_sandbox(self):
     )
     self.assertEqual(response.status, '422 Unprocessable Entity')
     self.assertEqual(response.content_type, 'application/json')
-    self.assertEqual(response.json['errors'][0]['description']['procurementMethodDetails'], u'Rogue field')
+    self.assertEqual(response.json['errors'][0]['description'], u'Rogue field')
+    self.assertEqual(response.json['errors'][0]['name'], 'procurementMethodDetails')
 
 
 # submissionMethodDetails test
@@ -434,20 +469,18 @@ def submissionMethodDetails_check_with_sandbox(self):
 
     self.assertNotIn(
         'submissionMethodDetails',
-        english['auctionParameters']
+        english
     )
     self.assertNotIn(
         'submissionMethodDetails',
-         second_english['auctionParameters']
+         second_english
     )
     self.assertNotIn(
         'submissionMethodDetails',
-        insider['auctionParameters']
+        insider
     )
 
-    auction_param_with_submissionMethodDetails = {
-        'auctionParameters': {'submissionMethodDetails': 'quick(mode:fast-forward)'}
-    }
+    auction_param_with_submissionMethodDetails = {'submissionMethodDetails': 'quick(mode:fast-forward)'}
 
     # Test submissionMethodDetails after update second english
     response = self.app.patch_json(
@@ -456,8 +489,8 @@ def submissionMethodDetails_check_with_sandbox(self):
         headers=self.access_header
     )
     self.assertEqual(
-        response.json['data']['auctionParameters']['submissionMethodDetails'],
-        auction_param_with_submissionMethodDetails['auctionParameters']['submissionMethodDetails']
+        response.json['data']['submissionMethodDetails'],
+        auction_param_with_submissionMethodDetails['submissionMethodDetails']
     )
 
     # Test submissionMethodDetails after update insider
@@ -467,8 +500,8 @@ def submissionMethodDetails_check_with_sandbox(self):
         headers=self.access_header
     )
     self.assertEqual(
-        response.json['data']['auctionParameters']['submissionMethodDetails'],
-        auction_param_with_submissionMethodDetails['auctionParameters']['submissionMethodDetails']
+        response.json['data']['submissionMethodDetails'],
+        auction_param_with_submissionMethodDetails['submissionMethodDetails']
     )
 
     # Test submissionMethodDetails after update english
@@ -478,8 +511,8 @@ def submissionMethodDetails_check_with_sandbox(self):
         headers=self.access_header
     )
     self.assertEqual(
-        response.json['data']['auctionParameters']['submissionMethodDetails'],
-        auction_param_with_submissionMethodDetails['auctionParameters']['submissionMethodDetails']
+        response.json['data']['submissionMethodDetails'],
+        auction_param_with_submissionMethodDetails['submissionMethodDetails']
     )
 
 
@@ -496,21 +529,19 @@ def submissionMethodDetails_check_without_sandbox(self):
 
     self.assertNotIn(
         'submissionMethodDetails',
-        response.json['data']['auctions'][0]['auctionParameters'],
+        response.json['data']['auctions'][0],
     )
     self.assertNotIn(
         'submissionMethodDetails',
-        response.json['data']['auctions'][1]['auctionParameters'],
+        response.json['data']['auctions'][1],
     )
     self.assertNotIn(
         'submissionMethodDetails',
-        response.json['data']['auctions'][2]['auctionParameters'],
+        response.json['data']['auctions'][2],
     )
 
 
-    auction_param_with_submissionMethodDetails = {
-        'auctionParameters': {'submissionMethodDetails': 'quick(mode:fast-forward)'}
-    }
+    auction_param_with_submissionMethodDetails = {'submissionMethodDetails': 'quick(mode:fast-forward)'}
 
     # Test submissionMethodDetails error while updating english
     response = self.app.patch_json(
@@ -521,7 +552,8 @@ def submissionMethodDetails_check_without_sandbox(self):
     )
     self.assertEqual(response.status, '422 Unprocessable Entity')
     self.assertEqual(response.content_type, 'application/json')
-    self.assertEqual(response.json['errors'][0]['description']['submissionMethodDetails'], u'Rogue field')
+    self.assertEqual(response.json['errors'][0]['description'], u'Rogue field')
+    self.assertEqual(response.json['errors'][0]['name'], 'submissionMethodDetails')
 
     # Test submissionMethodDetails error while updating english
     response = self.app.patch_json(
@@ -532,7 +564,8 @@ def submissionMethodDetails_check_without_sandbox(self):
     )
     self.assertEqual(response.status, '422 Unprocessable Entity')
     self.assertEqual(response.content_type, 'application/json')
-    self.assertEqual(response.json['errors'][0]['description']['submissionMethodDetails'], u'Rogue field')
+    self.assertEqual(response.json['errors'][0]['description'], u'Rogue field')
+    self.assertEqual(response.json['errors'][0]['name'], 'submissionMethodDetails')
 
     # Test submissionMethodDetails error while updating english
     response = self.app.patch_json(
@@ -543,4 +576,5 @@ def submissionMethodDetails_check_without_sandbox(self):
     )
     self.assertEqual(response.status, '422 Unprocessable Entity')
     self.assertEqual(response.content_type, 'application/json')
-    self.assertEqual(response.json['errors'][0]['description']['submissionMethodDetails'], u'Rogue field')
+    self.assertEqual(response.json['errors'][0]['description'], u'Rogue field')
+    self.assertEqual(response.json['errors'][0]['name'], 'submissionMethodDetails')

@@ -70,9 +70,6 @@ class AuctionParameters(Model):
 
     type = StringType(choices=['english', 'insider'])
     dutchSteps = IntType(default=None, min_value=1, max_value=100)
-    if SANDBOX_MODE:
-        procurementMethodDetails = StringType()
-        submissionMethodDetails = StringType()
 
 
 class Auction(Model):
@@ -84,14 +81,17 @@ class Auction(Model):
     status = StringType(choices=SELLOUT_AUCTION_STATUSES)
     procurementMethodType = StringType(choices=['sellout.english', 'sellout.insider'])
     tenderAttempts = IntType(min_value=1, max_value=3)
-    auctionPeriod = ModelType(StartDateRequiredPeriod) # req
-    value = ModelType(Value) # req
-    minimalStep = ModelType(Value) # req
-    guarantee = ModelType(Guarantee) # req
+    auctionPeriod = ModelType(StartDateRequiredPeriod)
+    value = ModelType(Value)
+    minimalStep = ModelType(Value)
+    guarantee = ModelType(Guarantee)
     registrationFee = ModelType(Guarantee)
     accountDetails = ModelType(AccountDetails)
     auctionParameters = ModelType(AuctionParameters)
     tenderingDuration = IsoDurationType()
+    if SANDBOX_MODE:
+        procurementMethodDetails = StringType()
+        submissionMethodDetails = StringType()
 
     def get_role(self):
         root = self.__parent__.__parent__
@@ -143,7 +143,7 @@ class Lot(BaseLot):
             role = 'edit_{}'.format(request.context.status)
         return role
 
-    @serializable(serialize_when_none=False, serialized_name='auctions')
+    @serializable(serialize_when_none=False, serialized_name='auctions', type=ListType(ModelType(Auction)))
     def auctions_serialize(self):
         if self.auctions:
             auto_calculated_fields = ['value', 'minimalStep', 'registrationFee', 'guarantee']
@@ -161,6 +161,7 @@ class Lot(BaseLot):
                     auction[key]['amount'] = english[key]['amount'] / 2
 
             insider.tenderingDuration = second_english.tenderingDuration
+        return self.auctions
 
     def __acl__(self):
         acl = [
