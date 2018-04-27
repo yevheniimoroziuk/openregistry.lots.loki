@@ -176,14 +176,17 @@ def auction_autocreation(self):
 
     self.assertEqual(english['procurementMethodType'], 'sellout.english')
     self.assertEqual(english['tenderAttempts'], 1)
+    self.assertEqual(english['status'], 'scheduled')
     self.assertEqual(english['auctionParameters']['type'], 'english')
 
     self.assertEqual(second_english['procurementMethodType'], 'sellout.english')
     self.assertEqual(second_english['tenderAttempts'], 2)
+    self.assertEqual(second_english['status'], 'scheduled')
     self.assertEqual(second_english['auctionParameters']['type'], 'english')
 
     self.assertEqual(insider['procurementMethodType'], 'sellout.insider')
     self.assertEqual(insider['tenderAttempts'], 3)
+    self.assertEqual(insider['status'], 'scheduled')
     self.assertEqual(insider['auctionParameters']['type'], 'insider')
     self.assertEqual(insider['auctionParameters']['dutchSteps'], DEFAULT_DUTCH_STEPS)
 

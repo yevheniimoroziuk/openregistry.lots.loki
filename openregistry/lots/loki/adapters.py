@@ -56,6 +56,7 @@ class LokiLotManagerAdapter(LotManagerAdapter):
             data = dict()
             data['tenderAttempts'] = tenderAttempts
             data['procurementMethodType'] = auction_type
+            data['status'] = 'scheduled'
             data['auctionParameters'] = {}
             if auction_type == 'sellout.english':
                 data['auctionParameters']['type'] = 'english'
