@@ -127,19 +127,20 @@ def validate_verification_status(request, error_handler, **kwargs):
             request.errors.add(
                 'body',
                 'data',
-                'Can\'t move lot to status verification until '
+                'Can\'t switch lot to verification status from pending until '
                 'this fields are not filled {} in auctions'.format(required_fields)
             )
             request.errors.status = 422
-            raise error_handler(request)
 
         required_fields = ['tenderingDuration']
         if not all(second_english[field] for field in required_fields):
             request.errors.add(
                 'body',
                 'data',
-                'Can\'t move lot to status verification until '
+                'Can\'t switch lot to verification status from pending until '
                 'this fields are not filled {} in second english auction'.format(required_fields)
             )
             request.errors.status = 422
+
+        if request.errors:
             raise error_handler(request)

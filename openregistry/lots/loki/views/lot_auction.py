@@ -32,10 +32,10 @@ class LotAuctionResource(APIResource):
         if self.request.params.get('all', ''):
             collection_data = [i.serialize("view") for i in self.context.auctions]
         else:
-            collection_data = sorted(dict([
+            collection_data = dict([
                 (i.id, i.serialize("view"))
                 for i in self.context.auctions
-            ]).values(), key=lambda i: i['tenderAttempts'])
+            ]).values()
         return {'data': collection_data}
 
     @json_view(permission='view_lot')

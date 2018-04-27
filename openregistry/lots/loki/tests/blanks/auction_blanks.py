@@ -455,9 +455,7 @@ def procurementMethodDetails_check_without_sandbox(self):
 
 
 # submissionMethodDetails test
-
-@unittest.skipIf(not SANDBOX_MODE, 'If sandbox mode is enabled auctionParameters has additional field submissionMethodDetails')
-def submissionMethodDetails_check_with_sandbox(self):
+def submissionMethodDetails_check(self):
     data = deepcopy(self.initial_data)
 
     # Test submissionMethodDetails after creating lot
@@ -515,66 +513,3 @@ def submissionMethodDetails_check_with_sandbox(self):
         auction_param_with_submissionMethodDetails['submissionMethodDetails']
     )
 
-
-@unittest.skipIf(SANDBOX_MODE, 'If sandbox mode is disabled auctionParameters has not submissionMethodDetails field')
-def submissionMethodDetails_check_without_sandbox(self):
-
-    # Test submissionMethodDetails after creating lot
-    data = deepcopy(self.initial_data)
-    response = self.app.get('/{}'.format(self.resource_id))
-    lot = response.json['data']
-    english = response.json['data']['auctions'][0]
-    second_english = response.json['data']['auctions'][1]
-    insider = response.json['data']['auctions'][2]
-
-    self.assertNotIn(
-        'submissionMethodDetails',
-        response.json['data']['auctions'][0],
-    )
-    self.assertNotIn(
-        'submissionMethodDetails',
-        response.json['data']['auctions'][1],
-    )
-    self.assertNotIn(
-        'submissionMethodDetails',
-        response.json['data']['auctions'][2],
-    )
-
-
-    auction_param_with_submissionMethodDetails = {'submissionMethodDetails': 'quick(mode:fast-forward)'}
-
-    # Test submissionMethodDetails error while updating english
-    response = self.app.patch_json(
-        '/{}/auctions/{}'.format(lot['id'], english['id']),
-        {"data": auction_param_with_submissionMethodDetails},
-        headers=self.access_header,
-        status=422
-    )
-    self.assertEqual(response.status, '422 Unprocessable Entity')
-    self.assertEqual(response.content_type, 'application/json')
-    self.assertEqual(response.json['errors'][0]['description'], u'Rogue field')
-    self.assertEqual(response.json['errors'][0]['name'], 'submissionMethodDetails')
-
-    # Test submissionMethodDetails error while updating english
-    response = self.app.patch_json(
-        '/{}/auctions/{}'.format(lot['id'], second_english['id']),
-        {"data": auction_param_with_submissionMethodDetails},
-        headers=self.access_header,
-        status=422
-    )
-    self.assertEqual(response.status, '422 Unprocessable Entity')
-    self.assertEqual(response.content_type, 'application/json')
-    self.assertEqual(response.json['errors'][0]['description'], u'Rogue field')
-    self.assertEqual(response.json['errors'][0]['name'], 'submissionMethodDetails')
-
-    # Test submissionMethodDetails error while updating english
-    response = self.app.patch_json(
-        '/{}/auctions/{}'.format(lot['id'], insider['id']),
-        {"data": auction_param_with_submissionMethodDetails},
-        headers=self.access_header,
-        status=422
-    )
-    self.assertEqual(response.status, '422 Unprocessable Entity')
-    self.assertEqual(response.content_type, 'application/json')
-    self.assertEqual(response.json['errors'][0]['description'], u'Rogue field')
-    self.assertEqual(response.json['errors'][0]['name'], 'submissionMethodDetails')

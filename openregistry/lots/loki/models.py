@@ -89,9 +89,11 @@ class Auction(Model):
     accountDetails = ModelType(AccountDetails)
     auctionParameters = ModelType(AuctionParameters)
     tenderingDuration = IsoDurationType()
+    submissionMethodDetails = StringType()
+    submissionMethodDetails_en = StringType()
+    submissionMethodDetails_ru = StringType()
     if SANDBOX_MODE:
         procurementMethodDetails = StringType()
-        submissionMethodDetails = StringType()
 
     def get_role(self):
         root = self.__parent__.__parent__
