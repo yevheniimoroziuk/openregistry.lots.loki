@@ -20,6 +20,7 @@ from openregistry.lots.loki.tests.blanks.lot_blanks import (
     change_pending_lot,
     change_composing_lot,
     change_verification_lot,
+    change_pending_deleted_lot,
     change_deleted_lot,
     change_pending_dissolution_lot,
     change_active_salable_lot,
@@ -53,6 +54,7 @@ class LotResourceTest(BaseLotWebTest, ResourceTestMixin):
     test_08_change_draft_lot = snitch(change_draft_lot)
     test_09_change_pending_lot = snitch(change_pending_lot)
     test_10_change_active_salable_lot = snitch(change_active_salable_lot)
+    test_change_pending_deleted_lot = snitch(change_pending_deleted_lot)
     test_11_check_deleted_lot = snitch(change_deleted_lot)
     test_12_check_pending_dissolution_lot = snitch(change_pending_dissolution_lot)
     test_13_check_active_salable_lot = snitch(change_active_salable_lot)

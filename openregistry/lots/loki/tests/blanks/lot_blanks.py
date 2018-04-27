@@ -84,8 +84,7 @@ def add_decisions(self, lot):
         }
     data_with_decisions = {
         "decisions": [
-            lot['decisions'][0],
-            asset_decision
+            lot['decisions'][0],asset_decision
         ]
     }
     response = self.app.patch_json('/{}'.format(lot['id']), params={'data': data_with_decisions})
@@ -489,7 +488,7 @@ def rectificationPeriod_workflow(self):
     self.assertEqual(lot['title'], response.json['data']['title'])
 
     add_cancellationDetails_document(self, lot, access_header)
-    check_patch_status_200(self, '/{}'.format(lot['id']), 'deleted', access_header)
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'pending.deleted', access_header)
 
 
 def dateModified_resource(self):
@@ -887,7 +886,7 @@ def change_pending_lot(self):
     # Move status from Pending to Deleted 403
     response = self.app.patch_json('/{}'.format(lot['id']),
                                    headers=access_header,
-                                   params={'data': {'status': 'deleted'}},
+                                   params={'data': {'status': 'pending.deleted'}},
                                    status=403)
     self.assertEqual(response.status, '403 Forbidden')
     self.assertEqual(response.content_type, 'application/json')
@@ -899,7 +898,7 @@ def change_pending_lot(self):
 
     # Move from 'pending' to 'deleted' status
     add_cancellationDetails_document(self, lot, access_header)
-    check_patch_status_200(self, '/{}'.format(lot['id']), 'deleted', access_header)
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'pending.deleted', access_header)
 
     # Create lot in 'draft' status and move it to 'pending'
     response = create_single_lot(self, deepcopy(lot_info))
@@ -972,7 +971,7 @@ def change_pending_lot(self):
 
     # Move status from Pending to Deleted 403
     response = self.app.patch_json('/{}'.format(lot['id']),
-                                   params={'data': {'status': 'deleted'}},
+                                   params={'data': {'status': 'pending.deleted'}},
                                    status=403)
     self.assertEqual(response.status, '403 Forbidden')
     self.assertEqual(response.content_type, 'application/json')
@@ -987,7 +986,7 @@ def change_pending_lot(self):
     add_cancellationDetails_document(self, lot, access_header)
     self.app.authorization = ('Basic', ('administrator', ''))
 
-    check_patch_status_200(self, '/{}'.format(lot['id']), 'deleted')
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'pending.deleted')
 
 
 def change_deleted_lot(self):
@@ -1031,8 +1030,12 @@ def change_deleted_lot(self):
 
     # Move from 'pending' to 'deleted'
     add_cancellationDetails_document(self, lot, access_header)
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'pending.deleted', access_header)
+
+    self.app.authorization = ('Basic', ('concierge', ''))
     check_patch_status_200(self, '/{}'.format(lot['id']), 'deleted', access_header)
 
+    self.app.authorization = ('Basic', ('broker', ''))
     # Move from 'deleted' to one of 'blacklist' status
     for status in STATUS_BLACKLIST['deleted']['lot_owner']:
         check_patch_status_403(self, '/{}'.format(lot['id']), status, access_header)
@@ -1604,3 +1607,74 @@ def change_invalid_lot(self):
     # Move from 'invalid' to one of 'blacklist' status
     for status in STATUS_BLACKLIST['invalid']['Administrator']:
         check_patch_status_403(self, '/{}'.format(lot['id']), status)
+
+
+def change_pending_deleted_lot(self):
+    response = self.app.get('/')
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(len(response.json['data']), 0)
+
+    self.app.authorization = ('Basic', ('broker', ''))
+
+    lot_info = self.initial_data
+
+    # Create new lot in 'pending.deleted' status
+    json = create_single_lot(self, lot_info, 'verification')
+    lot = json['data']
+    token = json['access']['token']
+    access_header = {'X-Access-Token': str(token)}
+    self.app.authorization = ('Basic', ('concierge', ''))
+    add_decisions(self, lot)
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'pending')
+    self.app.authorization = ('Basic', ('broker', ''))
+    add_cancellationDetails_document(self, lot, access_header)
+
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'pending.deleted', access_header)
+
+    # Move from 'pending.deleted' to one of 'blacklist' status
+    self.app.authorization = ('Basic', ('broker', ''))
+    for status in STATUS_BLACKLIST['pending.deleted']['lot_owner']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status, access_header)
+
+    self.app.authorization = ('Basic', ('concierge', ''))
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'deleted')
+
+    # Create new lot in 'pending.deleted' status
+    self.app.authorization = ('Basic', ('broker', ''))
+    json = create_single_lot(self, lot_info, 'verification')
+    lot = json['data']
+    token = json['access']['token']
+    access_header = {'X-Access-Token': str(token)}
+    self.app.authorization = ('Basic', ('concierge', ''))
+    add_decisions(self, lot)
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'pending')
+    self.app.authorization = ('Basic', ('broker', ''))
+    add_cancellationDetails_document(self, lot, access_header)
+
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'pending.deleted', access_header)
+
+    # Move from 'pending.deleted' to one of 'blacklist' status
+    self.app.authorization = ('Basic', ('concierge', ''))
+    for status in STATUS_BLACKLIST['pending.deleted']['concierge']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status)
+
+    # Move from 'pending.deleted' to one of 'blacklist' status
+    self.app.authorization = ('Basic', ('convoy', ''))
+    for status in STATUS_BLACKLIST['pending.deleted']['convoy']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status)
+
+    self.app.authorization = ('Basic', ('administrator', ''))
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'deleted')
+
+    # Create new lot in 'pending.deleted' status
+    self.app.authorization = ('Basic', ('broker', ''))
+    json = create_single_lot(self, lot_info, 'pending.deleted')
+    lot = json['data']
+    token = json['access']['token']
+    self.assertEqual(lot['status'], 'pending.deleted')
+
+    # Move from 'pending.deleted' to one of 'blacklist' status
+    self.app.authorization = ('Basic', ('administrator', ''))
+    for status in STATUS_BLACKLIST['pending.deleted']['Administrator']:
+        check_patch_status_403(self, '/{}'.format(lot['id']), status)
+
