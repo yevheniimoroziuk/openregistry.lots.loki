@@ -13,7 +13,7 @@ from openregistry.lots.core.validation import (
 
 def validate_document_operation_in_not_allowed_lot_status(request, error_handler, **kwargs):
     status = request.validated['lot_status']
-    if status != 'pending':
+    if status not in  ['pending', 'composing']:
         raise_operation_error(request, error_handler,
                               'Can\'t update document in current ({}) lot status'.format(status))
 
@@ -80,7 +80,7 @@ def rectificationPeriod_document_validation(request, error_handler, **kwargs):
 
 def validate_deleted_status(request, error_handler, **kwargs):
     can_be_deleted = any([doc.documentType == 'cancellationDetails' for doc in request.context['documents']])
-    if request.json['data'].get('status') == 'deleted' and not can_be_deleted:
+    if request.json['data'].get('status') == 'pending.deleted' and not can_be_deleted:
         request.errors.add(
             'body',
             'mode',
