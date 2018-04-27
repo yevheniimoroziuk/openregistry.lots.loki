@@ -9,7 +9,6 @@ from schematics.types.serializable import serializable
 from zope.interface import implementer
 from openregistry.lots.core.constants import (
     SANDBOX_MODE,
-    SELLOUT_AUCTION_STATUSES
 )
 
 from openregistry.lots.core.models import (
@@ -36,7 +35,7 @@ from openregistry.lots.core.utils import (
 
 from .constants import (
     LOT_STATUSES,
-    RECTIFICATION_PERIOD_DURATION,
+    AUCTION_STATUSES
 )
 from .roles import (
     lot_roles,
@@ -78,7 +77,7 @@ class Auction(Model):
 
     id = StringType(required=True, min_length=1, default=lambda: uuid4().hex)
     auctionID = StringType()
-    status = StringType(choices=SELLOUT_AUCTION_STATUSES)
+    status = StringType(choices=AUCTION_STATUSES)
     procurementMethodType = StringType(choices=['sellout.english', 'sellout.insider'])
     tenderAttempts = IntType(min_value=1, max_value=3)
     auctionPeriod = ModelType(StartDateRequiredPeriod)
