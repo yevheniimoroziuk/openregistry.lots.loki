@@ -151,7 +151,9 @@ class Lot(BaseLot):
             english = auctions[0]
             second_english = auctions[1]
             insider = auctions[2]
-            auto_calculated_fields = filter(lambda f: english[f], auto_calculated_fields)
+            auto_calculated_fields = filter(
+                lambda f: getattr(english, f, None), auto_calculated_fields
+            )
             for auction in (second_english, insider):
                 for key in auto_calculated_fields:
                     object_class = getattr(self.__class__.auctions.model_class, key)

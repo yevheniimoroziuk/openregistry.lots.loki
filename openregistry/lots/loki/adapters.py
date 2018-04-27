@@ -53,18 +53,17 @@ class LokiLotManagerAdapter(LotManagerAdapter):
         lot.date = get_now()
         auction_types = ['sellout.english', 'sellout.english', 'sellout.insider']
         auction_class = lot.__class__.auctions.model_class
-        auctionParameters_class = lot.__class__.auctions.model_class.auctionParameters.model_class
         for tenderAttempts, auction_type in enumerate(auction_types, 1):
-            auction = auction_class()
-            auction.procurementMethodType = auction_type
-            auction.tenderAttempts = tenderAttempts
-            auction.auctionParameters = auctionParameters_class()
+            data = dict()
+            data['tenderAttempts'] = tenderAttempts
+            data['procurementMethodType'] = auction_type
+            data['auctionParameters'] = {}
             if auction_type == 'sellout.english':
-                auction.auctionParameters.type = 'english'
-            if auction_type == 'sellout.insider':
-                auction.auctionParameters.type = 'insider'
-                auction.auctionParameters.dutchSteps = DEFAULT_DUTCH_STEPS
-            lot.auctions.append(auction)
+                data['auctionParameters']['type'] = 'english'
+            elif auction_type == 'sellout.insider':
+                data['auctionParameters']['type'] = 'insider'
+                data['auctionParameters']['dutchSteps'] = DEFAULT_DUTCH_STEPS
+            lot.auctions.append(auction_class(data))
 
     def create_lot(self, request):
         self._validate(request, self.create_validation)
