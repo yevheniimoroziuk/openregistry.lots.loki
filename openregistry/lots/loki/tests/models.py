@@ -10,7 +10,7 @@ from openregistry.lots.core.utils import get_now
 
 from openregistry.lots.loki.models import (
     StartDateRequiredPeriod,
-    AccountDetails,
+    BankAccount,
     Auction,
 )
 
@@ -41,19 +41,19 @@ class DummyModelsTest(unittest.TestCase):
         self.assertEqual(ex.exception.messages,
                          {"startDate": ["period should begin before its end"]})
 
-    def test_AccountDetails(self):
+    def test_BankAccount(self):
         data = {
             'name': 'Name'
         }
 
-        account_details = AccountDetails()
+        account_details = BankAccount()
         self.assertEqual(account_details.serialize(), None)
-        with self.assertRaisesRegexp(ValueError, 'AccountDetails Model has no role "test"'):
+        with self.assertRaisesRegexp(ValueError, 'BankAccount Model has no role "test"'):
             account_details.serialize('test')
 
         account_details.import_data(data)
         account_details.validate()
-        data['accountCodes'] = [
+        data['accountIdentification'] = [
             {
                 'scheme': 'wrong',
                 'id': '1231232'
@@ -64,16 +64,16 @@ class DummyModelsTest(unittest.TestCase):
             account_details.validate()
         self.assertEqual(
             ex.exception.messages,
-            {'accountCodes': [{
-                 'scheme': [u"Value must be one of ['UA-EDR', 'MFO', 'accountNumber']."],
+            {'accountIdentification': [{
+                 'scheme': [u"Value must be one of ['UA-EDR', 'UA-MFO', 'accountNumber']."],
                  'description': [u"This field is required."]
                 }]
             }
         )
 
-        data['accountCodes'] = [
+        data['accountIdentification'] = [
             {
-                'scheme': 'MFO',
+                'scheme': 'UA-MFO',
                 'id': '1231232',
                 'description': 'just description'
             }
