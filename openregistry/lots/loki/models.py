@@ -53,14 +53,14 @@ class StartDateRequiredPeriod(Period):
 
 
 class UAEDRAndMFOClassification(Classification):
-    scheme = StringType(choices=['UA-EDR', 'MFO', 'accountNumber'], required=True)
+    scheme = StringType(choices=['UA-EDR', 'UA-MFO', 'accountNumber'], required=True)
 
 
-class AccountDetails(Model):
+class BankAccount(Model):
     description = StringType()
     bankName = StringType()
     accountNumber = StringType()
-    accountCodes = ListType(ModelType(UAEDRAndMFOClassification), default=list())
+    accountIdentification = ListType(ModelType(UAEDRAndMFOClassification), default=list())
 
 
 class AuctionParameters(Model):
@@ -85,7 +85,7 @@ class Auction(Model):
     minimalStep = ModelType(Value)
     guarantee = ModelType(Guarantee)
     registrationFee = ModelType(Guarantee)
-    accountDetails = ModelType(AccountDetails)
+    bankAccount = ModelType(BankAccount)
     auctionParameters = ModelType(AuctionParameters)
     tenderingDuration = IsoDurationType()
     submissionMethodDetails = StringType()
