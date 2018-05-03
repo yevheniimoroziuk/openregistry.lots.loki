@@ -19,6 +19,8 @@ from .constants import (
 )
 from .validation import (
     validate_decision_post,
+    validate_decision_patch,
+    validate_deleted_status,
     validate_verification_status,
 )
 
@@ -38,6 +40,8 @@ class LokiLotManagerAdapter(LotManagerAdapter):
         validate_decision_post,
     )
     change_validation = (
+        validate_decision_patch,
+        validate_deleted_status,
         validate_verification_status,
     )
 
