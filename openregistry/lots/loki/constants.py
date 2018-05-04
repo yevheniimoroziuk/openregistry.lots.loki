@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import timedelta
 
-AUCTION_STATUSES = ['scheduled', 'deleted', 'active', 'complete',  'unsuccessful', 'cancelled']
+AUCTION_STATUSES = ['scheduled', 'active', 'complete',  'unsuccessful', 'cancelled']
 LOT_STATUSES = [
     "draft", "composing", "verification",  "pending", "pending.deleted", "deleted", "active.salable", "active.awaiting",
     "active.auction", "active.contracting", "pending.sold", "pending.dissolution", "sold", "dissolved", "invalid"]
