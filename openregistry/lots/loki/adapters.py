@@ -48,7 +48,9 @@ class LokiLotManagerAdapter(LotManagerAdapter):
     def _set_rectificationPeriod(self, request):
         data = dict()
         data['startDate'] = get_now()
-        data['endDate'] = calculate_business_date(data['startDate'], RECTIFICATION_PERIOD_DURATION)
+        data['endDate'] = calculate_business_date(data['startDate'],
+                                                  RECTIFICATION_PERIOD_DURATION,
+                                                  None)
         request.context.rectificationPeriod = type(request.context).rectificationPeriod.model_class(data)
 
     def _create_auctions(self, request):
