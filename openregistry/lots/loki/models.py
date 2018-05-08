@@ -159,7 +159,8 @@ class Lot(BaseLot):
                 for key in auto_calculated_fields:
                     object_class = getattr(self.__class__.auctions.model_class, key)
                     auction[key] = object_class(english[key].serialize())
-                    auction[key]['amount'] = english[key]['amount'] / 2
+                    auction[key]['amount'] = (0 if key == 'minimalStep' and auction.procurementMethodType == 'sellout.insider'
+                                              else english[key]['amount'] / 2)
 
             insider.tenderingDuration = second_english.tenderingDuration
         return self.auctions
