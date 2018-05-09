@@ -43,15 +43,6 @@ auction_roles = {
     'edit_3.sellout.insider': edit_insider
 }
 
-english_auctionParameters_edit_role = blacklist('type', 'dutchSteps')
-insider_auctionParameters_edit_role = blacklist('type')
-auctionParameters_roles = {
-    'create': blacklist('type', 'dutchSteps'),
-    'edit_1.sellout.english': english_auctionParameters_edit_role,
-    'edit_2.sellout.english': english_auctionParameters_edit_role,
-    'edit_3.sellout.insider': insider_auctionParameters_edit_role
-}
-
 lot_create_role = (whitelist('status', 'assets', 'decisions', 'lotType', 'lotIdentifier', 'mode'))
 lot_edit_role = (blacklist('owner_token', 'owner', '_attachments',
                        'revisions', 'date', 'dateModified', 'documents', 'decisions',
