@@ -25,13 +25,13 @@ def validate_item_data(request, error_handler, **kwargs):
     validate_data(request, model)
 
 
-def validate_decision_post(request, error_handler, **kwargs):
+def validate_decision_post(request, error_handler):
     if len(request.validated['lot'].decisions) > 1:
         raise_operation_error(request, error_handler,
                               'Can\'t add more than one decisions to lot')
 
 
-def validate_decision_patch(request, error_handler, **kwargs):
+def validate_decision_patch(request, error_handler):
     # Validate second decision because second decision come from asset and can be changed
     is_decisions_available = bool(
         len(request.context.decisions) == 2 or
@@ -78,7 +78,7 @@ def rectificationPeriod_document_validation(request, error_handler, **kwargs):
         raise error_handler(request)
 
 
-def validate_deleted_status(request, error_handler, **kwargs):
+def validate_deleted_status(request, error_handler):
     can_be_deleted = any([doc.documentType == 'cancellationDetails' for doc in request.context['documents']])
     if request.json['data'].get('status') == 'pending.deleted' and not can_be_deleted:
         request.errors.add(
@@ -115,7 +115,7 @@ def validate_update_auction_in_not_allowed_status(request, error_handler, **kwar
                                   'Can\'t update item in current ({}) lot status'.format(request.validated['lot_status']))
 
 
-def validate_verification_status(request, error_handler, **kwargs):
+def validate_verification_status(request, error_handler):
     if request.validated['data'].get('status') == 'verification' and request.context.status == 'composing':
         lot = request.validated['lot']
         auctions = sorted(lot.auctions, key=lambda a: a.tenderAttempts)

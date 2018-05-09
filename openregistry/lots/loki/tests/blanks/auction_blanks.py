@@ -330,8 +330,6 @@ def rectificationPeriod_auction_workflow(self):
 
 @unittest.skipIf(not SANDBOX_MODE, 'If sandbox mode is enabled auctionParameters has additional field procurementMethodDetails')
 def procurementMethodDetails_check_with_sandbox(self):
-    data = deepcopy(self.initial_data)
-
     # Test procurementMethodDetails after creating lot
     response = self.app.get('/{}'.format(self.resource_id))
     lot = response.json['data']
@@ -394,9 +392,7 @@ def procurementMethodDetails_check_with_sandbox(self):
 
 @unittest.skipIf(SANDBOX_MODE, 'If sandbox mode is disabled auctionParameters has not procurementMethodDetails field')
 def procurementMethodDetails_check_without_sandbox(self):
-
     # Test procurementMethodDetails after creating lot
-    data = deepcopy(self.initial_data)
     response = self.app.get('/{}'.format(self.resource_id))
     lot = response.json['data']
     english = response.json['data']['auctions'][0]
@@ -458,8 +454,6 @@ def procurementMethodDetails_check_without_sandbox(self):
 
 # submissionMethodDetails test
 def submissionMethodDetails_check(self):
-    data = deepcopy(self.initial_data)
-
     # Test submissionMethodDetails after creating lot
     response = self.app.get('/{}'.format(self.resource_id))
     lot = response.json['data']
@@ -514,4 +508,3 @@ def submissionMethodDetails_check(self):
         response.json['data']['submissionMethodDetails'],
         auction_param_with_submissionMethodDetails['submissionMethodDetails']
     )
-

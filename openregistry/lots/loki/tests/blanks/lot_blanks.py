@@ -1679,4 +1679,3 @@ def change_pending_deleted_lot(self):
     self.app.authorization = ('Basic', ('administrator', ''))
     for status in STATUS_BLACKLIST['pending.deleted']['Administrator']:
         check_patch_status_403(self, '/{}'.format(lot['id']), status)
-
