@@ -128,7 +128,7 @@ class DummyModelsTest(unittest.TestCase):
         self.assertEqual(
             ex.exception.messages,
             {'auctionParameters':
-                 {'dutchSteps': [u'Int value should be less than 100.']}
+                 {'dutchSteps': [u'Int value should be less than 99.']}
             }
         )
 
