@@ -25,10 +25,10 @@ Schema
     List of :ref:`identifier` objects
     
 :address:
-    :ref:`Address`, required
+    :ref:`Address`, required for lotCustodian
     
 :contactPoint:
-    :ref:`ContactPoint`, required
+    :ref:`ContactPoint`, required for lotCustodian
 
 
 .. index:: Company, id
@@ -150,13 +150,13 @@ Schema
     The telephone number of the contact point/person. This should include the international dialling code.
     
 :faxNumber:
-    string
+    string, optional
     
     |ocdsDescription|
     The fax number of the contact point/person. This should include the international dialling code.
     
 :url:
-    URL
+    URL, optional
     
     |ocdsDescription|
     A web address for the contact point/person.

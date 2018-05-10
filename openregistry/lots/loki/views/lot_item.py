@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from openregistry.lots.core.utils import (
-    get_file,
     update_file_content_type,
     json_view,
     context_unpack,
@@ -54,11 +53,17 @@ class LotItemResource(APIResource):
         item = self.request.validated['item']
         self.context.items.append(item)
         if save_lot(self.request):
-            self.LOGGER.info('Created lot item {}'.format(item.id),
-                        extra=context_unpack(self.request, {'MESSAGE_ID': 'lot_item_create'}, {'item_id': item.id}))
+            self.LOGGER.info(
+                'Created lot item {}'.format(item.id),
+                extra=context_unpack(self.request, {'MESSAGE_ID': 'lot_item_create'}, {'item_id': item.id})
+            )
             self.request.response.status = 201
             item_route = self.request.matched_route.name.replace("collection_", "")
-            self.request.response.headers['Location'] = self.request.current_route_url(_route_name=item_route, item_id=item.id, _query={})
+            self.request.response.headers['Location'] = self.request.current_route_url(
+                                                            _route_name=item_route,
+                                                            item_id=item.id,
+                                                            _query={}
+                                                            )
             return {'data': item.serialize("view")}
 
     @json_view(permission='view_lot')
@@ -72,6 +77,8 @@ class LotItemResource(APIResource):
         """Lot Item Update"""
         if apply_patch(self.request, src=self.request.context.serialize()):
             update_file_content_type(self.request)
-            self.LOGGER.info('Updated lot item {}'.format(self.request.context.id),
-                        extra=context_unpack(self.request, {'MESSAGE_ID': 'lot_item_patch'}))
+            self.LOGGER.info(
+                'Updated lot item {}'.format(self.request.context.id),
+                extra=context_unpack(self.request, {'MESSAGE_ID': 'lot_item_patch'})
+            )
             return {'data': self.request.context.serialize("view")}

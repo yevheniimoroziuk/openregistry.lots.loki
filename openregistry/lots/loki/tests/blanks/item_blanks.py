@@ -116,5 +116,3 @@ def rectificationPeriod_item_workflow(self):
                                    status=403)
     self.assertEqual(response.status, '403 Forbidden')
     self.assertEqual(response.json['errors'][0]['description'], 'You can\'t change items after rectification period')
-
-

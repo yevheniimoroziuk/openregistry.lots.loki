@@ -1,7 +1,7 @@
 .. . Kicking page rebuild 2014-10-30 17:00:08
 .. include:: defs.hrst
 
-.. index:: Auction, Duration, Value, Guarantee, auctionParameters
+.. index:: Auction, Duration, Value, Guarantee, auctionParameters, Bank Account
 
 .. _auction:
 
@@ -20,15 +20,36 @@ Schema
   The auction identifier to refer auction to in "paper" documentation. 
 
   |ocdsDescription|
-  AuctionID should always be the same as the OCID. It is included to make the flattened data structure more convenient.
+  It is included to make the flattened data structure more convenient.
    
 :procurementMethodType:
   string, auto-generated, read-only
 
+  Type that defines what type of the procedure is going to be used. Possible values:
+
+  * `sellout.english` - procedure with the open ascending price auction;
+
+  * `sellout.insider` - procedure with the insider auction.
+
+:procurementMethodDetails:
+  string, optional 
+
+  Parameter that accelerates auction periods. Set *quick, accelerator=1440* as text value for `procurementMethodDetails` for the time frames to be reduced in 1440 times.
+
+:submissionMethodDetails:
+  string, optional 
+
+  Parameter that works only with mode = "test" and speeds up auction start date. 
+
+  Possible values are:
+
+  * `quick(mode:no-auction)`; 
+  * `quick(mode:fast-forward)`.
+
 :auctionPeriod:
   :ref:`period`, required
 
-  Period when the first auction is conducted. Here startDate` should be provided.
+  Period when the first auction is conducted. Here only `startDate` has be provided.
 
 :tenderingDuration:
   :ref:`Duration`, required
@@ -36,13 +57,13 @@ Schema
   Duration of tenderPeriod for 2nd and 3rd procedures within the privatization cycle. 
 
 :documents:
-  List of :ref:`document` objects
+  Array of :ref:`document` objects
  
   |ocdsDescription|
   All documents and attachments related to the auction.
 
 :value:
-  ref:`value`, required
+  :ref:`value`, required
 
   Total available budget of the 1st auction. Bids lower than ``value`` will be rejected.
 
@@ -54,38 +75,39 @@ Schema
 :guarantee:
   :ref:`Guarantee`, required
 
-  Bid guarantee.
+  Bid guarantee. `Lots.auctions.guarantee` for 2nd and 3rd auctions within the privatization cycle will be calculated auctomatically.
 
 :registrationFee:
   :ref:`Guarantee`, required
 
-  Bid registration fee.
+  Bid registration fee. `Lots.auctions.registrationFee` for 2nd and 3rd auctions within the privatization cycle will be calculated auctomatically.
 
 :minimalStep:
   :ref:`value`, required
 
-  The minimal step of the 1st auction. `Auction.minimalStep` for 2nd and 3rd auctions within the privatization cycle will be calculated as half of the `auction.minimalStep` provided.
-
-  Validation rules:
-
-  * `amount` should be greater than `Auction.value.amount`
-  * `currency` should either be absent or match `Auction.value.currency`
-  * `valueAddedTaxIncluded` should either be absent or match `Auction.value.valueAddedTaxIncluded`
+  The minimal step of the 1st auction. `Lots.auctions.minimalStep` for 2nd and 3rd auctions within the privatization cycle will be calculated auctomatically.
 
 :auctionParameters:
-  :ref: `auctionParameters`, optional
+  :ref:`auctionParameters`, optional
 
   Parameters for the auction to be held.
 
-:accountDetails:
-  :ref:`accountDetails`, optional
+  Ogranizator can optionally set value for the 3rd auction within the `lots.auctions` structure.
+
+:bankAccount:
+  :ref:`bankAccount`, optional
 
   Details which uniquely identify a bank account, and are used when making or receiving a payment.
 
+:tenderAttempts: 
+  integer, auto-generated, read-only
+
+  The number which represents what time (from 1 up to 3) procedure with a current lot takes place.
+
 .. _auctionParameters:
 
-auctionParameters
-=================
+Auction Parameters
+==================
 
 Schema
 ------
@@ -101,12 +123,6 @@ Schema
   Number of steps within the dutch part of the insider auction. 
 
   Possible values are [1; 100]. Defaul value is 99.
-
-:procurementMethodDetails:
-
-  Parameter that accelerates auction periods. For instance you can set `quick, accelerator=1440`
-  as text value for `procurementMethodDetails`. The number 1440 shows that restrictions and time frames 
-  will be reduced in 1440 times.
 
 .. _duration:
 
@@ -163,3 +179,29 @@ Schema
     
   |ocdsDescription|
   The currency in 3-letter ISO 4217 format.
+
+.. _bankAccount:
+
+Bank Account
+============
+
+:description:
+  string, multilingual, optional
+    
+  Additional information that has to be noted from the Organizator's point.
+
+:bankName:
+  string, required
+
+  Name of the bank.
+
+:accountIdentification:
+  Array of :ref:`Classification`, required
+
+  Major data on the account details of the state entity selling a lot, to facilitate payments at the end of the process.
+
+  Most frequently used are:
+
+  * `UA-EDR`; 
+  * `UA-MFO`;
+  * `accountNumber`.

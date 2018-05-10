@@ -110,7 +110,7 @@ class DummyModelsTest(unittest.TestCase):
         auction.import_data(data)
         auction.validate()
 
-        data['auctionParameters'] = {'dutchSteps': -3, 'type': 'insider'}
+        data['auctionParameters'] = {'dutchSteps': 0, 'type': 'insider'}
         auction.import_data(data)
         with self.assertRaises(ModelValidationError) as ex:
             auction.validate()
@@ -121,7 +121,7 @@ class DummyModelsTest(unittest.TestCase):
             }
         )
 
-        data['auctionParameters'] = {'dutchSteps': 132, 'type': 'insider'}
+        data['auctionParameters'] = {'dutchSteps': 100, 'type': 'insider'}
         auction.import_data(data)
         with self.assertRaises(ModelValidationError) as ex:
             auction.validate()
@@ -148,5 +148,3 @@ def suite():
 
 if __name__ == '__main__':
     unittest.main(defaultTest='suite')
-
-

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from openregistry.lots.core.utils import (
-    update_file_content_type,
     json_view,
     context_unpack,
     APIResource,
@@ -18,6 +17,7 @@ patch_validators = (
     rectificationPeriod_auction_validation,
     validate_update_auction_in_not_allowed_status
 )
+
 
 @oplotsresource(name='loki:Lot Auctions',
                 collection_path='/lots/{lot_id}/auctions',
@@ -48,6 +48,8 @@ class LotAuctionResource(APIResource):
     def patch(self):
         """Lot Auction Update"""
         if apply_patch(self.request, src=self.request.context.serialize()):
-            self.LOGGER.info('Updated lot auction {}'.format(self.request.context.id),
-                        extra=context_unpack(self.request, {'MESSAGE_ID': 'lot_auction_patch'}))
+            self.LOGGER.info(
+                'Updated lot auction {}'.format(self.request.context.id),
+                extra=context_unpack(self.request, {'MESSAGE_ID': 'lot_auction_patch'})
+            )
             return {'data': self.request.context.serialize("view")}
