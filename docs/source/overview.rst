@@ -6,12 +6,11 @@ openregistry.lots.loki contains the description of the Lots Registry.
 Features
 --------
 
-* Lot represents the finalized object to be privatized within the process .
+* Lot represents the finalized object to be privatized within the process.
 * One asset only may be included in a single lot.
 * Asset which is included in lot, marked as attached to it and can't be used for other lots formation.
 * Lot can be deleted only in case of `documentType: cancellationDetails` has been attached.
 * Time for the lot to be edited is `rectificationPeriod`. 
-* Lots in `status: active.salable` are available for further usage with a meaning of a procedure creation.
 
 Conventions
 -----------

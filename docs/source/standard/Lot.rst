@@ -1,7 +1,7 @@
 .. . Kicking page rebuild 2014-10-30 17:00:08
 .. include:: defs.hrst
 
-.. index:: Lot, Period, Date 
+.. index:: Lot, Period, Date, Decisions 
 
 .. _lot:
 
@@ -21,6 +21,19 @@ Schema
 
    |ocdsDescription|
    LotID is included to make the flattened data structure more convenient.
+
+:title:
+    string, multilingual, required
+    
+    Initial data originates from `asset.title`.
+
+:description:
+    string, multilingual, required
+    
+    |ocdsDescription|
+    A description of the goods, services to be provided.
+    
+    Initial data originates from `asset.description`.
    
 :date:
     string, auto-generated, read-only
@@ -32,11 +45,6 @@ Schema
     
     |ocdsDescription|
     Date when the lot was last modified.
-    
-:rectificationPeriod:
-    :ref:`Period`, auto-generated, read-only
-
-    Period during which the lot's owner can edit it.
 
 :status:
     string, required
@@ -44,42 +52,35 @@ Schema
     The lot status within the Registry.
 
 :assets:
-    string, optional
+    string, required
     
-    id of the related asset.
-
-:title:
-    string, multilingual, auto-generated
-    
-    Originates from `asset.title`.
-
-:description:
-    string, multilingual, auto-generated
-    
-    |ocdsDescription|
-    A description of the goods, services to be provided.
-    
-    Originates from `asset.description`.
+    id of the related asset. Id of the one asset only can be noted.
     
 :decisions:
-    Array of :ref:`Decisions`, auto-generated, required
+    Array of :ref:`Decisions`, required
 
-    Also include the decision from `asset.decisions <http://assetsbounce.api-docs.registry.ea2.openprocurement.io/en/latest/standard/asset.html#decisions>`_.
+    Also include the data from `asset.decisions <http://assetsbounce.api-docs.registry.ea2.openprocurement.io/en/latest/standard/asset.html#decisions>`_.
     
 :lotCustodian:
-   :ref:`Organization`, auto-generated
 
-   An entity managing the lot. Originates from `asset.assetCustodian <http://assetsbounce.api-docs.registry.ea2.openprocurement.io/en/latest/standard/organization.html#organization>`_.
+   :ref:`Organization`, required
+
+   An entity managing the lot. Initial data originates from `asset.assetCustodian <http://assetsbounce.api-docs.registry.ea2.openprocurement.io/en/latest/standard/organization.html#organization>`_.
 
 :items:
-    :ref:`Item`, auto-generated
+    :ref:`Item`, required
 
-    Originates from `asset.items <http://assetsbounce.api-docs.registry.ea2.openprocurement.io/en/latest/standard/item.html>`_.
+    Initial data originates from `asset.items <http://assetsbounce.api-docs.registry.ea2.openprocurement.io/en/latest/standard/item.html>`_.
 
 :lotHolder:
-   :ref:`lotHolder`, auto-generated
+   :ref:`Organization`, required
 
-   Originates from `asset.assetHolder <http://assetsbounce.api-docs.registry.ea2.openprocurement.io/en/latest/standard/assetHolder.html>`_.
+   Initial data originates from `asset.assetHolder <http://assetsbounce.api-docs.registry.ea2.openprocurement.io/en/latest/standard/organization.html#organization>`_.
+
+:rectificationPeriod:
+    :ref:`Period`, auto-generated, read-only
+
+    Period during which the lot's owner can edit it.
 
 :auctions:
     :ref:`Auctions`, required
@@ -94,7 +95,9 @@ Schema
 :lotType:
     string, auto-generated, read-only
 
-    Type of the given lot.
+    Type of the given lot. Given value:
+
+    * `yoke` - lotType for the small scale privatization process.
 
 .. _period:    
 
@@ -147,3 +150,31 @@ Schema
 :valueAddedTaxIncluded:
     bool, required
 
+
+.. _decisions:
+
+Decisions
+=========
+
+Schema
+------
+
+:title:
+    string, multilingual, optional
+    
+    * Ukrainian by default (optional) - Ukrainian title
+    
+    * ``title_en`` (English) - English title
+    
+    * ``title_ru`` (Russian) - Russian title
+
+:decisionDate:
+    :ref:`Date`, required
+
+    |ocdsDescription|
+    The date on which the document was first published.
+
+:decisionID:
+    string, required
+
+    The decision identifier to refer to in the `paper` documentation. 
