@@ -65,12 +65,12 @@ Schema
 
     Geographical coordinates of the location. Element consists of the following items:
 
-    :latitude:
-        string, required
-    :longitude:
-        string, required
-    :elevation:
-        string, optional, usually not used
+    :`latitude`:
+        string, required;
+    :`longitude`:
+        string, required;
+    :`elevation`:
+        string, optional, usually not used.
 
     `location` usually takes precedence over `address` if both are present.
 
@@ -91,12 +91,12 @@ Schema
 
     Possible values are:
 
-    :unknown: 
-        Default value.
-    :registering:
-        Item is still registering.
-    :complete:
-        Item has already been registered.
+    :`unknown`: 
+        default value;
+    :`registering`:
+        item is still registering;
+    :`complete`:
+        item has already been registered.
 
 :registrationID:
     string, optional
