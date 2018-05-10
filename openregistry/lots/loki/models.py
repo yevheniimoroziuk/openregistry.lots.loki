@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 from uuid import uuid4
-from copy import deepcopy
 from pyramid.security import Allow
-from schematics.exceptions import ValidationError
 from schematics.types import StringType, IntType, MD5Type
 from schematics.types.compound import ModelType, ListType
 from schematics.types.serializable import serializable
@@ -30,7 +28,6 @@ from openregistry.lots.core.models import (
 from openregistry.lots.core.models import ILot, Lot as BaseLot
 from openregistry.lots.core.utils import (
     get_now,
-    calculate_business_date
 )
 
 from .constants import (
@@ -159,8 +156,10 @@ class Lot(BaseLot):
                 for key in auto_calculated_fields:
                     object_class = getattr(self.__class__.auctions.model_class, key)
                     auction[key] = object_class(english[key].serialize())
-                    auction[key]['amount'] = (0 if key == 'minimalStep' and auction.procurementMethodType == 'sellout.insider'
-                                              else english[key]['amount'] / 2)
+                    auction[key]['amount'] = (
+                        0 if key == 'minimalStep' and auction.procurementMethodType == 'sellout.insider'
+                        else english[key]['amount'] / 2
+                    )
 
             insider.tenderingDuration = second_english.tenderingDuration
         return self.auctions
