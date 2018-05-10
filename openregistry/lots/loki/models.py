@@ -10,7 +10,6 @@ from openregistry.lots.core.constants import (
 )
 
 from openregistry.lots.core.models import (
-    Classification,
     LokiDocument as Document,
     LokiItem as Item,
     Decision,
@@ -21,8 +20,9 @@ from openregistry.lots.core.models import (
     IsoDurationType,
     Guarantee,
     Period,
-    Value
-
+    Value,
+    BankAccount,
+    AuctionParameters
 )
 
 from openregistry.lots.core.models import ILot, Lot as BaseLot
@@ -37,7 +37,6 @@ from .constants import (
 from .roles import (
     lot_roles,
     auction_roles,
-    auctionParameters_roles
 )
 
 
@@ -47,25 +46,6 @@ class ILokiLot(ILot):
 
 class StartDateRequiredPeriod(Period):
     startDate = IsoDateTimeType(required=True)
-
-
-class UAEDRAndMFOClassification(Classification):
-    scheme = StringType(choices=['UA-EDR', 'UA-MFO', 'accountNumber'], required=True)
-
-
-class BankAccount(Model):
-    description = StringType()
-    bankName = StringType()
-    accountNumber = StringType()
-    accountIdentification = ListType(ModelType(UAEDRAndMFOClassification), default=list())
-
-
-class AuctionParameters(Model):
-    class Options:
-        roles = auctionParameters_roles
-
-    type = StringType(choices=['english', 'insider'])
-    dutchSteps = IntType(default=None, min_value=1, max_value=99)
 
 
 class Auction(Model):
