@@ -65,7 +65,7 @@ class AuctionParameters(Model):
         roles = auctionParameters_roles
 
     type = StringType(choices=['english', 'insider'])
-    dutchSteps = IntType(default=None, min_value=1, max_value=100)
+    dutchSteps = IntType(default=None, min_value=1, max_value=99)
 
 
 class Auction(Model):
