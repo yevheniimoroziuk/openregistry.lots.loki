@@ -25,12 +25,14 @@ Lots Workflow
                     edge[dir="forward"];
                     "pending.sold" -> "sold" [color="0.6667 1.0000 0.5020"];
                     color=white;
-            } 
+            }
 
             edge[style=solid, arrowhead="vee"]
             "verification" -> "invalid" [color="0.0000 0.0000 0.3882"];
             edge[style=dashed, arrowhead="vee"]
-            "pending" -> "deleted" [color="0.0000 0.0000 0.3882"];
+            "pending" -> "pending.deleted" [color="0.0000 0.0000 0.3882"];
+            edge[style=solid, arrowhead="vee"]
+            "pending.deleted" -> "deleted" [color="0.0000 0.0000 0.3882"];
             edge[style=solid];
             node [style=solid];
             edge[style=solid];
