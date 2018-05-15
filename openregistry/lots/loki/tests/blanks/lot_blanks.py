@@ -419,17 +419,20 @@ def rectificationPeriod_workflow(self):
     access_header = {'X-Access-Token': str(token)}
 
     self.assertNotIn('rectificationPeriod', response.json['data'])
+    self.assertNotIn('next_check', response.json['data'])
 
     response = self.app.patch_json('/{}'.format(lot['id']),
                                    headers=access_header,
                                    params={'data': {'status': 'composing'}})
     self.assertNotIn('rectificationPeriod', response.json['data'])
+    self.assertNotIn('next_check', response.json['data'])
 
     add_auctions(self, lot, access_header)
     response = self.app.patch_json('/{}'.format(lot['id']),
                                    headers=access_header,
                                    params={'data': {'status': 'verification'}})
     self.assertNotIn('rectificationPeriod', response.json['data'])
+    self.assertNotIn('next_check', response.json['data'])
 
     self.app.authorization = ('Basic', ('concierge', ''))
     add_decisions(self, lot)
@@ -439,6 +442,7 @@ def rectificationPeriod_workflow(self):
     startDate = parse_datetime(response.json['data']['rectificationPeriod']['startDate'])
     endDate = parse_datetime(response.json['data']['rectificationPeriod']['endDate'])
     self.assertEqual(endDate - startDate, RECTIFICATION_PERIOD_DURATION)
+    self.assertEqual(response.json['data']['next_check'], response.json['data']['rectificationPeriod']['endDate'])
 
     self.app.authorization = ('Basic', ('broker', ''))
 
