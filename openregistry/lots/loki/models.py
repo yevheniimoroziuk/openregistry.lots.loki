@@ -121,6 +121,12 @@ class Lot(BaseLot):
             role = 'edit_{}'.format(request.context.status)
         return role
 
+    @serializable(serialize_when_none=False, type=IsoDateTimeType())
+    def next_check(self):
+        if self.rectificationPeriod:
+            return self.rectificationPeriod.endDate
+        return
+
     @serializable(serialize_when_none=False, serialized_name='auctions', type=ListType(ModelType(Auction)))
     def auctions_serialize(self):
         if self.auctions:
