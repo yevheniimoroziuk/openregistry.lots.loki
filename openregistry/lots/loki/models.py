@@ -111,6 +111,8 @@ class Lot(BaseLot):
             role = 'concierge'
         elif request.authenticated_role == 'convoy':
             role = 'convoy'
+        elif request.authenticated_role == 'chronograph':
+            role = 'chronograph'
         else:
             after_rectificationPeriod = bool(
                 request.context.rectificationPeriod and
