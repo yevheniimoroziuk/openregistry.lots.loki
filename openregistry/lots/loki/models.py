@@ -111,6 +111,8 @@ class Lot(BaseLot):
             role = 'concierge'
         elif request.authenticated_role == 'convoy':
             role = 'convoy'
+        elif request.authenticated_role == 'chronograph':
+            role = 'chronograph'
         else:
             after_rectificationPeriod = bool(
                 request.context.rectificationPeriod and
@@ -120,6 +122,12 @@ class Lot(BaseLot):
                 return 'edit_pendingAfterRectificationPeriod'
             role = 'edit_{}'.format(request.context.status)
         return role
+
+    @serializable(serialize_when_none=False, type=IsoDateTimeType())
+    def next_check(self):
+        if self.rectificationPeriod:
+            return self.rectificationPeriod.endDate
+        return
 
     @serializable(serialize_when_none=False, serialized_name='auctions', type=ListType(ModelType(Auction)))
     def auctions_serialize(self):
