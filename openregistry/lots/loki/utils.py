@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-from pkg_resources import get_distribution
-from logging import getLogger
-
 from openregistry.lots.core.utils import get_now, context_unpack, LOGGER
 
 
