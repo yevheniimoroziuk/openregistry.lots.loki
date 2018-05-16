@@ -260,31 +260,6 @@ def check_change_to_verification(self):
     check_patch_status_200(self, '/{}'.format(lot['id']), 'verification', access_header)
 
 
-def check_lotIdentifier(self):
-    data = deepcopy(self.initial_data)
-    data['lotIdentifier'] = ''
-    response = self.app.post_json('/', {"data": data}, status=422)
-    self.assertEqual(response.status, '422 Unprocessable Entity')
-    self.assertEqual(response.content_type, 'application/json')
-    self.assertEqual(response.json['status'], 'error')
-    self.assertEqual(response.json['errors'][0]['description'], ["String value is too short."])
-
-    del data['lotIdentifier']
-    response = self.app.post_json('/', {"data": data}, status=422)
-    self.assertEqual(response.status, '422 Unprocessable Entity')
-    self.assertEqual(response.content_type, 'application/json')
-    self.assertEqual(response.json['status'], 'error')
-    self.assertEqual(response.json['errors'][0]['description'], ["This field is required."])
-
-    data['lotIdentifier'] = 'Q24421K222'
-    lot = create_single_lot(self, data).json['data']
-    response = self.app.get('/{}'.format(lot['id']))
-    self.assertEqual(response.status, '200 OK')
-    self.assertEqual(response.content_type, 'application/json')
-    self.assertEqual(set(response.json['data']), set(lot))
-    self.assertEqual(response.json['data'], lot)
-
-
 def check_decisions(self):
     self.app.authorization = ('Basic', ('broker', ''))
 
@@ -590,7 +565,6 @@ def dateModified_resource(self):
 
 def simple_patch(self):
     data = deepcopy(self.initial_data)
-    data['lotIdentifier'] = 'Q24421K222'
     response = create_single_lot(self, data)
     lot = response.json['data']
     token = response.json['access']['token']

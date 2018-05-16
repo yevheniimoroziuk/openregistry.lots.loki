@@ -55,7 +55,6 @@ test_lot_auctions_data = {
 test_loki_lot_data = {
     "title": u"Тестовий лот",
     "description": u"Щось там тестове",
-    "lotIdentifier": u"Q81318b19827",
     "lotType": "loki",
     "assets": [],
     "decisions": [{
