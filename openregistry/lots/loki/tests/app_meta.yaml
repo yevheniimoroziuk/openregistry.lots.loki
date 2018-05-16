@@ -5,6 +5,7 @@ plugins:
       lots.core:
         plugins:
           lots.loki:
+      auctions.core:
 config:
   auth:
     type: file
