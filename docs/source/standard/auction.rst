@@ -103,7 +103,22 @@ Schema
   integer, auto-generated, read-only
 
   The number which represents what time (from 1 up to 3) procedure with a current lot takes place.
+  
+:status: 
+  string, required
 
+  Auction status within which the lot is being sold:
+  
+  * `scheduled` - the process is planned, but is not yet taking place. Details of the anticipated dates may be provided further;
+  
+  * `active` -  the process is currently taking place;  
+  
+  * `complete` - the process is complete; 
+  
+  * `cancelled` - the process has been cancelled;  
+
+  * `unsuccessful` - the process has been unsuccessful.
+  
 .. _auctionParameters:
 
 Auction Parameters

@@ -9,8 +9,11 @@ from openregistry.lots.core.validation import (
 )
 from openregistry.lots.core.utils import (
     get_now,
-    calculate_business_date
+    calculate_business_date,
+    apply_patch,
+    save_lot
 )
+from openregistry.lots.loki.utils import check_status
 from .constants import (
     STATUS_CHANGES,
     RECTIFICATION_PERIOD_DURATION,
@@ -77,5 +80,9 @@ class LokiLotManagerAdapter(LotManagerAdapter):
 
     def change_lot(self, request):
         self._validate(request, self.change_validation)
-        if request.validated['data'].get('status') == 'pending' and not request.context.rectificationPeriod:
+        if request.authenticated_role == 'chronograph':
+            apply_patch(request, save=False, src=request.validated['lot_src'])
+            check_status(request)
+            save_lot(request)
+        elif request.validated['data'].get('status') == 'pending' and not request.context.rectificationPeriod:
             self._set_rectificationPeriod(request)
