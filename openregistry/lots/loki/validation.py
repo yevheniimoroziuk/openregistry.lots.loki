@@ -139,8 +139,8 @@ def validate_verification_status(request, error_handler):
             request.errors.add(
                 'body',
                 'data',
-                'Can\'t switch lot to verification status from pending until '
-                'this fields are not filled {} in auctions'.format(required_fields)
+                'Can\'t switch lot to verification status from composing until '
+                'these fields are empty {} within the auctions'.format(required_fields)
             )
             request.errors.status = 422
 
@@ -149,8 +149,8 @@ def validate_verification_status(request, error_handler):
             request.errors.add(
                 'body',
                 'data',
-                'Can\'t switch lot to verification status from pending until '
-                'this fields are not filled {} in second english auction'.format(required_fields)
+                'Can\'t switch lot to verification status from composing until '
+                'these fields are empty {} within the second (english) auction'.format(required_fields)
             )
             request.errors.status = 422
 
