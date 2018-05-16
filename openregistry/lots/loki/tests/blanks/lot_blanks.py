@@ -227,8 +227,8 @@ def check_change_to_verification(self):
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(
         response.json['errors'][0]['description'],
-        "Can\'t switch lot to verification status from pending until "
-        "this fields are not filled ['value', 'minimalStep', 'auctionPeriod', 'guarantee'] in auctions"
+        "Can\'t switch lot to verification status from composing until "
+        "these fields are empty ['value', 'minimalStep', 'auctionPeriod', 'guarantee'] within the auctions"
     )
 
     response = self.app.patch_json(
@@ -247,8 +247,8 @@ def check_change_to_verification(self):
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(
         response.json['errors'][0]['description'],
-        "Can\'t switch lot to verification status from pending until "
-        "this fields are not filled ['tenderingDuration'] in second english auction"
+        "Can\'t switch lot to verification status from composing until "
+        "these fields are empty ['tenderingDuration'] within the second (english) auction"
     )
 
     response = self.app.patch_json(
