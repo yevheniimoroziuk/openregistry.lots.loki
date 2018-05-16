@@ -80,9 +80,9 @@ class LokiLotManagerAdapter(LotManagerAdapter):
 
     def change_lot(self, request):
         self._validate(request, self.change_validation)
-        if request.validated['data'].get('status') == 'pending' and not request.context.rectificationPeriod:
-            self._set_rectificationPeriod(request)
         if request.authenticated_role == 'chronograph':
             apply_patch(request, save=False, src=request.validated['lot_src'])
             check_status(request)
             save_lot(request)
+        elif request.validated['data'].get('status') == 'pending' and not request.context.rectificationPeriod:
+            self._set_rectificationPeriod(request)
