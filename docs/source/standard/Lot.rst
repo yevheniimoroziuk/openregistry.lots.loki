@@ -86,6 +86,12 @@ Schema
     :ref:`Auctions`, required
 
     Auction conditions due to which the lot is to be sold.
+    
+:documents:
+    Array of :ref:`documents` objects
+ 
+    |ocdsDescription|
+    All documents and attachments related to the lot.
 
 :mode:
     optional

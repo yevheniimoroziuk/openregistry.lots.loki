@@ -57,7 +57,7 @@ Schema
   Duration of tenderPeriod for 2nd and 3rd procedures within the privatization cycle. 
 
 :documents:
-  Array of :ref:`document` objects
+  Array of :ref:`documents` objects
  
   |ocdsDescription|
   All documents and attachments related to the auction.
