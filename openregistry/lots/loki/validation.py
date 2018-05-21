@@ -20,7 +20,7 @@ def validate_item_data(request, error_handler, **kwargs):
     update_logging_context(request, {'item_id': '__new__'})
     context = request.context if 'items' in request.context else request.context.__parent__
     model = type(context).items.model_class
-    validate_data(request, model)
+    validate_data(request, model, "item")
 
 
 def validate_decision_post(request, error_handler):
@@ -114,7 +114,7 @@ def validate_auction_data(request, error_handler, **kwargs):
     update_logging_context(request, {'auction_id': '__new__'})
     context = request.context if 'auctions' in request.context else request.context.__parent__
     model = type(context).auctions.model_class
-    validate_data(request, model, partial=True)
+    validate_data(request, model)
 
 
 def validate_update_auction_in_not_allowed_status(request, error_handler, **kwargs):
