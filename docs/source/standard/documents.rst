@@ -33,7 +33,7 @@ Schema
 
     * `x_presentation` - Presentation
 
-    Presentation about the asset to be sold.
+    Presentation about the lot to be sold.
 
     * `informationDetails` - Information Details
 
