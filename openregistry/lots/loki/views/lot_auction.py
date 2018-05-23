@@ -22,7 +22,7 @@ patch_validators = (
 @oplotsresource(name='loki:Lot Auctions',
                 collection_path='/lots/{lot_id}/auctions',
                 path='/lots/{lot_id}/auctions/{auction_id}',
-                lotType='loki',
+                _internal_type='loki',
                 description="Lot related auctions")
 class LotAuctionResource(APIResource):
 

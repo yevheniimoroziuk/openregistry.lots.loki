@@ -101,6 +101,7 @@ class Lot(BaseLot):
     decisions = ListType(ModelType(Decision), default=list(), min_size=1, max_size=2, required=True)
     assets = ListType(MD5Type(), required=True, min_size=1, max_size=1)
     auctions = ListType(ModelType(Auction), default=list(), max_size=3)
+    _internal_type = 'loki'
 
     def get_role(self):
         root = self.__parent__
