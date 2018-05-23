@@ -87,6 +87,26 @@ def rectificationPeriod_document_validation(request, error_handler, **kwargs):
         raise error_handler(request)
 
 
+def rectificationPeriod_auction_document_validation(request, error_handler, **kwargs):
+    is_period_ended = bool(
+        request.validated['lot'].rectificationPeriod and
+        request.validated['lot'].rectificationPeriod.endDate < get_now()
+    )
+    if is_period_ended and request.method == 'POST':
+        request.errors.add(
+            'body',
+            'mode',
+            'You can\'t add documents to auction after rectification period'
+        )
+        request.errors.status = 403
+        raise error_handler(request)
+
+    if is_period_ended and request.method in ['PUT', 'PATCH']:
+        request.errors.add('body', 'mode', 'You can\'t change documents after rectification period')
+        request.errors.status = 403
+        raise error_handler(request)
+
+
 def validate_deleted_status(request, error_handler):
     can_be_deleted = any([doc.documentType == 'cancellationDetails' for doc in request.context['documents']])
     if request.json['data'].get('status') == 'pending.deleted' and not can_be_deleted:
@@ -123,9 +143,17 @@ def validate_update_auction_in_not_allowed_status(request, error_handler, **kwar
             raise_operation_error(
                 request,
                 error_handler,
-                'Can\'t update item in current ({}) lot status'.format(request.validated['lot_status'])
+                'Can\'t update auction in current ({}) lot status'.format(request.validated['lot_status'])
             )
 
+
+def validate_update_auction_document_in_not_allowed_status(request, error_handler, **kwargs):
+    if request.validated['lot_status'] not in ['draft', 'composing', 'pending']:
+            raise_operation_error(
+                request,
+                error_handler,
+                'Can\'t update document of auction in current ({}) lot status'.format(request.validated['lot_status'])
+            )
 
 def validate_verification_status(request, error_handler):
     if request.validated['data'].get('status') == 'verification' and request.context.status == 'composing':
