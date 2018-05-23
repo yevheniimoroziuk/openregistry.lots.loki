@@ -50,7 +50,7 @@ class StartDateRequiredPeriod(Period):
 
 
 class AuctionDocument(Document):
-    documentType = StringType(choices=AUCTION_DOCUMENT_TYPES)
+    documentType = StringType(choices=AUCTION_DOCUMENT_TYPES, required=True)
     documentOf = StringType(choices=['auction'])
 
 

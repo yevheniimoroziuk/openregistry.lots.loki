@@ -282,7 +282,7 @@ def patch_auction_document(self):
     doc_id = response.json["data"]['id']
     self.assertIn(doc_id, response.headers['Location'])
     self.assertEqual(u'укр.doc', response.json["data"]["title"])
-    self.assertNotIn("documentType", response.json["data"])
+    self.assertEqual(self.initial_document_data["documentType"], response.json["data"]['documentType'])
 
     response = self.app.patch_json('/{}/auctions/{}/documents/{}'.format(self.resource_id, auction_id, doc_id),
         headers=self.access_header, params={
@@ -317,7 +317,7 @@ def patch_auction_document(self):
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(doc_id, response.json["data"]["id"])
-    self.assertNotIn("documentType", response.json["data"])
+    self.assertEqual(self.initial_document_data["documentType"], response.json["data"]['documentType'])
 
     response = self.app.get('/{}/auctions/{}/documents/{}'.format(self.resource_id, auction_id, doc_id),
                             headers=self.access_header)
