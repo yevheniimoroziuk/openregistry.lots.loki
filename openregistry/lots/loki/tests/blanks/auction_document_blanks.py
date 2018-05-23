@@ -136,7 +136,6 @@ def create_auction_document(self):
     doc_id = response.json["data"]['id']
     self.assertIn(doc_id, response.headers['Location'])
     self.assertEqual(self.initial_document_data['title'], response.json["data"]["title"])
-    key = response.json["data"]["url"].split('?')[-1]
 
     response = self.app.get('/{}/auctions/{}/documents'.format(self.resource_id, auction_id))
     self.assertEqual(response.status, '200 OK')
@@ -201,7 +200,6 @@ def put_auction_document(self):
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(doc_id, response.json["data"]["id"])
-    key = response.json["data"]["url"].split('?')[-1]
 
     # response = self.app.get('/{}/auctions/{}/documents/{}?{}'.format(
     #     self.resource_id, auction_id, doc_id, key))
