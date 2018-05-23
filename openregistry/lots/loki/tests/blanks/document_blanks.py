@@ -19,7 +19,7 @@ def patch_resource_document(self):
     #dateModified = response.json["data"]['dateModified']
     self.assertIn(doc_id, response.headers['Location'])
     self.assertEqual(u'укр.doc', response.json["data"]["title"])
-    self.assertNotIn("documentType", response.json["data"])
+    self.assertEqual(self.initial_document_data["documentType"], response.json["data"]['documentType'])
 
     response = self.app.patch_json('/{}/documents/{}'.format(self.resource_id, doc_id),
         headers=self.access_header, params={
@@ -54,7 +54,7 @@ def patch_resource_document(self):
     self.assertEqual(response.status, '200 OK')
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(doc_id, response.json["data"]["id"])
-    self.assertNotIn("documentType", response.json["data"])
+    self.assertEqual(self.initial_document_data["documentType"], response.json["data"]['documentType'])
 
     response = self.app.get('/{}/documents/{}'.format(self.resource_id, doc_id),
                             headers=self.access_header)

@@ -32,7 +32,8 @@ from openregistry.lots.core.utils import (
 
 from .constants import (
     LOT_STATUSES,
-    AUCTION_STATUSES
+    AUCTION_STATUSES,
+    AUCTION_DOCUMENT_TYPES
 )
 from .roles import (
     lot_roles,
@@ -46,6 +47,11 @@ class ILokiLot(ILot):
 
 class StartDateRequiredPeriod(Period):
     startDate = IsoDateTimeType(required=True)
+
+
+class AuctionDocument(Document):
+    documentType = StringType(choices=AUCTION_DOCUMENT_TYPES, required=True)
+    documentOf = StringType(choices=['auction'])
 
 
 class Auction(Model):
@@ -63,6 +69,7 @@ class Auction(Model):
     guarantee = ModelType(Guarantee)
     registrationFee = ModelType(Guarantee)
     bankAccount = ModelType(BankAccount)
+    documents = ListType(ModelType(AuctionDocument), default=list())
     auctionParameters = ModelType(AuctionParameters)
     tenderingDuration = IsoDurationType()
     submissionMethodDetails = StringType()
@@ -158,5 +165,6 @@ class Lot(BaseLot):
             (Allow, '{}_{}'.format(self.owner, self.owner_token), 'upload_lot_documents'),
             (Allow, '{}_{}'.format(self.owner, self.owner_token), 'upload_lot_items'),
             (Allow, '{}_{}'.format(self.owner, self.owner_token), 'upload_lot_auctions'),
+            (Allow, '{}_{}'.format(self.owner, self.owner_token), 'upload_lot_auction_documents'),
         ]
         return acl
