@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 from datetime import timedelta
 
+from openregistry.lots.core.constants import LOKI_DOCUMENT_TYPES
+
+
 AUCTION_STATUSES = ['scheduled', 'active', 'complete',  'unsuccessful', 'cancelled']
+
 LOT_STATUSES = [
     "draft", "composing", "verification",  "pending", "pending.deleted", "deleted", "active.salable", "active.awaiting",
     "active.auction", "active.contracting", "pending.sold", "pending.dissolution", "sold", "dissolved", "invalid"]
@@ -97,6 +101,18 @@ STATUS_CHANGES = {
         "next_status": {}
     },
 }
+AUCTION_DOCUMENT_TYPES = [
+    'notice',
+    'technicalSpecifications',
+    'evaluationCriteria',
+    'illustration',
+    'x_PublicAssetCertificate',
+    'x_PlatformLegalDetails',
+    'x_presentation',
+    'bidders',
+    'x_nda',
+    'x_dgfAssetFamiliarization'
+]
 
 RECTIFICATION_PERIOD_DURATION = timedelta(days=2)
 DEFAULT_DUTCH_STEPS = 99
