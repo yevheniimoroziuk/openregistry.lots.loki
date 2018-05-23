@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 from datetime import timedelta
 
-from openregistry.lots.core.constants import LOKI_DOCUMENT_TYPES
-
 
 AUCTION_STATUSES = ['scheduled', 'active', 'complete',  'unsuccessful', 'cancelled']
 

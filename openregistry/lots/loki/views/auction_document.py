@@ -70,7 +70,11 @@ class AuctionDocumentResource(APIResource):
         if save_lot(self.request):
             self.LOGGER.info(
                 'Created auction document {}'.format(document.id),
-                extra=context_unpack(self.request, {'MESSAGE_ID': 'auction_document_create'}, {'document_id': document.id})
+                extra=context_unpack(
+                    self.request,
+                    {'MESSAGE_ID': 'auction_document_create'},
+                    {'document_id': document.id}
+                )
             )
             self.request.response.status = 201
             document_route = self.request.matched_route.name.replace("collection_", "")

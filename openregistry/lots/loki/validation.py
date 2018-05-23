@@ -155,6 +155,7 @@ def validate_update_auction_document_in_not_allowed_status(request, error_handle
                 'Can\'t update document of auction in current ({}) lot status'.format(request.validated['lot_status'])
             )
 
+
 def validate_verification_status(request, error_handler):
     if request.validated['data'].get('status') == 'verification' and request.context.status == 'composing':
         lot = request.validated['lot']
