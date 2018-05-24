@@ -5,7 +5,7 @@ from datetime import timedelta
 AUCTION_STATUSES = ['scheduled', 'active', 'complete',  'unsuccessful', 'cancelled']
 
 LOT_STATUSES = [
-    "draft", "composing", "verification",  "pending", "pending.deleted", "deleted", "active.salable", "active.awaiting",
+    "draft", "composing", "verification",  "pending", "pending.deleted", "deleted", "active.salable",
     "active.auction", "active.contracting", "pending.sold", "pending.dissolution", "sold", "dissolved", "invalid"]
 
 ITEM_EDITING_STATUSES = ['draft', 'composing', 'pending']
@@ -48,30 +48,24 @@ STATUS_CHANGES = {
         "next_status": {}
     },
     "active.salable": {
-        "editing_permissions": ["Administrator", "convoy"],
+        "editing_permissions": ["Administrator", "concierge"],
         "next_status": {
-            "active.awaiting": ["Administrator", "convoy"]
-        }
-    },
-    "active.awaiting": {
-        "editing_permissions": ["Administrator", "convoy"],
-        "next_status": {
-            "active.salable": ["Administrator", "convoy"],
-            "active.auction": ["Administrator", "convoy"]
+            "active.auction": ["Administrator", "concierge"]
         }
     },
     "active.auction": {
         "editing_permissions": ["Administrator", "convoy"],
         "next_status": {
             "active.contracting": ["Administrator", "convoy"],
-            "pending.dissolution": ["Administrator", "convoy"]
+            "pending.dissolution": ["Administrator", "convoy"],
+            "active.salable": ["Administrator", "convoy"]
         }
     },
     "active.contracting": {
         "editing_permissions": ["Administrator", "convoy"],
         "next_status": {
             "pending.sold": ["Administrator", "convoy"],
-            "pending.dissolution": ["Administrator", "convoy"]
+            "pending.dissolution": ["Administrator", "convoy"],
         }
     },
     "pending.sold": {
