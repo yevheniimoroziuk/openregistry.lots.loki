@@ -82,11 +82,11 @@ Let's see what listing of lots reveals us:
 .. literalinclude:: tutorial/initial-lot-listing.http
    :language: javascript
 
-We do see the internal `id` of the lot (that can be used to construct full URL http://lb.api-sandbox.registry.ea2.openprocurement.net/api/2.4/lots/1947689f874148418bdd871ed5efe21f`) and its `dateModified` date stamp.
+We do see the internal `id` of the lot (that can be used to construct full URL http://lb.api-sandbox.registry.ea2.openprocurement.net/api/2.4/lots/8286cc7863814271afe23cb2646237ed`) and its `dateModified` date stamp.
 
 Let's try creating another lot:
 
-. literalinclude:: tutorial/create-second-lot.http
+.. literalinclude:: tutorial/create-second-lot.http
    :language: javascript
 
 .. XXX patching lot to pending.dissolution
@@ -95,7 +95,7 @@ And again we have `201 Created` response code, `Location` header and body with e
 
 Switch second lot to 'composing' status':
 
-. literalinclude:: tutorial/second-lot-to-composing.http
+.. literalinclude:: tutorial/second-lot-to-composing.http
    :language: javascript
 
 Let's check what lot registry contains:
@@ -141,6 +141,7 @@ So now lot can be easily deleted:
    :language: javascript
 
 Integration with assets
+-----------------------
 
 
 Concierge operations
@@ -155,61 +156,62 @@ and status of a lot itself will be changed to `pending`:
 
 In case of this assets is unavailable, status of the current lot will turn to `invalid`:
 
-.. literalinclude:: switch-lot-to-invalid.http
+.. literalinclude:: tutorial/switch-lot-to-invalid.http
    :language: javascript
 
 When bot finds that status of lot is `pending.deleted`, it
-turns status of the asset being attached to that lot to `pending`. Status of the lot itself will become `deleted`.
+turns status of the asset being attached to that lot to `pending`. Status of the lot itself will become `deleted`:
 
-.. literalinclude:: lot-delete-3pc.http
+.. literalinclude:: tutorial/lot-delete-3pc.http
    :language: javascript
 
 When bot finds that status of lot is `pending.dissolution`, it
-turns status of the asset being attached to that lot to `pending`. Status of the lot itself will become `dissolved`.
+turns status of the asset being attached to that lot to `pending`. Status of the lot itself will become `dissolved`:
    
-.. literalinclude:: patch-lot-to-dissolved.http
+.. literalinclude:: tutorial/patch-lot-to-dissolved.http
    :language: javascript
 
 When bot finds that status of lot is `pending.sold`, it
 turns status of the asset being attached to that lot to `complete`. Status of the lot itself
 turns to `sold`.
 
-**************************************
+.. literalinclude:: tutorial/switch-lot-to-sold.http
+   :language: javascript
    
 Convoy operations
 -----------------
 
-The procedure will be formed automatically after `rectificationPeriod.endDate`. For this to be done, lot status automatically receives `active.salable` at first.
+The procedure will be formed automatically after `rectificationPeriod.endDate`. For this to be done, lot status automatically receives `active.salable` at first:
 
-.. literalinclude:: concierge-patched-lot-to-active.salable.http
+.. literalinclude:: tutorial/concierge-patched-lot-to-active.salable.http
    :language: javascript
 
-When the procedure is successfully created, lot status changes to 
-`active.auction`: 
+When the procedure is successfully created, lot status changes to `active.auction`: 
 
-.. literalinclude:: switch-lot-active.auction.http
+.. literalinclude:: tutorial/switch-lot-active.auction.http
    :language: javascript
 
-If the procedure (`procurementMethodType: sellout.english`) becomes `unsuccessful`, lot status turns to `active.salable`.
+If the procedure (`procurementMethodType: sellout.english`) becomes `unsuccessful`, lot status turns to `active.salable`:
 
-.. literalinclude:: concierge-patched-lot-to-active.salable.http
+.. literalinclude:: tutorial/concierge-patched-lot-to-active.salable.http
    :language: javascript
 
 As long as a new procedure is being automatically created, the lot will be given `active.auction` status:
 
-.. literalinclude:: switch-lot-active.auction.http
+.. literalinclude:: tutorial/switch-lot-active.auction.http
    :language: javascript
 
 In case of that lot has not been sold (either `contract` has become `unsuccessful` or a procedure has received `cancelled` status or third procedure (`procurementMethodType: sellout.insider`) has turned to `unsuccessful`) , its status becomes `pending.dissolution`:
 
-.. literalinclude:: patch-lot-to-pending.dissolution.http
+.. literalinclude:: tutorial/patch-lot-to-pending.dissolution.http
    :language: javascript
 
 When contract has been successfully created within the Module of Contracting, lot's status turns to `active.contracting`:
 
-.. literalinclude:: switch-lot-active.contracting.http
+.. literalinclude:: tutorial/switch-lot-active.contracting.http
    :language: javascript
 
 When contract reaches `terminated` status, lot automatically becomes `pending.sold`:
 
-**************************************
+.. literalinclude:: tutorial/switch-lot-to-pending.sold.http
+   :language: javascript
