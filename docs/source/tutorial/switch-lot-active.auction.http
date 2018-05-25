@@ -1,12 +1,12 @@
 PATCH /api/2.4/lots/113a3b9fc6304fd9a3361b497a155042 HTTP/1.0
-Authorization: Basic Y29udm95Og==
-Content-Length: 43
+Authorization: Basic Y29uY2llcmdlOg==
+Content-Length: 38
 Content-Type: application/json
 Host: lb.api-sandbox.registry.ea2.openprocurement.net
 DATA:
 {
   "data": {
-    "status": "pending.dissolution"
+    "status": "active.auction"
   }
 }
 
@@ -15,7 +15,7 @@ Content-Type: application/json
 X-Content-Type-Options: nosniff
 {
   "data": {
-    "status": "pending.dissolution", 
+    "status": "active.auction", 
     "rectificationPeriod": {
       "startDate": "2018-05-22T17:29:21.000575+03:00", 
       "endDate": "2018-05-23T17:29:21.000575+03:00"
@@ -26,7 +26,7 @@ X-Content-Type-Options: nosniff
     ], 
     "title": "title", 
     "lotType": "loki", 
-    "dateModified": "2018-05-25T17:29:21.407658+03:00", 
+    "dateModified": "2018-05-25T17:29:21.211794+03:00", 
     "owner": "broker", 
     "next_check": "2018-05-23T17:29:21.000575+03:00", 
     "auctions": [
@@ -119,7 +119,7 @@ X-Content-Type-Options: nosniff
         }
       }
     ], 
-    "date": "2018-05-25T17:29:21.407407+03:00", 
+    "date": "2018-05-25T17:29:21.211595+03:00", 
     "decisions": [
       {
         "decisionDate": "2018-05-25T17:29:21.015938+03:00", 
