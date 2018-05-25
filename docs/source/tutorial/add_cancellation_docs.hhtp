@@ -1,0 +1,36 @@
+POST /api/2.4/lots/1947689f874148418bdd871ed5efe21f/documents HTTP/1.0
+Authorization: Basic YnJva2VyOg==
+Content-Length: 348
+Content-Type: application/json
+Host: lb.api-sandbox.registry.ea2.openprocurement.net
+X-Access-Token: 7911aa2b190c4039bc8d6c030cdbd101
+DATA:
+{
+  "data": {
+    "url": "http://localhost/get/684665392c3c4e2baad7eb3ec5b8e05e?KeyID=172d32c8&Signature=AvQxSu2Mjus9sLvPww8yxMkBflPFHklJTy1nWf74IAo4aYjuU6bWe6cD5o%2Btxkz4fSrlYBIFq9nZKff3utyhCQ%3D%3D", 
+    "title": "укр.doc", 
+    "format": "application/msword", 
+    "hash": "md5:00000000000000000000000000000000", 
+    "documentType": "cancellationDetails"
+  }
+}
+
+Response: 201 Created
+Content-Type: application/json
+Location: http://lb.api-sandbox.registry.ea2.openprocurement.net/api/2.4/lots/1947689f874148418bdd871ed5efe21f/documents/76526af5ecff419d9c9c3e28693d7e2f
+X-Content-Type-Options: nosniff
+{
+  "data": {
+    "dateModified": "2018-05-25T17:29:19.081412+03:00", 
+    "hash": "md5:00000000000000000000000000000000", 
+    "format": "application/msword", 
+    "url": "http://localhost/get/684665392c3c4e2baad7eb3ec5b8e05e?KeyID=172d32c8&Signature=%252BnGVFJ6S39dOayEwTfaQx81FpXtMGFFzy0fsW7gtUWuoRbJ%252Blxy19EYr01%2FC%252B3G8xrfAPDQqgcC8PqvF4754Aw%253D%253D", 
+    "author": "lot_owner", 
+    "documentOf": "lot", 
+    "datePublished": "2018-05-25T17:29:19.081378+03:00", 
+    "documentType": "cancellationDetails", 
+    "title": "укр.doc", 
+    "id": "76526af5ecff419d9c9c3e28693d7e2f"
+  }
+}
+

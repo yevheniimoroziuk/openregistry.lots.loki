@@ -1,8 +1,8 @@
-POST /api/0.1/lots?opt_pretty=1 HTTP/1.0
+POST /api/2.4/lots HTTP/1.0
 Authorization: Basic YnJva2VyOg==
 Content-Length: 4
 Content-Type: application/x-www-form-urlencoded
-Host: lb.api-sandbox.registry.ea.openprocurement.net
+Host: lb.api-sandbox.registry.ea2.openprocurement.net
 
 Response: 415 Unsupported Media Type
 Content-Type: application/json

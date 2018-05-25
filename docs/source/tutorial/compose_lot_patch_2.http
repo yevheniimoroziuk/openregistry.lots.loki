@@ -1,0 +1,47 @@
+PATCH /api/2.4/lots/1947689f874148418bdd871ed5efe21f/auctions/5f0dcb4cb3c6436c85af7ce3ee949d44 HTTP/1.0
+Authorization: Basic YnJva2VyOg==
+Content-Length: 43
+Content-Type: application/json
+Host: lb.api-sandbox.registry.ea2.openprocurement.net
+X-Access-Token: 7911aa2b190c4039bc8d6c030cdbd101
+DATA:
+{
+  "data": {
+    "tenderingDuration": "P25DT12H"
+  }
+}
+
+Response: 200 OK
+Content-Type: application/json
+X-Content-Type-Options: nosniff
+{
+  "data": {
+    "status": "scheduled", 
+    "minimalStep": {
+      "currency": "UAH", 
+      "amount": 150.0, 
+      "valueAddedTaxIncluded": true
+    }, 
+    "registrationFee": {
+      "currency": "UAH", 
+      "amount": 350.0
+    }, 
+    "procurementMethodType": "sellout.english", 
+    "value": {
+      "currency": "UAH", 
+      "amount": 1500.0, 
+      "valueAddedTaxIncluded": true
+    }, 
+    "tenderingDuration": "P25DT12H", 
+    "id": "5f0dcb4cb3c6436c85af7ce3ee949d44", 
+    "auctionParameters": {
+      "type": "english"
+    }, 
+    "tenderAttempts": 2, 
+    "guarantee": {
+      "currency": "UAH", 
+      "amount": 350.0
+    }
+  }
+}
+
