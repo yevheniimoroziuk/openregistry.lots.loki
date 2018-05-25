@@ -1,4 +1,4 @@
-POST /api/2.4/lots HTTP/1.0
+POST /api/2.4/lots?opt_pretty=1 HTTP/1.0
 Authorization: Basic YnJva2VyOg==
 Content-Length: 362
 Content-Type: application/json
@@ -10,12 +10,12 @@ DATA:
     "description": "Щось там тестове", 
     "decisions": [
       {
-        "decisionDate": "2018-05-25T17:28:37.300221+03:00", 
+        "decisionDate": "2018-05-25T18:39:50.545256+03:00", 
         "decisionID": "decisionLotID"
       }
     ], 
     "assets": [
-      "964e194e98b14d1da03fc48be7865221"
+      "83e2013200da46a99e618a23ee840b93"
     ], 
     "title": "Тестовий лот"
   }
@@ -23,20 +23,20 @@ DATA:
 
 Response: 201 Created
 Content-Type: application/json
-Location: http://lb.api-sandbox.registry.ea2.openprocurement.net/api/2.4/lots/d643a4ad34414779a15fc9c00c229efa
+Location: http://lb.api-sandbox.registry.ea2.openprocurement.net/api/2.4/lots/fd2bb96b7f2c4ec78a38e556cf80441d
 X-Content-Type-Options: nosniff
 {
   "access": {
-    "token": "e995182bb02246e895b85a7efa0c9e32"
+    "token": "b2d586bd4408409d9cdeafdba3289478"
   }, 
   "data": {
     "status": "draft", 
     "lotID": "UA-LR-DGF-2018-05-25-000002", 
     "assets": [
-      "964e194e98b14d1da03fc48be7865221"
+      "83e2013200da46a99e618a23ee840b93"
     ], 
     "lotType": "loki", 
-    "dateModified": "2018-05-25T17:28:38.730678+03:00", 
+    "dateModified": "2018-05-25T18:39:51.987185+03:00", 
     "owner": "broker", 
     "auctions": [
       {
@@ -46,7 +46,7 @@ X-Content-Type-Options: nosniff
         "auctionParameters": {
           "type": "english"
         }, 
-        "id": "b6cbe635f04a4be186cf5c23cc4e0c4c"
+        "id": "36c04fc7eb994128beaef7a49a02f132"
       }, 
       {
         "status": "scheduled", 
@@ -55,7 +55,7 @@ X-Content-Type-Options: nosniff
         "auctionParameters": {
           "type": "english"
         }, 
-        "id": "5cbe9610176a43afbf624c1d79de0239"
+        "id": "d01782a9cc6042cbaa71cebd3cc4bcaa"
       }, 
       {
         "status": "scheduled", 
@@ -65,17 +65,17 @@ X-Content-Type-Options: nosniff
           "type": "insider", 
           "dutchSteps": 99
         }, 
-        "id": "9d847f4e98aa461eab42cfc3d2391f90"
+        "id": "1220de3b020b4a88823ebb87908a0201"
       }
     ], 
-    "date": "2018-05-25T17:28:38.727253+03:00", 
+    "date": "2018-05-25T18:39:51.983358+03:00", 
     "decisions": [
       {
-        "decisionDate": "2018-05-25T17:28:37.300221+03:00", 
+        "decisionDate": "2018-05-25T18:39:50.545256+03:00", 
         "decisionID": "decisionLotID"
       }
     ], 
-    "id": "d643a4ad34414779a15fc9c00c229efa"
+    "id": "fd2bb96b7f2c4ec78a38e556cf80441d"
   }
 }
 

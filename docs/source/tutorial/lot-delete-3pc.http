@@ -1,4 +1,4 @@
-PATCH /api/2.4/lots/63e1b8fda9454da6aee99763e4e3affb?acc_token=10b8862cf2544d07aa079a4e9645f7b3 HTTP/1.0
+PATCH /api/2.4/lots/2f01e3ce40454ddabdc521f35a3fcff1?acc_token=ac7314abc1f847dfab998cbb48a76169 HTTP/1.0
 Authorization: Basic YnJva2VyOg==
 Content-Length: 39
 Content-Type: application/json
@@ -17,31 +17,31 @@ X-Content-Type-Options: nosniff
   "data": {
     "status": "pending.deleted", 
     "rectificationPeriod": {
-      "startDate": "2018-05-25T17:29:20.340195+03:00", 
-      "endDate": "2018-05-27T17:29:20.340195+03:00"
+      "startDate": "2018-05-25T18:40:39.423574+03:00", 
+      "endDate": "2018-05-27T18:40:39.423574+03:00"
     }, 
     "lotID": "UA-LR-DGF-2018-05-25-000004", 
     "assets": [
-      "4ea8891f91674800aae50fbd13f49bce"
+      "838bd7a94eae4f4f95b0cbd029c8daa5"
     ], 
     "lotType": "loki", 
-    "dateModified": "2018-05-25T17:29:20.513240+03:00", 
+    "dateModified": "2018-05-25T18:40:39.584823+03:00", 
     "owner": "broker", 
     "documents": [
       {
-        "dateModified": "2018-05-25T17:29:20.399142+03:00", 
+        "dateModified": "2018-05-25T18:40:39.482505+03:00", 
         "hash": "md5:00000000000000000000000000000000", 
         "format": "application/msword", 
-        "url": "http://localhost/get/65384493b78b468da684f0885b539caf?KeyID=172d32c8&Signature=wkul%2FtBpRdQf%252BDXkCXl9XPS56JSP3ASPSZCVHYL54M0%252BwYOFuXiSt%252Bdt1lTydDaUHG7m310Hfga9LDIkUybJDg%253D%253D", 
+        "url": "http://localhost/get/657cf0c5734e4907a2f7884f75cc05c6?KeyID=172d32c8&Signature=67YDtGnuKPvotzutU4MKJsu0vmonOuEHCWq786miK%252BKFHTnOcU5p2wOM5wD2Ka2YFqFI1RNwocJRM6JDEIckCw%253D%253D", 
         "author": "lot_owner", 
         "documentOf": "lot", 
-        "datePublished": "2018-05-25T17:29:20.399116+03:00", 
+        "datePublished": "2018-05-25T18:40:39.482477+03:00", 
         "documentType": "cancellationDetails", 
         "title": "укр.doc", 
-        "id": "89488ca77aa84270b3a6f5318225cfaf"
+        "id": "d49d9a4b7caa49f7bcb8dd23d83dcb87"
       }
     ], 
-    "next_check": "2018-05-27T17:29:20.340195+03:00", 
+    "next_check": "2018-05-27T18:40:39.423574+03:00", 
     "auctions": [
       {
         "status": "scheduled", 
@@ -51,8 +51,8 @@ X-Content-Type-Options: nosniff
           "valueAddedTaxIncluded": true
         }, 
         "auctionPeriod": {
-          "startDate": "2018-05-30T17:28:37.300003+03:00", 
-          "endDate": "2018-06-04T17:28:37.300003+03:00"
+          "startDate": "2018-05-30T18:39:50.545034+03:00", 
+          "endDate": "2018-06-04T18:39:50.545034+03:00"
         }, 
         "registrationFee": {
           "currency": "UAH", 
@@ -64,7 +64,7 @@ X-Content-Type-Options: nosniff
           "amount": 3000.0, 
           "valueAddedTaxIncluded": true
         }, 
-        "id": "eb68f3bd3f5948e780ed2d03c18c6c84", 
+        "id": "283e3f24ea9f4318836ecbf91e1d811a", 
         "auctionParameters": {
           "type": "english"
         }, 
@@ -92,7 +92,7 @@ X-Content-Type-Options: nosniff
           "valueAddedTaxIncluded": true
         }, 
         "tenderingDuration": "P25DT12H", 
-        "id": "f6c76ff45e214b4ebb8bfdb23adc3f11", 
+        "id": "b24fdf3cb6464a449f0623ab0141afd8", 
         "auctionParameters": {
           "type": "english"
         }, 
@@ -120,7 +120,7 @@ X-Content-Type-Options: nosniff
           "valueAddedTaxIncluded": true
         }, 
         "tenderingDuration": "P25DT12H", 
-        "id": "dd5c79532b514af5a74d3b27b47b222b", 
+        "id": "4737d16e578948f8a80d6e80d7a0de1e", 
         "auctionParameters": {
           "type": "insider", 
           "dutchSteps": 99
@@ -132,18 +132,18 @@ X-Content-Type-Options: nosniff
         }
       }
     ], 
-    "date": "2018-05-25T17:29:20.512993+03:00", 
+    "date": "2018-05-25T18:40:39.584606+03:00", 
     "decisions": [
       {
-        "decisionDate": "2018-05-25T17:28:37.300221+03:00", 
+        "decisionDate": "2018-05-25T18:39:50.545256+03:00", 
         "decisionID": "decisionLotID"
       }, 
       {
-        "decisionDate": "2018-05-25T17:29:20.208526+03:00", 
+        "decisionDate": "2018-05-25T18:40:39.293849+03:00", 
         "decisionID": "decisionAssetID"
       }
     ], 
-    "id": "63e1b8fda9454da6aee99763e4e3affb"
+    "id": "2f01e3ce40454ddabdc521f35a3fcff1"
   }
 }
 

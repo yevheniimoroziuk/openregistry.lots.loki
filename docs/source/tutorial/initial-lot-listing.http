@@ -1,4 +1,4 @@
-GET /api/2.4/lots HTTP/1.0
+GET /api/2.4/lots?opt_pretty=1 HTTP/1.0
 Authorization: Basic YnJva2VyOg==
 Host: lb.api-sandbox.registry.ea2.openprocurement.net
 
@@ -11,6 +11,11 @@ X-Content-Type-Options: nosniff
     "uri": "http://lb.api-sandbox.registry.ea2.openprocurement.net/api/2.4/lots?offset=", 
     "offset": ""
   }, 
-  "data": []
+  "data": [
+    {
+      "id": "8286cc7863814271afe23cb2646237ed", 
+      "dateModified": "2018-05-25T18:39:51.915563+03:00"
+    }
+  ]
 }
 

@@ -253,9 +253,10 @@ class LotResourceTest(BaseLotWebTest):
         access_header = {'X-Access-Token': str(owner_token)}
 
           # switch lot to 'pending'
-        response = self.app.patch_json('/{}?acc_token={}'.format(lot_id, owner_token),
-                                       {'data': {"status": 'pending'}})
-        self.assertEqual(response.status, '200 OK')
+        with open('docs/source/tutorial/switch-lot-to-pending.http', 'w') as self.app.file_obj:
+            response = self.app.patch_json('/{}?acc_token={}'.format(lot_id, owner_token),
+                                           {'data': {"status": 'pending'}})
+            self.assertEqual(response.status, '200 OK')
 
         self.app.authorization = ('Basic', ('broker', ''))
         add_cancellationDetails_document(self, lot, access_header)
@@ -423,7 +424,8 @@ class LotResourceTest(BaseLotWebTest):
             self.assertEqual(response.status, '200 OK')
 
           # switch to 'sold'
-        self.app.authorization = ('Basic', ('concierge', ''))
-        response = self.app.patch_json('/{}'.format(lot_id),
-                                       {'data': {"status": 'sold'}})
-        self.assertEqual(response.status, '200 OK')
+        with open('docs/source/tutorial/switch-lot-to-sold.http', 'w') as self.app.file_obj:
+            self.app.authorization = ('Basic', ('concierge', ''))
+            response = self.app.patch_json('/{}'.format(lot_id),
+                                           {'data': {"status": 'sold'}})
+            self.assertEqual(response.status, '200 OK')

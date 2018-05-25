@@ -1,4 +1,4 @@
-PATCH /api/2.4/lots/a841c1bfa69d46d6b5c2e640a119f0c9 HTTP/1.0
+PATCH /api/2.4/lots/83aec387590e40689fff71c9186e6fb4 HTTP/1.0
 Authorization: Basic Y29uY2llcmdlOg==
 Content-Length: 31
 Content-Type: application/json
@@ -18,10 +18,10 @@ X-Content-Type-Options: nosniff
     "status": "invalid", 
     "lotID": "UA-LR-DGF-2018-05-25-000003", 
     "assets": [
-      "4ea8891f91674800aae50fbd13f49bce"
+      "838bd7a94eae4f4f95b0cbd029c8daa5"
     ], 
     "lotType": "loki", 
-    "dateModified": "2018-05-25T17:29:19.908529+03:00", 
+    "dateModified": "2018-05-25T18:40:39.007929+03:00", 
     "owner": "broker", 
     "auctions": [
       {
@@ -32,8 +32,8 @@ X-Content-Type-Options: nosniff
           "valueAddedTaxIncluded": true
         }, 
         "auctionPeriod": {
-          "startDate": "2018-05-30T17:28:37.300003+03:00", 
-          "endDate": "2018-06-04T17:28:37.300003+03:00"
+          "startDate": "2018-05-30T18:39:50.545034+03:00", 
+          "endDate": "2018-06-04T18:39:50.545034+03:00"
         }, 
         "registrationFee": {
           "currency": "UAH", 
@@ -45,7 +45,7 @@ X-Content-Type-Options: nosniff
           "amount": 3000.0, 
           "valueAddedTaxIncluded": true
         }, 
-        "id": "0cc8bc1a9bf8450a86249ec3db1a5b32", 
+        "id": "a597fe9f004e468baac4b7b6ddd20229", 
         "auctionParameters": {
           "type": "english"
         }, 
@@ -73,7 +73,7 @@ X-Content-Type-Options: nosniff
           "valueAddedTaxIncluded": true
         }, 
         "tenderingDuration": "P25DT12H", 
-        "id": "a475097a6cc4455e8c315f612058765e", 
+        "id": "0a20e51a06d64ab6a2dcfde21476d60c", 
         "auctionParameters": {
           "type": "english"
         }, 
@@ -101,7 +101,7 @@ X-Content-Type-Options: nosniff
           "valueAddedTaxIncluded": true
         }, 
         "tenderingDuration": "P25DT12H", 
-        "id": "bc435fb0614a423480c7d883fcbeb4ff", 
+        "id": "a219a2917a3046db882b5b1685bd7ea1", 
         "auctionParameters": {
           "type": "insider", 
           "dutchSteps": 99
@@ -113,18 +113,18 @@ X-Content-Type-Options: nosniff
         }
       }
     ], 
-    "date": "2018-05-25T17:29:19.908330+03:00", 
+    "date": "2018-05-25T18:40:39.007690+03:00", 
     "decisions": [
       {
-        "decisionDate": "2018-05-25T17:28:37.300221+03:00", 
+        "decisionDate": "2018-05-25T18:39:50.545256+03:00", 
         "decisionID": "decisionLotID"
       }, 
       {
-        "decisionDate": "2018-05-25T17:29:19.766479+03:00", 
+        "decisionDate": "2018-05-25T18:40:38.871022+03:00", 
         "decisionID": "decisionAssetID"
       }
     ], 
-    "id": "a841c1bfa69d46d6b5c2e640a119f0c9"
+    "id": "83aec387590e40689fff71c9186e6fb4"
   }
 }
 
