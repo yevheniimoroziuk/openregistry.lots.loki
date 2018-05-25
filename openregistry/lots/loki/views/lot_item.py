@@ -52,7 +52,7 @@ class LotItemResource(APIResource):
                 extra=context_unpack(self.request, {'MESSAGE_ID': 'lot_item_create'}, {'item_id': item.id})
             )
             self.request.response.status = 201
-            item_route = self.request.matchedq_route.name.replace("collection_", "")
+            item_route = self.request.matched_route.name.replace("collection_", "")
             self.request.response.headers['Location'] = self.request.current_route_url(
                                                             _route_name=item_route,
                                                             item_id=item.id,
