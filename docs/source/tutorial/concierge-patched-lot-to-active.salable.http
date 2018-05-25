@@ -1,6 +1,6 @@
-GET /api/0.1/lots/df82d57c54b84ff6a78bdc9a727859f6 HTTP/1.0
-Authorization: Basic Y29uY2llcmdlOg==
-Host: lb.api-sandbox.registry.ea.openprocurement.net
+GET /api/2.4/lots/113a3b9fc6304fd9a3361b497a155042 HTTP/1.0
+Authorization: Basic Y2hyb25vZ3JhcGg6
+Host: lb.api-sandbox.registry.ea2.openprocurement.net
 
 Response: 200 OK
 Content-Type: application/json
@@ -8,37 +8,121 @@ X-Content-Type-Options: nosniff
 {
   "data": {
     "status": "active.salable", 
-    "lotIdentifier": "Q81318b19827", 
-    "lotID": "UA-LR-DGF-2018-01-15-000003", 
-    "description": "Щось там тестове", 
-    "title": "Тестовий лот", 
-    "lotType": "basic", 
-    "dateModified": "2018-01-15T15:33:04.100775+02:00", 
-    "owner": "broker", 
-    "lotCustodian": {
-      "contactPoint": {
-        "name": "Державне управління справами", 
-        "telephone": "0440000000"
-      }, 
-      "identifier": {
-        "scheme": "UA-EDR", 
-        "id": "00037256", 
-        "uri": "http://www.dus.gov.ua/"
-      }, 
-      "name": "Державне управління справами", 
-      "address": {
-        "postalCode": "01220", 
-        "countryName": "Україна", 
-        "streetAddress": "вул. Банкова, 11, корпус 1", 
-        "region": "м. Київ", 
-        "locality": "м. Київ"
-      }
+    "rectificationPeriod": {
+      "startDate": "2018-05-22T17:29:21.000575+03:00", 
+      "endDate": "2018-05-23T17:29:21.000575+03:00"
     }, 
-    "date": "2018-01-15T15:33:04.100596+02:00", 
-    "id": "df82d57c54b84ff6a78bdc9a727859f6", 
+    "lotID": "UA-LR-DGF-2018-05-25-000005", 
     "assets": [
-      "d7017f6e2c474d4fa8b25f8363b45d70"
-    ]
+      "4ea8891f91674800aae50fbd13f49bce"
+    ], 
+    "title": "title", 
+    "lotType": "loki", 
+    "dateModified": "2018-05-25T17:29:21.103716+03:00", 
+    "owner": "broker", 
+    "next_check": "2018-05-23T17:29:21.000575+03:00", 
+    "auctions": [
+      {
+        "status": "scheduled", 
+        "minimalStep": {
+          "currency": "UAH", 
+          "amount": 300.0, 
+          "valueAddedTaxIncluded": true
+        }, 
+        "auctionPeriod": {
+          "startDate": "2018-05-30T17:28:37.300003+03:00", 
+          "endDate": "2018-06-04T17:28:37.300003+03:00"
+        }, 
+        "registrationFee": {
+          "currency": "UAH", 
+          "amount": 700.0
+        }, 
+        "procurementMethodType": "sellout.english", 
+        "value": {
+          "currency": "UAH", 
+          "amount": 3000.0, 
+          "valueAddedTaxIncluded": true
+        }, 
+        "id": "7a0e907be6ac43b184181017ea93f21d", 
+        "auctionParameters": {
+          "type": "english"
+        }, 
+        "tenderAttempts": 1, 
+        "guarantee": {
+          "currency": "UAH", 
+          "amount": 700.0
+        }
+      }, 
+      {
+        "status": "scheduled", 
+        "minimalStep": {
+          "currency": "UAH", 
+          "amount": 150.0, 
+          "valueAddedTaxIncluded": true
+        }, 
+        "registrationFee": {
+          "currency": "UAH", 
+          "amount": 350.0
+        }, 
+        "procurementMethodType": "sellout.english", 
+        "value": {
+          "currency": "UAH", 
+          "amount": 1500.0, 
+          "valueAddedTaxIncluded": true
+        }, 
+        "tenderingDuration": "P25DT12H", 
+        "id": "9da3a4a5d582496b843578e3ae1186e2", 
+        "auctionParameters": {
+          "type": "english"
+        }, 
+        "tenderAttempts": 2, 
+        "guarantee": {
+          "currency": "UAH", 
+          "amount": 350.0
+        }
+      }, 
+      {
+        "status": "scheduled", 
+        "minimalStep": {
+          "currency": "UAH", 
+          "amount": 0, 
+          "valueAddedTaxIncluded": true
+        }, 
+        "registrationFee": {
+          "currency": "UAH", 
+          "amount": 350.0
+        }, 
+        "procurementMethodType": "sellout.insider", 
+        "value": {
+          "currency": "UAH", 
+          "amount": 1500.0, 
+          "valueAddedTaxIncluded": true
+        }, 
+        "tenderingDuration": "P25DT12H", 
+        "id": "02f235e16512412b9751d22946250a38", 
+        "auctionParameters": {
+          "type": "insider", 
+          "dutchSteps": 99
+        }, 
+        "tenderAttempts": 3, 
+        "guarantee": {
+          "currency": "UAH", 
+          "amount": 350.0
+        }
+      }
+    ], 
+    "date": "2018-05-25T17:29:21.103525+03:00", 
+    "decisions": [
+      {
+        "decisionDate": "2018-05-25T17:29:21.015938+03:00", 
+        "decisionID": "decisionAssetID"
+      }, 
+      {
+        "decisionDate": "2018-05-25T17:29:21.015969+03:00", 
+        "decisionID": "decisionAssetID"
+      }
+    ], 
+    "id": "113a3b9fc6304fd9a3361b497a155042"
   }
 }
 
