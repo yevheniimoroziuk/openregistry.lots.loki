@@ -23,6 +23,13 @@ def validate_item_data(request, error_handler, **kwargs):
     validate_data(request, model, "item")
 
 
+def validate_patch_item_data(request, error_handler, **kwargs):
+    update_logging_context(request, {'item_id': '__new__'})
+    context = request.context if 'items' in request.context else request.context.__parent__
+    model = type(context).items.model_class
+    validate_data(request, model)
+
+
 def validate_decision_post(request, error_handler):
     if len(request.validated['lot'].decisions) > 1:
         raise_operation_error(request, error_handler,

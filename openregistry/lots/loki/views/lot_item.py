@@ -14,6 +14,7 @@ from openregistry.lots.core.validation import (
 from openregistry.lots.loki.validation import (
     validate_item_data,
     rectificationPeriod_item_validation,
+    validate_patch_item_data
 )
 
 post_validators = (
@@ -22,7 +23,7 @@ post_validators = (
     validate_update_item_in_not_allowed_status
 )
 patch_validators = (
-    validate_item_data,
+    validate_patch_item_data,
     rectificationPeriod_item_validation,
     validate_update_item_in_not_allowed_status
 )

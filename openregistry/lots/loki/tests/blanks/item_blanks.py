@@ -108,6 +108,19 @@ def patch_item(self):
     self.assertEqual(item_id, response.json["data"]["id"])
     self.assertEqual(response.json["data"]["description"], 'new item description')
 
+    # Test partial update
+    response = self.app.patch_json('/{}/items/{}'.format(self.resource_id, item_id),
+        headers=self.access_header, params={
+            "data": {
+                "description": "partial item update",
+                "additionalClassifications": []
+            }})
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(item_id, response.json["data"]["id"])
+    self.assertEqual(response.json["data"]["description"], 'partial item update')
+    self.assertNotIn('additionalClassifications', response.json['data'])
+
 
 def create_item_resource_invalid(self):
     pass
