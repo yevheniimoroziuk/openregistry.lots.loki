@@ -12,6 +12,60 @@ from openregistry.lots.loki.models import Lot
 from openregistry.lots.core.constants import SANDBOX_MODE
 from openregistry.lots.loki.constants import DEFAULT_DUTCH_STEPS
 
+from openregistry.lots.loki.tests.base import (
+    create_single_lot,
+    check_patch_status_200,
+    check_patch_status_403,
+    add_decisions,
+    add_auctions
+)
+
+
+def patch_auctions_with_lot(self):
+    self.app.authorization = ('Basic', ('broker', ''))
+
+    response = create_single_lot(self, self.initial_data)
+    lot = response.json['data']
+    token = response.json['access']['token']
+    access_header = {'X-Access-Token': str(token)}
+
+    # Move from 'draft' to 'pending' status
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'composing', access_header)
+    add_auctions(self, lot, access_header)
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'verification', access_header)
+
+
+    self.app.authorization = ('Basic', ('concierge', ''))
+
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'verification')
+    add_decisions(self, lot)
+    check_patch_status_200(self, '/{}'.format(lot['id']), 'pending')
+
+    self.app.authorization = ('Basic', ('broker', ''))
+
+
+    data = deepcopy(lot)
+    del data['decisions']
+    del data['status']
+    data['auctions'][0]['tenderAttempts'] = 3
+    data['auctions'][0]['procurementMethodType'] = 'sellout.insider'
+    response = self.app.patch_json(
+        '/{}'.format(lot['id']),
+        headers=access_header,
+        params={'data': data},
+    )
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['data']['auctions'][0]['tenderAttempts'], 1)
+    self.assertEqual(response.json['data']['auctions'][0]['procurementMethodType'], 'sellout.english')
+
+    response = self.app.get('/{}/auctions'.format(lot['id']))
+    auctions = sorted(response.json['data'], key=lambda a: a['tenderAttempts'])
+    english = auctions[0]
+    self.assertEqual(english['tenderAttempts'], 1)
+    self.assertEqual(english['procurementMethodType'], 'sellout.english')
+
+
 
 def patch_english_auction(self):
     data = deepcopy(self.initial_auctions_data)
