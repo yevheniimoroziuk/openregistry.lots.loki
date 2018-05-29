@@ -83,23 +83,6 @@ def add_cancellationDetails_document(self, lot, access_header):
     self.assertNotIn('Expires=', tender['documents'][-1]["url"])
 
 
-def add_decisions(self, lot):
-    asset_decision = {
-            'decisionDate': get_now().isoformat(),
-            'decisionID': 'decisionAssetID'
-        }
-    data_with_decisions = {
-        "decisions": [
-            lot['decisions'][0],asset_decision
-        ]
-    }
-    response = self.app.patch_json('/{}'.format(lot['id']), params={'data': data_with_decisions})
-    self.assertEqual(response.status, '200 OK')
-    self.assertEqual(response.content_type, 'application/json')
-    self.assertEqual(response.json['data']['decisions'], data_with_decisions['decisions'])
-
-
-
 def auction_autocreation(self):
     response = self.app.post_json('/', {"data": self.initial_data})
     self.assertEqual(response.status, '201 Created')
