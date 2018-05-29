@@ -137,7 +137,7 @@ class Lot(BaseLot):
             return self.rectificationPeriod.endDate
         return
 
-    @serializable(serialize_when_none=False, serialized_name='auctions', type=ListType(ModelType(Auction)))
+    @serializable(serialize_when_none=False)
     def auctions_serialize(self):
         if self.auctions:
             auto_calculated_fields = ['value', 'minimalStep', 'registrationFee', 'guarantee']
@@ -158,7 +158,9 @@ class Lot(BaseLot):
                     )
 
             insider.tenderingDuration = second_english.tenderingDuration
-        return self.auctions
+            self.auctions[0] = english
+            self.auctions[1] = second_english
+            self.auctions[2] = insider
 
     def __acl__(self):
         acl = [
