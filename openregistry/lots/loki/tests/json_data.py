@@ -11,6 +11,7 @@ from openregistry.lots.core.tests.blanks.json_data import (
 
 now = get_now()
 test_loki_document_data = deepcopy(test_document_data)
+test_loki_document_data['documentType'] = 'notice'
 test_loki_document_data['documentOf'] = 'lot'
 
 auction_common = {

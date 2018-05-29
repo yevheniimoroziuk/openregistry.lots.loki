@@ -14,6 +14,7 @@ from openregistry.lots.core.validation import (
 from openregistry.lots.loki.validation import (
     validate_item_data,
     rectificationPeriod_item_validation,
+    validate_patch_item_data
 )
 
 post_validators = (
@@ -22,7 +23,7 @@ post_validators = (
     validate_update_item_in_not_allowed_status
 )
 patch_validators = (
-    validate_item_data,
+    validate_patch_item_data,
     rectificationPeriod_item_validation,
     validate_update_item_in_not_allowed_status
 )
@@ -38,13 +39,7 @@ class LotItemResource(APIResource):
     @json_view(permission='view_lot')
     def collection_get(self):
         """Lot Item List"""
-        if self.request.params.get('all', ''):
-            collection_data = [i.serialize("view") for i in self.context.items]
-        else:
-            collection_data = sorted(dict([
-                (i.id, i.serialize("view"))
-                for i in self.context.items
-            ]).values(), key=lambda i: i['dateModified'])
+        collection_data = [i.serialize("view") for i in self.context.items]
         return {'data': collection_data}
 
     @json_view(content_type="application/json", permission='upload_lot_items', validators=(post_validators))

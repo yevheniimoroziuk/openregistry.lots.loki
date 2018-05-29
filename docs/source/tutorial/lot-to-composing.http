@@ -1,42 +1,27 @@
-POST /api/2.4/lots?opt_pretty=1 HTTP/1.0
+PATCH /api/2.4/lots/8286cc7863814271afe23cb2646237ed?acc_token=696900bbe76b405891282adaf3d9bf56 HTTP/1.0
 Authorization: Basic YnJva2VyOg==
-Content-Length: 362
+Content-Length: 33
 Content-Type: application/json
 Host: lb.api-sandbox.registry.ea2.openprocurement.net
 DATA:
 {
   "data": {
-    "lotType": "loki", 
-    "description": "Щось там тестове", 
-    "decisions": [
-      {
-        "decisionDate": "2018-05-25T18:39:50.545256+03:00", 
-        "decisionID": "decisionLotID"
-      }
-    ], 
-    "assets": [
-      "83e2013200da46a99e618a23ee840b93"
-    ], 
-    "title": "Тестовий лот"
+    "status": "composing"
   }
 }
 
-Response: 201 Created
+Response: 200 OK
 Content-Type: application/json
-Location: http://lb.api-sandbox.registry.ea2.openprocurement.net/api/2.4/lots/fd2bb96b7f2c4ec78a38e556cf80441d
 X-Content-Type-Options: nosniff
 {
-  "access": {
-    "token": "b2d586bd4408409d9cdeafdba3289478"
-  }, 
   "data": {
-    "status": "draft", 
-    "lotID": "UA-LR-DGF-2018-05-25-000002", 
+    "status": "composing", 
+    "lotID": "UA-LR-DGF-2018-05-25-000001", 
     "assets": [
       "83e2013200da46a99e618a23ee840b93"
     ], 
     "lotType": "loki", 
-    "dateModified": "2018-05-25T18:39:51.987185+03:00", 
+    "dateModified": "2018-05-25T18:39:51.715298+03:00", 
     "owner": "broker", 
     "auctions": [
       {
@@ -46,7 +31,7 @@ X-Content-Type-Options: nosniff
         "auctionParameters": {
           "type": "english"
         }, 
-        "id": "36c04fc7eb994128beaef7a49a02f132"
+        "id": "daad73e4924547f691a846f9333302ca"
       }, 
       {
         "status": "scheduled", 
@@ -55,7 +40,7 @@ X-Content-Type-Options: nosniff
         "auctionParameters": {
           "type": "english"
         }, 
-        "id": "d01782a9cc6042cbaa71cebd3cc4bcaa"
+        "id": "45db8a103dc4425792f5df042d63676e"
       }, 
       {
         "status": "scheduled", 
@@ -65,17 +50,17 @@ X-Content-Type-Options: nosniff
           "type": "insider", 
           "dutchSteps": 99
         }, 
-        "id": "1220de3b020b4a88823ebb87908a0201"
+        "id": "96f0ba0f16f14dd5b29545fdc3f4cf3e"
       }
     ], 
-    "date": "2018-05-25T18:39:51.983358+03:00", 
+    "date": "2018-05-25T18:39:51.715048+03:00", 
     "decisions": [
       {
         "decisionDate": "2018-05-25T18:39:50.545256+03:00", 
         "decisionID": "decisionLotID"
       }
     ], 
-    "id": "fd2bb96b7f2c4ec78a38e556cf80441d"
+    "id": "8286cc7863814271afe23cb2646237ed"
   }
 }
 

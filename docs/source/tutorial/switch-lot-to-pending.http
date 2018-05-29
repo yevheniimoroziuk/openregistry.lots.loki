@@ -1,12 +1,12 @@
-PATCH /api/2.4/lots/f2e72bbcd27d454a834f39f12c772dea HTTP/1.0
+PATCH /api/2.4/lots/2f01e3ce40454ddabdc521f35a3fcff1?acc_token=ac7314abc1f847dfab998cbb48a76169 HTTP/1.0
 Authorization: Basic Y29uY2llcmdlOg==
-Content-Length: 33
+Content-Length: 31
 Content-Type: application/json
 Host: lb.api-sandbox.registry.ea2.openprocurement.net
 DATA:
 {
   "data": {
-    "status": "dissolved"
+    "status": "pending"
   }
 }
 
@@ -15,20 +15,19 @@ Content-Type: application/json
 X-Content-Type-Options: nosniff
 {
   "data": {
-    "status": "dissolved", 
+    "status": "pending", 
     "rectificationPeriod": {
-      "startDate": "2018-05-22T18:40:40.062705+03:00", 
-      "endDate": "2018-05-23T18:40:40.062705+03:00"
+      "startDate": "2018-05-25T18:40:39.423574+03:00", 
+      "endDate": "2018-05-27T18:40:39.423574+03:00"
     }, 
-    "lotID": "UA-LR-DGF-2018-05-25-000005", 
+    "lotID": "UA-LR-DGF-2018-05-25-000004", 
     "assets": [
       "838bd7a94eae4f4f95b0cbd029c8daa5"
     ], 
-    "title": "title", 
     "lotType": "loki", 
-    "dateModified": "2018-05-25T18:40:40.557130+03:00", 
+    "dateModified": "2018-05-25T18:40:39.432996+03:00", 
     "owner": "broker", 
-    "next_check": "2018-05-23T18:40:40.062705+03:00", 
+    "next_check": "2018-05-27T18:40:39.423574+03:00", 
     "auctions": [
       {
         "status": "scheduled", 
@@ -51,7 +50,7 @@ X-Content-Type-Options: nosniff
           "amount": 3000.0, 
           "valueAddedTaxIncluded": true
         }, 
-        "id": "8e41b9724bc34f5aa06762871aa307ba", 
+        "id": "283e3f24ea9f4318836ecbf91e1d811a", 
         "auctionParameters": {
           "type": "english"
         }, 
@@ -79,7 +78,7 @@ X-Content-Type-Options: nosniff
           "valueAddedTaxIncluded": true
         }, 
         "tenderingDuration": "P25DT12H", 
-        "id": "e5812a9ca4c04af9a2caa1c00d8faaec", 
+        "id": "b24fdf3cb6464a449f0623ab0141afd8", 
         "auctionParameters": {
           "type": "english"
         }, 
@@ -107,7 +106,7 @@ X-Content-Type-Options: nosniff
           "valueAddedTaxIncluded": true
         }, 
         "tenderingDuration": "P25DT12H", 
-        "id": "872489acf0bc497091a37aae7e5c79bf", 
+        "id": "4737d16e578948f8a80d6e80d7a0de1e", 
         "auctionParameters": {
           "type": "insider", 
           "dutchSteps": 99
@@ -119,18 +118,18 @@ X-Content-Type-Options: nosniff
         }
       }
     ], 
-    "date": "2018-05-25T18:40:40.556896+03:00", 
+    "date": "2018-05-25T18:40:39.432787+03:00", 
     "decisions": [
       {
-        "decisionDate": "2018-05-25T18:40:40.075106+03:00", 
-        "decisionID": "decisionAssetID"
+        "decisionDate": "2018-05-25T18:39:50.545256+03:00", 
+        "decisionID": "decisionLotID"
       }, 
       {
-        "decisionDate": "2018-05-25T18:40:40.075147+03:00", 
+        "decisionDate": "2018-05-25T18:40:39.293849+03:00", 
         "decisionID": "decisionAssetID"
       }
     ], 
-    "id": "f2e72bbcd27d454a834f39f12c772dea"
+    "id": "2f01e3ce40454ddabdc521f35a3fcff1"
   }
 }
 

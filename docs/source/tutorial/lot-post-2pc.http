@@ -1,81 +1,81 @@
-POST /api/0.1/lots?opt_pretty=1 HTTP/1.0
+POST /api/2.4/lots?opt_pretty=1 HTTP/1.0
 Authorization: Basic YnJva2VyOg==
-Content-Length: 1104
+Content-Length: 362
 Content-Type: application/json
-Host: lb.api-sandbox.registry.ea.openprocurement.net
+Host: lb.api-sandbox.registry.ea2.openprocurement.net
 DATA:
 {
   "data": {
-    "lotIdentifier": "Q81318b19827", 
-    "lotCustodian": {
-      "contactPoint": {
-        "name": "Державне управління справами", 
-        "telephone": "0440000000"
-      }, 
-      "identifier": {
-        "scheme": "UA-EDR", 
-        "id": "00037256", 
-        "uri": "http://www.dus.gov.ua/"
-      }, 
-      "name": "Державне управління справами", 
-      "address": {
-        "countryName": "Україна", 
-        "postalCode": "01220", 
-        "region": "м. Київ", 
-        "streetAddress": "вул. Банкова, 11, корпус 1", 
-        "locality": "м. Київ"
+    "lotType": "loki", 
+    "description": "Щось там тестове", 
+    "decisions": [
+      {
+        "decisionDate": "2018-05-25T18:39:50.545256+03:00", 
+        "decisionID": "decisionLotID"
       }
-    }, 
-    "assets": [
-      "b49f767133cb4d0bbcfd9c404ece8b01"
     ], 
-    "title": "Тестовий лот", 
-    "lotType": "basic", 
-    "description": "Щось там тестове"
+    "assets": [
+      "83e2013200da46a99e618a23ee840b93"
+    ], 
+    "title": "Тестовий лот"
   }
 }
 
 Response: 201 Created
 Content-Type: application/json
-Location: http://lb.api-sandbox.registry.ea.openprocurement.net/api/0.1/lots/f0c5e8decc17498cabe79808ee889cc3
+Location: http://lb.api-sandbox.registry.ea2.openprocurement.net/api/2.4/lots/8286cc7863814271afe23cb2646237ed
 X-Content-Type-Options: nosniff
 {
   "access": {
-    "token": "5b2eae27ea3a41cfa4197fab969a0859"
+    "token": "696900bbe76b405891282adaf3d9bf56"
   }, 
   "data": {
     "status": "draft", 
-    "lotIdentifier": "Q81318b19827", 
-    "lotID": "UA-LR-DGF-2018-01-15-000001", 
-    "description": "Щось там тестове", 
-    "title": "Тестовий лот", 
-    "lotType": "basic", 
-    "dateModified": "2018-01-15T15:33:03.426524+02:00", 
-    "owner": "broker", 
-    "lotCustodian": {
-      "contactPoint": {
-        "name": "Державне управління справами", 
-        "telephone": "0440000000"
-      }, 
-      "identifier": {
-        "scheme": "UA-EDR", 
-        "id": "00037256", 
-        "uri": "http://www.dus.gov.ua/"
-      }, 
-      "name": "Державне управління справами", 
-      "address": {
-        "postalCode": "01220", 
-        "countryName": "Україна", 
-        "streetAddress": "вул. Банкова, 11, корпус 1", 
-        "region": "м. Київ", 
-        "locality": "м. Київ"
-      }
-    }, 
-    "date": "2018-01-15T15:33:03.424179+02:00", 
-    "id": "f0c5e8decc17498cabe79808ee889cc3", 
+    "lotID": "UA-LR-DGF-2018-05-25-000001", 
     "assets": [
-      "b49f767133cb4d0bbcfd9c404ece8b01"
-    ]
+      "83e2013200da46a99e618a23ee840b93"
+    ], 
+    "lotType": "loki", 
+    "dateModified": "2018-05-25T18:39:51.637310+03:00", 
+    "owner": "broker", 
+    "auctions": [
+      {
+        "status": "scheduled", 
+        "tenderAttempts": 1, 
+        "procurementMethodType": "sellout.english", 
+        "auctionParameters": {
+          "type": "english"
+        }, 
+        "id": "daad73e4924547f691a846f9333302ca"
+      }, 
+      {
+        "status": "scheduled", 
+        "tenderAttempts": 2, 
+        "procurementMethodType": "sellout.english", 
+        "auctionParameters": {
+          "type": "english"
+        }, 
+        "id": "45db8a103dc4425792f5df042d63676e"
+      }, 
+      {
+        "status": "scheduled", 
+        "tenderAttempts": 3, 
+        "procurementMethodType": "sellout.insider", 
+        "auctionParameters": {
+          "type": "insider", 
+          "dutchSteps": 99
+        }, 
+        "id": "96f0ba0f16f14dd5b29545fdc3f4cf3e"
+      }
+    ], 
+    "date": "2018-05-25T18:39:51.633631+03:00", 
+    "decisions": [
+      {
+        "decisionDate": "2018-05-25T18:39:50.545256+03:00", 
+        "decisionID": "decisionLotID"
+      }
+    ], 
+    "id": "8286cc7863814271afe23cb2646237ed"
   }
 }
 
