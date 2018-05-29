@@ -1,4 +1,4 @@
-PATCH /api/2.4/lots/d643a4ad34414779a15fc9c00c229efa?acc_token=e995182bb02246e895b85a7efa0c9e32 HTTP/1.0
+PATCH /api/2.4/lots/fd2bb96b7f2c4ec78a38e556cf80441d?acc_token=b2d586bd4408409d9cdeafdba3289478 HTTP/1.0
 Authorization: Basic YnJva2VyOg==
 Content-Length: 53
 Content-Type: application/json
@@ -18,10 +18,10 @@ X-Content-Type-Options: nosniff
     "status": "composing", 
     "lotID": "UA-LR-DGF-2018-05-25-000002", 
     "assets": [
-      "964e194e98b14d1da03fc48be7865221"
+      "83e2013200da46a99e618a23ee840b93"
     ], 
     "lotType": "loki", 
-    "dateModified": "2018-05-25T17:28:38.807676+03:00", 
+    "dateModified": "2018-05-25T18:39:52.049683+03:00", 
     "owner": "broker", 
     "auctions": [
       {
@@ -31,7 +31,7 @@ X-Content-Type-Options: nosniff
         "auctionParameters": {
           "type": "english"
         }, 
-        "id": "b6cbe635f04a4be186cf5c23cc4e0c4c"
+        "id": "36c04fc7eb994128beaef7a49a02f132"
       }, 
       {
         "status": "scheduled", 
@@ -40,7 +40,7 @@ X-Content-Type-Options: nosniff
         "auctionParameters": {
           "type": "english"
         }, 
-        "id": "5cbe9610176a43afbf624c1d79de0239"
+        "id": "d01782a9cc6042cbaa71cebd3cc4bcaa"
       }, 
       {
         "status": "scheduled", 
@@ -50,17 +50,17 @@ X-Content-Type-Options: nosniff
           "type": "insider", 
           "dutchSteps": 99
         }, 
-        "id": "9d847f4e98aa461eab42cfc3d2391f90"
+        "id": "1220de3b020b4a88823ebb87908a0201"
       }
     ], 
-    "date": "2018-05-25T17:28:38.807355+03:00", 
+    "date": "2018-05-25T18:39:52.049450+03:00", 
     "decisions": [
       {
-        "decisionDate": "2018-05-25T17:28:37.300221+03:00", 
+        "decisionDate": "2018-05-25T18:39:50.545256+03:00", 
         "decisionID": "decisionLotID"
       }
     ], 
-    "id": "d643a4ad34414779a15fc9c00c229efa"
+    "id": "fd2bb96b7f2c4ec78a38e556cf80441d"
   }
 }
 

@@ -1,9 +1,9 @@
-PATCH /api/2.4/lots/1947689f874148418bdd871ed5efe21f/auctions/5f0dcb4cb3c6436c85af7ce3ee949d44 HTTP/1.0
+PATCH /api/2.4/lots/8286cc7863814271afe23cb2646237ed/auctions/45db8a103dc4425792f5df042d63676e HTTP/1.0
 Authorization: Basic YnJva2VyOg==
 Content-Length: 43
 Content-Type: application/json
 Host: lb.api-sandbox.registry.ea2.openprocurement.net
-X-Access-Token: 7911aa2b190c4039bc8d6c030cdbd101
+X-Access-Token: 696900bbe76b405891282adaf3d9bf56
 DATA:
 {
   "data": {
@@ -33,7 +33,7 @@ X-Content-Type-Options: nosniff
       "valueAddedTaxIncluded": true
     }, 
     "tenderingDuration": "P25DT12H", 
-    "id": "5f0dcb4cb3c6436c85af7ce3ee949d44", 
+    "id": "45db8a103dc4425792f5df042d63676e", 
     "auctionParameters": {
       "type": "english"
     }, 
