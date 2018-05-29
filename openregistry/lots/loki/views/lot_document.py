@@ -45,7 +45,7 @@ patch_validators = (
 @oplotsresource(name='loki:Lot Documents',
                 collection_path='/lots/{lot_id}/documents',
                 path='/lots/{lot_id}/documents/{document_id}',
-                lotType='loki',
+                _internal_type='loki',
                 description="Lot related binary files (PDFs, etc.)")
 class LotDocumentResource(APIResource):
 

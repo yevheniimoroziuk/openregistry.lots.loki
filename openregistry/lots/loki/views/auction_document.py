@@ -45,7 +45,7 @@ patch_validators = (
 @oplotsresource(name='loki:Auction Documents',
                 collection_path='/lots/{lot_id}/auctions/{auction_id}/documents',
                 path='/lots/{lot_id}/auctions/{auction_id}/documents/{document_id}',
-                lotType='loki',
+                _internal_type='loki',
                 description="Auction related binary files (PDFs, etc.)")
 class AuctionDocumentResource(APIResource):
 
