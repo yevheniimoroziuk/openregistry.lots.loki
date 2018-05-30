@@ -38,5 +38,3 @@ def update_auctions(lot):
             )
 
     insider.tenderingDuration = second_english.tenderingDuration
-    auctions[2] = insider
-    return auctions
