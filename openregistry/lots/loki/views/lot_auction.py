@@ -7,7 +7,6 @@ from openregistry.lots.core.utils import (
 from openregistry.lots.core.utils import (
     oplotsresource, apply_patch, save_lot
 )
-from openregistry.lots.core.interfaces import ILotManager
 from openregistry.lots.loki.utils import update_auctions
 from openregistry.lots.loki.validation import (
     validate_auction_data,
