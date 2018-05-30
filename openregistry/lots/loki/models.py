@@ -137,31 +137,6 @@ class Lot(BaseLot):
             return self.rectificationPeriod.endDate
         return
 
-    @serializable(serialize_when_none=False)
-    def auctions_serialize(self):
-        if self.auctions:
-            auto_calculated_fields = ['value', 'minimalStep', 'registrationFee', 'guarantee']
-            auctions = sorted(self.auctions, key=lambda a: a.tenderAttempts)
-            english = auctions[0]
-            second_english = auctions[1]
-            insider = auctions[2]
-            auto_calculated_fields = filter(
-                lambda f: getattr(english, f, None), auto_calculated_fields
-            )
-            for auction in (second_english, insider):
-                for key in auto_calculated_fields:
-                    object_class = getattr(self.__class__.auctions.model_class, key)
-                    auction[key] = object_class(english[key].serialize())
-                    auction[key]['amount'] = (
-                        0 if key == 'minimalStep' and auction.procurementMethodType == 'sellout.insider'
-                        else english[key]['amount'] / 2
-                    )
-
-            insider.tenderingDuration = second_english.tenderingDuration
-            self.auctions[0] = english
-            self.auctions[1] = second_english
-            self.auctions[2] = insider
-
     def __acl__(self):
         acl = [
             (Allow, '{}_{}'.format(self.owner, self.owner_token), 'edit_lot'),
