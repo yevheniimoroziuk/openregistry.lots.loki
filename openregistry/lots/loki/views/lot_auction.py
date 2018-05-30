@@ -5,8 +5,9 @@ from openregistry.lots.core.utils import (
     APIResource,
 )
 from openregistry.lots.core.utils import (
-    oplotsresource, apply_patch,
+    oplotsresource, apply_patch, save_lot
 )
+from openregistry.lots.loki.utils import update_auctions
 from openregistry.lots.loki.validation import (
     validate_auction_data,
     rectificationPeriod_auction_validation,
@@ -41,7 +42,9 @@ class LotAuctionResource(APIResource):
     @json_view(content_type="application/json", permission='upload_lot_auctions', validators=(patch_validators))
     def patch(self):
         """Lot Auction Update"""
-        if apply_patch(self.request, src=self.request.context.serialize()):
+        apply_patch(self.request, save=False, src=self.request.context.serialize())
+        update_auctions(self.request.validated['lot'])
+        if save_lot(self.request):
             self.LOGGER.info(
                 'Updated lot auction {}'.format(self.request.context.id),
                 extra=context_unpack(self.request, {'MESSAGE_ID': 'lot_auction_patch'})
