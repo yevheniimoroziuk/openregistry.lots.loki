@@ -29,7 +29,6 @@ from openregistry.lots.core.models import ILot, Lot as BaseLot
 from openregistry.lots.core.utils import (
     get_now
 )
-from openregistry.lots.core.constants import TZ
 
 from .constants import (
     LOT_STATUSES,
