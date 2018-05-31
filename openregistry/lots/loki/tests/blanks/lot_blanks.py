@@ -445,6 +445,7 @@ def rectificationPeriod_workflow(self):
     self.assertNotEqual(response.json['data']['title'], 'PATCHED')
     self.assertEqual(lot['title'], response.json['data']['title'])
     self.assertEqual(response.json['data']['status'], 'active.salable')
+    self.assertNotIn('next_check', response.json['data'])
 
 
 def dateModified_resource(self):

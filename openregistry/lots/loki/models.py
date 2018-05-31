@@ -27,7 +27,7 @@ from openregistry.lots.core.models import (
 
 from openregistry.lots.core.models import ILot, Lot as BaseLot
 from openregistry.lots.core.utils import (
-    get_now,
+    get_now
 )
 
 from .constants import (
@@ -133,9 +133,10 @@ class Lot(BaseLot):
 
     @serializable(serialize_when_none=False, type=IsoDateTimeType())
     def next_check(self):
-        if self.rectificationPeriod:
-            return self.rectificationPeriod.endDate
-        return
+        checks = []
+        if self.rectificationPeriod and self.status == 'pending':
+            checks.append(self.rectificationPeriod.endDate)
+        return min(checks) if checks else None
 
     def __acl__(self):
         acl = [
