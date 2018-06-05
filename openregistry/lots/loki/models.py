@@ -38,6 +38,7 @@ from .constants import (
 from .roles import (
     lot_roles,
     auction_roles,
+    decision_roles
 )
 
 
@@ -52,6 +53,12 @@ class StartDateRequiredPeriod(Period):
 class AuctionDocument(Document):
     documentType = StringType(choices=AUCTION_DOCUMENT_TYPES, required=True)
     documentOf = StringType(choices=['auction'])
+
+
+class LotDecision(Decision):
+    class Options:
+        roles = decision_roles
+    decisionOf = StringType(choices=['lot', 'asset'], default='lot')
 
 
 class Auction(Model):
@@ -107,7 +114,7 @@ class Lot(BaseLot):
     officialRegistrationID = StringType(serialize_when_none=False)
     items = ListType(ModelType(Item), default=list())
     documents = ListType(ModelType(Document), default=list())
-    decisions = ListType(ModelType(Decision), default=list(), min_size=1, max_size=2, required=True)
+    decisions = ListType(ModelType(LotDecision), default=list(), min_size=1, max_size=2, required=True)
     assets = ListType(MD5Type(), required=True, min_size=1, max_size=1)
     auctions = ListType(ModelType(Auction), default=list(), max_size=3)
     _internal_type = 'loki'
