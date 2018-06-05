@@ -7,7 +7,7 @@ from openregistry.lots.core.models import (
 )
 from openregistry.lots.core.models import (
     schematics_default_role,
-    schematics_embedded_role
+    lots_embedded_role
 )
 
 
@@ -52,13 +52,13 @@ lot_create_role = (whitelist('status', 'assets', 'decisions', 'lotType', 'lotIde
 lot_edit_role = (blacklist(
     'owner_token', 'owner', '_attachments',
     'revisions', 'date', 'dateModified', 'documents', 'auctions',
-    'lotID', 'mode', 'doc_id', 'rectificationPeriod') + schematics_embedded_role)
-view_role = (blacklist('owner_token', '_attachments', 'revisions') + schematics_embedded_role)
+    'lotID', 'mode', 'doc_id', 'rectificationPeriod') + lots_embedded_role)
+view_role = (blacklist('owner_token', '_attachments', 'revisions') + lots_embedded_role)
 
 Administrator_role = whitelist('status', 'mode')
 concierge_role = (blacklist(
     'owner_token', 'owner', '_attachments', 'revisions', 'date', 'dateModified',
-    'lotID', 'mode', 'doc_id') + schematics_embedded_role)
+    'lotID', 'mode', 'doc_id') + lots_embedded_role)
 
 decision_roles = {
     'create': blacklist('decisionOf', 'relatedItem'),
