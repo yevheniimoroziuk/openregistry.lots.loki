@@ -10,7 +10,7 @@ from openregistry.lots.core.utils import (
 from openregistry.lots.core.models import Period
 from openregistry.lots.loki.models import Lot
 from openregistry.lots.core.constants import SANDBOX_MODE
-from openregistry.lots.loki.constants import DEFAULT_DUTCH_STEPS
+from openregistry.lots.loki.constants import DEFAULT_DUTCH_STEPS, DEFAULT_REGISTRATION_FEE
 
 from openregistry.lots.loki.tests.base import (
     create_single_lot,
@@ -597,3 +597,63 @@ def submissionMethodDetails_check(self):
         response.json['data']['submissionMethodDetails'],
         auction_param_with_submissionMethodDetails['submissionMethodDetails']
     )
+
+
+def registrationFee_default(self):
+    # Check default registrationFee.amount
+    response = self.app.get('/{}/auctions'.format(self.resource_id))
+    auctions = sorted(response.json['data'], key=lambda a: a['tenderAttempts'])
+    english = auctions[0]
+    second_english = auctions[1]
+    insider = auctions[2]
+
+    self.assertEqual(english['registrationFee']['amount'], DEFAULT_REGISTRATION_FEE)
+    self.assertEqual(second_english['registrationFee']['amount'], DEFAULT_REGISTRATION_FEE / 2)
+    self.assertEqual(insider['registrationFee']['amount'], DEFAULT_REGISTRATION_FEE / 2)
+
+    # Change registrationFee
+    data = {
+        'registrationFee': {'amount': 100}
+    }
+    response = self.app.patch_json('/{}/auctions/{}'.format(self.resource_id, english['id']),
+        headers=self.access_header, params={
+            'data': data
+            })
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(
+        response.json['data']['registrationFee']['amount'],
+        data['registrationFee']['amount']
+    )
+
+    response = self.app.get('/{}/auctions'.format(self.resource_id))
+    auctions = sorted(response.json['data'], key=lambda a: a['tenderAttempts'])
+    english = auctions[0]
+    second_english = auctions[1]
+    insider = auctions[2]
+
+    self.assertEqual(english['registrationFee']['amount'], data['registrationFee']['amount'])
+    self.assertEqual(second_english['registrationFee']['amount'], data['registrationFee']['amount'] / 2)
+    self.assertEqual(insider['registrationFee']['amount'], data['registrationFee']['amount'] / 2)
+
+    # Patch registrationFee to None
+    data = {
+        'registrationFee': None
+    }
+    response = self.app.patch_json('/{}/auctions/{}'.format(self.resource_id, english['id']),
+        headers=self.access_header, params={
+            'data': data
+            })
+    self.assertEqual(response.status, '200 OK')
+    self.assertEqual(response.content_type, 'application/json')
+    self.assertEqual(response.json['data']['registrationFee']['amount'], DEFAULT_REGISTRATION_FEE)
+
+    response = self.app.get('/{}/auctions'.format(self.resource_id))
+    auctions = sorted(response.json['data'], key=lambda a: a['tenderAttempts'])
+    english = auctions[0]
+    second_english = auctions[1]
+    insider = auctions[2]
+
+    self.assertEqual(english['registrationFee']['amount'], DEFAULT_REGISTRATION_FEE)
+    self.assertEqual(second_english['registrationFee']['amount'], DEFAULT_REGISTRATION_FEE / 2)
+    self.assertEqual(insider['registrationFee']['amount'], DEFAULT_REGISTRATION_FEE / 2)
