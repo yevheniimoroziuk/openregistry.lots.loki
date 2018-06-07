@@ -144,7 +144,7 @@ def patch_english_auction(self):
     # Test second sellout.english(half values)
     self.assertEqual(second_english['procurementMethodType'], 'sellout.english')
     self.assertEqual(second_english['value']['amount'], english['value']['amount'] / 2)
-    self.assertEqual(second_english['registrationFee']['amount'], english['registrationFee']['amount'] / 2)
+    self.assertEqual(second_english['registrationFee']['amount'], english['registrationFee']['amount'])
     self.assertEqual(second_english['minimalStep']['amount'], english['minimalStep']['amount'] / 2)
     self.assertEqual(second_english['guarantee']['amount'], english['guarantee']['amount'] / 2)
     self.assertEqual(second_english['auctionParameters']['type'], 'english')
@@ -153,7 +153,7 @@ def patch_english_auction(self):
     # Test second sellout.insider(half values)
     self.assertEqual(insider['procurementMethodType'], 'sellout.insider')
     self.assertEqual(insider['value']['amount'], english['value']['amount'] / 2)
-    self.assertEqual(insider['registrationFee']['amount'], english['registrationFee']['amount'] / 2)
+    self.assertEqual(insider['registrationFee']['amount'], english['registrationFee']['amount'])
     self.assertEqual(insider['minimalStep']['amount'], 0)
     self.assertEqual(insider['guarantee']['amount'], english['guarantee']['amount'] / 2)
     self.assertEqual(insider['auctionParameters']['type'], 'insider')
@@ -190,7 +190,7 @@ def patch_english_auction(self):
     # Test second sellout.english(half values)
     self.assertEqual(second_english['procurementMethodType'], 'sellout.english')
     self.assertEqual(second_english['value']['amount'], english['value']['amount'] / 2)
-    self.assertEqual(second_english['registrationFee']['amount'], english['registrationFee']['amount'] / 2)
+    self.assertEqual(second_english['registrationFee']['amount'], english['registrationFee']['amount'])
     self.assertEqual(second_english['minimalStep']['amount'], english['minimalStep']['amount'] / 2)
     self.assertEqual(second_english['guarantee']['amount'], english['guarantee']['amount'] / 2)
     self.assertEqual(second_english['auctionParameters']['type'], 'english')
@@ -199,7 +199,7 @@ def patch_english_auction(self):
     # Test second sellout.insider(half values)
     self.assertEqual(insider['procurementMethodType'], 'sellout.insider')
     self.assertEqual(insider['value']['amount'], english['value']['amount'] / 2)
-    self.assertEqual(insider['registrationFee']['amount'], english['registrationFee']['amount'] / 2)
+    self.assertEqual(insider['registrationFee']['amount'], english['registrationFee']['amount'])
     self.assertEqual(insider['minimalStep']['amount'], 0)
     self.assertEqual(insider['guarantee']['amount'], english['guarantee']['amount'] / 2)
     self.assertEqual(insider['auctionParameters']['type'], 'insider')
@@ -608,8 +608,8 @@ def registrationFee_default(self):
     insider = auctions[2]
 
     self.assertEqual(english['registrationFee']['amount'], DEFAULT_REGISTRATION_FEE)
-    self.assertEqual(second_english['registrationFee']['amount'], DEFAULT_REGISTRATION_FEE / 2)
-    self.assertEqual(insider['registrationFee']['amount'], DEFAULT_REGISTRATION_FEE / 2)
+    self.assertEqual(second_english['registrationFee']['amount'], DEFAULT_REGISTRATION_FEE)
+    self.assertEqual(insider['registrationFee']['amount'], DEFAULT_REGISTRATION_FEE)
 
     # Change registrationFee
     data = {
@@ -633,8 +633,8 @@ def registrationFee_default(self):
     insider = auctions[2]
 
     self.assertEqual(english['registrationFee']['amount'], data['registrationFee']['amount'])
-    self.assertEqual(second_english['registrationFee']['amount'], data['registrationFee']['amount'] / 2)
-    self.assertEqual(insider['registrationFee']['amount'], data['registrationFee']['amount'] / 2)
+    self.assertEqual(second_english['registrationFee']['amount'], data['registrationFee']['amount'])
+    self.assertEqual(insider['registrationFee']['amount'], data['registrationFee']['amount'])
 
     # Patch registrationFee to None
     data = {
@@ -655,5 +655,5 @@ def registrationFee_default(self):
     insider = auctions[2]
 
     self.assertEqual(english['registrationFee']['amount'], DEFAULT_REGISTRATION_FEE)
-    self.assertEqual(second_english['registrationFee']['amount'], DEFAULT_REGISTRATION_FEE / 2)
-    self.assertEqual(insider['registrationFee']['amount'], DEFAULT_REGISTRATION_FEE / 2)
+    self.assertEqual(second_english['registrationFee']['amount'], DEFAULT_REGISTRATION_FEE)
+    self.assertEqual(insider['registrationFee']['amount'], DEFAULT_REGISTRATION_FEE)
