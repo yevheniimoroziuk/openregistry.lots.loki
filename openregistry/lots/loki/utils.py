@@ -65,7 +65,7 @@ def update_auctions(lot):
             else:
                 auction[key]['amount'] = (
                     0 if key == 'minimalStep' and auction.procurementMethodType == 'sellout.insider'
-                    else english[key]['amount'] / 2
+                    else round(english[key]['amount'] / 2, 2)
                 )
 
     insider.tenderingDuration = second_english.tenderingDuration
