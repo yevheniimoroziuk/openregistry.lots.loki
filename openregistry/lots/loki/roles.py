@@ -48,7 +48,7 @@ auction_roles = {
     'concierge': whitelist('status', 'auctionID', 'relatedProcessID')
 }
 
-lot_create_role = (whitelist('status', 'assets', 'decisions', 'lotType', 'lotIdentifier', 'mode'))
+lot_create_role = (whitelist('status', 'assets', 'decisions', 'lotType', 'lotIdentifier', 'mode', 'sandboxParameters'))
 lot_edit_role = (blacklist(
     'owner_token', 'owner', '_attachments', 'contracts',
     'revisions', 'date', 'dateModified', 'documents', 'auctions',
