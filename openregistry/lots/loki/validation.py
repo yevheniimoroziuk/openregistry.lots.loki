@@ -8,10 +8,15 @@ from openregistry.lots.core.utils import (
     check_document,
     set_first_document_fields,
     get_type,
-    update_document_url
+    update_document_url,
+    calculate_business_date
 )
 from openregistry.lots.core.validation import (
     validate_data
+)
+from openregistry.lots.loki.constants import (
+    DAYS_AFTER_RECTIFICATION_PERIOD,
+    RECTIFICATION_PERIOD_DURATION
 )
 
 
@@ -174,6 +179,7 @@ def rectificationPeriod_auction_validation(request, error_handler, **kwargs):
         request.validated['lot'].rectificationPeriod and
         request.validated['lot'].rectificationPeriod.endDate < get_now()
     )
+
     if request.authenticated_role not in ['convoy', 'concierge'] and is_rectificationPeriod_finished:
         request.errors.add('body', 'mode', 'You can\'t change auctions after rectification period')
         request.errors.status = 403
@@ -229,6 +235,26 @@ def validate_verification_status(request, error_handler):
                 'these fields are empty {} within the auctions'.format(required_fields)
             )
             request.errors.status = 422
+
+        duration = DAYS_AFTER_RECTIFICATION_PERIOD + RECTIFICATION_PERIOD_DURATION
+
+        min_auction_start_date = calculate_business_date(
+            start=get_now(),
+            delta=duration,
+            context=lot,
+            working_days=True
+        )
+
+        auction_period = english.auctionPeriod
+        if auction_period and min_auction_start_date > auction_period.startDate:
+            request.errors.add(
+                'body',
+                'mode',
+                'startDate of auctionPeriod must be '
+                'at least in {} days after today'.format(duration.days)
+            )
+            request.errors.status = 422
+            raise error_handler(request)
 
         required_fields = ['tenderingDuration']
         if not all(second_english[field] for field in required_fields):

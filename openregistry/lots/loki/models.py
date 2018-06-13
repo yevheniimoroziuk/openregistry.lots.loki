@@ -2,6 +2,7 @@
 from uuid import uuid4
 from pyramid.security import Allow
 from schematics.types import StringType, IntType, MD5Type, FloatType
+from schematics.exceptions import ValidationError
 from schematics.types.compound import ModelType, ListType
 from schematics.types.serializable import serializable
 from zope.interface import implementer
@@ -26,21 +27,28 @@ from openregistry.lots.core.models import (
 )
 
 from openregistry.lots.core.validation import validate_items_uniq
-from openregistry.lots.core.models import ILot, Lot as BaseLot
+from openregistry.lots.core.models import (
+    ILot,
+    Lot as BaseLot,
+    get_lot
+)
 from openregistry.lots.core.utils import (
-    get_now
+    get_now,
+    calculate_business_date
 )
 
 from .constants import (
     LOT_STATUSES,
     AUCTION_STATUSES,
     AUCTION_DOCUMENT_TYPES,
-    DEFAULT_REGISTRATION_FEE
+    DEFAULT_REGISTRATION_FEE,
+    DAYS_AFTER_RECTIFICATION_PERIOD
 )
 from .roles import (
     lot_roles,
     auction_roles,
     decision_roles,
+    auction_period_roles,
     contracts_roles
 )
 
@@ -50,6 +58,8 @@ class ILokiLot(ILot):
 
 
 class StartDateRequiredPeriod(Period):
+    class Options:
+        roles = auction_period_roles
     startDate = IsoDateTimeType(required=True)
 
 
@@ -92,6 +102,21 @@ class Auction(Model):
     submissionMethodDetails_ru = StringType()
     if SANDBOX_MODE:
         procurementMethodDetails = StringType()
+
+    def validate_auctionPeriod(self, data, period):
+        lot = get_lot(data['__parent__'])
+        if data['tenderAttempts'] == 1 and lot.rectificationPeriod:
+            min_auction_start_date = calculate_business_date(
+                start=lot.rectificationPeriod.endDate,
+                delta=DAYS_AFTER_RECTIFICATION_PERIOD,
+                context=lot,
+                working_days=True
+            )
+            if min_auction_start_date > period['startDate']:
+                raise ValidationError(
+                    'startDate of auctionPeriod must be at least '
+                    'in {} days after endDate of rectificationPeriod'.format(DAYS_AFTER_RECTIFICATION_PERIOD.days)
+                )
 
     def get_role(self):
         root = self.__parent__.__parent__
