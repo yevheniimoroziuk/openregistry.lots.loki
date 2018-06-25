@@ -2,7 +2,7 @@
 from openregistry.lots.loki.tests.base import create_single_lot, check_patch_status_200
 
 
-def patch_contracts(self):
+def patch_contracts_by(self, role):
     response = self.app.get('/{}'.format(self.resource_id))
     lot_type = response.json['data']['lotType']
 
@@ -13,7 +13,7 @@ def patch_contracts(self):
     self.assertEqual(len(contracts), 1)
     self.assertEqual(contract['type'], lot_type)
 
-    self.app.authorization = ('Basic', ('caravan', ''))
+    self.app.authorization = ('Basic', (role, ''))
     response = self.app.patch_json('/{}/contracts/{}'.format(self.resource_id, contract_id),
         headers=self.access_header, params={
             "data": self.initial_contract_data})
@@ -50,7 +50,7 @@ def patch_contracts(self):
     self.assertEqual(response.status, '403 Forbidden')
 
     # Invalid patch
-    self.app.authorization = ('Basic', ('caravan', ''))
+    self.app.authorization = ('Basic', (role, ''))
     response = self.app.patch_json(
         '/{}/contracts/{}'.format(self.resource_id, contract_id),
         headers=self.access_header,
@@ -62,6 +62,14 @@ def patch_contracts(self):
     self.assertEqual(response.status, '422 Unprocessable Entity')
     self.assertEqual(response.content_type, 'application/json')
     self.assertEqual(response.json['errors'][0]['description'], 'Rogue field')
+
+
+def patch_contracts_by_convoy(self):
+    patch_contracts_by(self, 'convoy')
+
+
+def patch_contracts_by_caravan(self):
+    patch_contracts_by(self, 'caravan')
 
 
 def patch_contracts_with_lot(self):

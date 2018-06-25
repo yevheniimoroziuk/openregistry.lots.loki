@@ -80,7 +80,8 @@ decision_roles = {
 
 contracts_roles = {
     'view': (schematics_default_role + blacklist()),
-    'caravan': blacklist('id', 'type')
+    'caravan': blacklist('id', 'type'),
+    'convoy': blacklist('id', 'type'),
 }
 
 
@@ -138,5 +139,6 @@ lot_roles = {
     'edit.invalid': whitelist(),
     'concierge': whitelist('status', 'decisions', 'title', 'lotCustodian', 'description', 'lotHolder', 'items'),
     'chronograph': whitelist(),
-    'caravan': whitelist()
+    'caravan': whitelist(),
+    'convoy': whitelist()
 }
