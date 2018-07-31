@@ -23,12 +23,12 @@ from .constants import (
     RECTIFICATION_PERIOD_DURATION,
     ITEM_EDITING_STATUSES,
     DEFAULT_DUTCH_STEPS,
+    DECISION_EDITING_STATUSES,
     CONTRACT_TYPE,
     PLATFORM_LEGAL_DETAILS_DOC_DATA
 )
 from .validation import (
-    validate_decision_post,
-    validate_decision_patch,
+    validate_pending_status,
     validate_deleted_status,
     validate_verification_status,
 )
@@ -40,16 +40,16 @@ class LokiLotConfigurator(LotConfigurator):
     name = "Loki Lot configurator"
     available_statuses = STATUS_CHANGES
     item_editing_allowed_statuses = ITEM_EDITING_STATUSES
+    decision_editing_allowed_statuses = DECISION_EDITING_STATUSES
 
 
 class LokiLotManagerAdapter(LotManagerAdapter):
     name = 'Loki Lot Manager'
     create_validation = (
         validate_post_lot_role,
-        validate_decision_post,
     )
     change_validation = (
-        validate_decision_patch,
+        validate_pending_status,
         validate_deleted_status,
         validate_verification_status,
     )
