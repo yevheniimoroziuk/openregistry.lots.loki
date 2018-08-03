@@ -50,6 +50,8 @@ Documentation of related packages
 
 * `OpenProcurement API <http://api-docs.openprocurement.org/en/latest/>`_
 
+* `Sellout.english <http://sellout-english.api-docs.ea2.openprocurement.io/en/latest/>`_
+
 API stability
 -------------
 

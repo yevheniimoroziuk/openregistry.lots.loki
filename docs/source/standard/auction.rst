@@ -3,7 +3,7 @@
 
 .. index:: Auction, Duration, Value, Guarantee, auctionParameters, Bank Account, Сontracts
 
-.. _auction:
+.. _Auction:
 
 Auction
 =======
@@ -41,10 +41,7 @@ Schema
 
   Parameter that works only with mode = "test" and speeds up auction start date. 
 
-  Possible values are:
-
-  * `quick(mode:no-auction)`; 
-  * `quick(mode:fast-forward)`.
+  Possible values is quick.
 
 :sandboxParameters:
   string, optional
@@ -62,7 +59,7 @@ Schema
   Duration of tenderPeriod for 2nd and 3rd procedures within the privatization cycle. 
 
 :documents:
-  Array of :ref:`documents` objects
+  Array of :ref:`documents` objects, optional
  
   |ocdsDescription|
   All documents and attachments related to the auction.
@@ -113,14 +110,22 @@ Schema
   string, required
 
   Auction status within which the lot is being sold:
-  
-  * `scheduled` - the process is planned, but is not yet taking place. Details of the anticipated dates may be provided further;
-  
-  * `active` -  the process is currently taking place;  
-  
-  * `complete` - the process is complete; 
-  
-  * `cancelled` - the process has been cancelled;  
+
++---------------+------------------------------------------------------------+
+|    Status     |                    Description                             |
++===============+============================================================+
+|               | The process is planned, but is not yet taking place.       |
++  `scheduled`  +                                                            +
+|               | Details of the anticipated dates may be provided further   |
++---------------+------------------------------------------------------------+
+| `active`      | The process is currently taking place                      |
++---------------+------------------------------------------------------------+
+| `complete`    | The process is complete;                                   |
++---------------+------------------------------------------------------------+
+| `cancelled`   | The process has been cancelled;                            |
++---------------+------------------------------------------------------------+
+| `unsuccessful`| The process has been unsuccessful.                         |
++---------------+------------------------------------------------------------+
 
   * `unsuccessful` - the process has been unsuccessful.
 
@@ -130,7 +135,11 @@ Schema
   Information of the related contract.
 
 :relatedProcessID:
+<<<<<<< HEAD
+  uuid, required
+=======
   string, required
+>>>>>>> 078fefa334899d9c06a9ba88931d29fdbf439b2d
 
   Internal id of the auction.
 
@@ -148,7 +157,7 @@ Schema
   Type of the auction.
 
 :dutchSteps:
-  integer, optional
+  integer, required for the third auction
 
   Number of steps within the dutch part of the insider auction. 
 
@@ -244,8 +253,11 @@ Schema
 Сontracts
 =========
 
+<<<<<<< HEAD
+=======
 All of the fields within are auto-generated & read-only
 
+>>>>>>> 078fefa334899d9c06a9ba88931d29fdbf439b2d
 Schema
 ------
 
@@ -262,8 +274,16 @@ Schema
   Added as long as the contract is being created within the Module of Contracting.
 
 :relatedProcessID:
+<<<<<<< HEAD
+  uuid, required, auto-generated, read-only
+
+  Internal identifier of the object within the Module of Contracting.
+
+  Added as long as the contract is being created within the Module of Contracting.
+=======
   string, required, auto-generated, read-only
 
   Internal identifier of the object within the Module of Contracting.
 
   Added as long as the contract is being created within the Module of Contracting.
+>>>>>>> 078fefa334899d9c06a9ba88931d29fdbf439b2d

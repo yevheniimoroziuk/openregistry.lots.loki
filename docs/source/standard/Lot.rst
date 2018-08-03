@@ -1,19 +1,21 @@
 .. . Kicking page rebuild 2014-10-30 17:00:08
 .. include:: defs.hrst
 
-.. index:: Lot, Period, Date, Decisions 
+.. index:: Lot, Period, Date, Decisions, Contracts
 
 .. _lot:
 
 Lot
-===============
+===
 
 Schema
 ------
 
 :id:
-    string, auto-generated, read-only
-    
+    uuid, auto-generated, read-only
+
+    Internal identifier for this lot.
+
 :lotID:
    string, auto-generated, read-only
 
@@ -29,35 +31,85 @@ Schema
 
 :date:
     string, auto-generated, read-only
+<<<<<<< HEAD
+
+=======
     
+>>>>>>> 078fefa334899d9c06a9ba88931d29fdbf439b2d
     The date of lot creation/undoing.
 
 :title:
     string, multilingual, required
-    
+
+    * Ukrainian by default (required) - Ukrainian title
+
+    * ``title_en`` (English) - English title
+
+    * ``title_ru`` (Russian) - Russian title
+
+    Oprionally can be mentioned in English/Russian.
+
     Initial data originates from `asset.title`.
 
 :description:
     string, multilingual, required
-    
+
     |ocdsDescription|
     A description of the goods, services to be provided.
-    
+
+    * Ukrainian by default - Ukrainian decription
+
+    * ``decription_en`` (English) - English decription
+
+    * ``decription_ru`` (Russian) - Russian decription
+
     Initial data originates from `asset.description`.
     
 :dateModified:    
     string, auto-generated, read-only
-    
+
     |ocdsDescription|
     Date when the lot was last modified.
 
 :status:
     string, required
-    
+
     The lot status within the Registry.
 
++-------------------------+---------------------------------------------------+
+|        Status           |                  Description                      |
++=========================+===================================================+
+| :`draft`:               |  Lot created but not yet available                |
++-------------------------+---------------------------------------------------+
+| :`composing`:           |  Attachment of the asset to the lot               |
++-------------------------+---------------------------------------------------+
+| :`verification`:        |  Asset availability check                         |
++-------------------------+---------------------------------------------------+
+| :`pending`:             |  Editing the lot                                  |
++-------------------------+---------------------------------------------------+
+| :`invalid`:             |  If the lot is incorrectly created                |
++-------------------------+---------------------------------------------------+
+| :`active.salable`:      |  Expecting the start of the auction               |
++-------------------------+---------------------------------------------------+
+| :`pending.deleted`:     |  Separating the asset                             |
++-------------------------+---------------------------------------------------+
+| :`deleted`:             |  Delete a lot                                     |
++-------------------------+---------------------------------------------------+
+| :`active.auction`:      |  Holding an auction by lot                        |
++-------------------------+---------------------------------------------------+
+| :`active.contracting`:  |  Contracting process                              |
++-------------------------+---------------------------------------------------+
+| :`pending.sold`:        |  Separating the asset. Lot sold                   |
++-------------------------+---------------------------------------------------+
+| :`sold`:                |  Lot sold                                         |
++-------------------------+---------------------------------------------------+
+| :`pending.dissolution`: |  Separating the asset                             | 
++-------------------------+---------------------------------------------------+
+| :`dissolved`:           |  Dissolution lot                                  |
++-------------------------+---------------------------------------------------+
+
 :assets:
-    string, required
+    uuid, required
     
     id of the related asset. Id of the one asset only can be noted.
     
@@ -73,7 +125,7 @@ Schema
    An entity managing the lot. Initial data originates from `asset.assetCustodian <http://assetsbounce.api-docs.registry.ea2.openprocurement.io/en/latest/standard/organization.html#organization>`_.
 
 :items:
-    :ref:`Item`, required
+    :ref:`Items`, required
 
     Initial data originates from `asset.items <http://assetsbounce.api-docs.registry.ea2.openprocurement.io/en/latest/standard/item.html>`_.
 
@@ -88,7 +140,7 @@ Schema
     Period during which the lot's owner can edit it.
 
 :auctions:
-    :ref:`Auctions`, required
+    :ref:`Auction`, required
 
     Auction conditions due to which the lot is to be sold.
     
@@ -99,9 +151,14 @@ Schema
     All documents and attachments related to the lot.
 
 :mode:
-    optional
+    string, optional
 
     The additional parameter with a value `test`.
+
+:sandboxParameters:
+    string, optional
+
+    Parameter that accelerates lot periods. Set quick, accelerator=1440 as text value for `sandboxParameters` for the time frames to be reduced in 1440 times.
 
 :lotType:
     string, auto-generated, read-only
@@ -142,7 +199,7 @@ Date/time in `ISO 8601 <https://en.wikipedia.org/wiki/ISO_8601#Dates>`_.
 .. _value:
 
 Value
-===============
+=====
 
 Schema
 ------
@@ -199,6 +256,40 @@ Schema
     * `asset`
 
 :relatedItem:
+<<<<<<< HEAD
+    string, auto-generated
+
+    Internal ID of related asset.
+
+
+.. _contracts:
+
+Сontracts
+=========
+
+Schema
+------
+
+:type:
+  string, required, auto-generated, read-only
+
+  Type of the contract. The only value is `yoke`.
+
+:id:
+  uuid, required, auto-generated, read-only
+
+  Internal identifier of the object within the Module of Contracting.
+
+  Added as long as the contract is being created within the Module of Contracting.
+
+:status:
+  string, required, auto-generated, read-only
+
+  Status of contract within the Module of Contracting.
+
+  Added as long as the contract is being created within the Module of Contracting.
+=======
     string, optional
 
     ID of related asset.
+>>>>>>> 078fefa334899d9c06a9ba88931d29fdbf439b2d
