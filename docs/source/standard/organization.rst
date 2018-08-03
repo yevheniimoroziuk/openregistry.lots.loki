@@ -55,7 +55,7 @@ Schema
 ------
 
 :scheme:
-   string
+   string, required
 
    |ocdsDescription|
    Organization identifiers be drawn from an existing identification scheme. 
@@ -76,7 +76,7 @@ Schema
    (EDRPOU and IPN).
 
 :legalName:
-   string, multilingual
+   string, multilingual, optional
 
    |ocdsDescription|
    The legally registered name of the organization.
@@ -84,7 +84,7 @@ Schema
    Full legal name (e.g. Nadra Bank).
 
 :uri:
-   uri
+   uri, optional
 
    |ocdsDescription|
    A URI to identify the organization, such as those provided by Open
@@ -104,25 +104,25 @@ Schema
 ------
 
 :streetAddress:
-    string
+    string, optional
     
     |ocdsDescription|
     The street address. For example, 1600 Amphitheatre Pkwy.
     
 :locality:
-    string
+    string, optional
     
     |ocdsDescription|
     The locality. For example, Mountain View.
     
 :region:
-    string
+    string, optional
     
     |ocdsDescription|
     The region. For example, CA.
     
 :postalCode:
-    string
+    string, optional
     
     |ocdsDescription|
     The postal code. For example, 94043.

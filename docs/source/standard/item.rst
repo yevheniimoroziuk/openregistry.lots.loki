@@ -3,7 +3,7 @@
 
 .. index:: Item, Parameter, Classification, CAV, Unit, registrationDetails
 
-.. _Item:
+.. _Items:
 
 Item
 ====
@@ -12,7 +12,9 @@ Schema
 ------
 
 :id:
-    string, auto-generated
+    uuid, auto-generated, read-only
+
+    Internal identifier for this item.
 
 :description:
     string, multilingual, required
@@ -36,7 +38,7 @@ Schema
     The CPV & CAV-PS codes accuracy should be equal to the class (XXXX0000-Y) at least.
 
 :additionalClassifications:
-    List of :ref:`Classification` objects, optional
+    Array of :ref:`Classification`, optional
 
     |ocdsDescription|
     An array of additional classifications for the item. See the
@@ -58,7 +60,7 @@ Schema
     decimal, required
 
     |ocdsDescription|
-    The number of units required
+    The number of units required.
 
 :address:
     :ref:`Address`, required
@@ -127,7 +129,7 @@ Schema
 ------
 
 :scheme:
-    string
+    string, required
 
     |ocdsDescription|
     A classification should be drawn from an existing scheme or list of
@@ -136,19 +138,19 @@ Schema
     should represent a known Item Classification Scheme wherever possible.
 
 :id:
-    string
+    string, required
 
     |ocdsDescription|
     The classification code drawn from the selected scheme.
 
 :description:
-    string
+    string, required
 
     |ocdsDescription|
     A textual description or title for the code.
 
 :uri:
-    uri
+    uri, optional
 
     |ocdsDescription|
     A URI to identify the code. In the event individual URIs are not
@@ -169,7 +171,7 @@ Schema
     UN/CEFACT Recommendation 20 unit code.
 
 :name:
-    string
+    string, optional
 
     |ocdsDescription|
     Name of the unit

@@ -12,7 +12,9 @@ Schema
 ------
 
 :id:
-    string, auto-generated
+    string, auto-generated, read-only
+
+    Internal identifier of the object within an array.
 
 :documentType:
     string, required
@@ -43,7 +45,6 @@ Schema
 
     Reasons why the lot has to be deleted.
 
-    
     **Note**: The following are specific for :ref:`auction` only:
 
     * `evaluationCriteria` - **Evaluation Criteria**
@@ -63,6 +64,7 @@ Schema
     Information on bidders or participants, their validation documents and any procedural exemptions for which they qualify.
 
     * `x_nda` - **Non-disclosure Agreement (NDA)**
+
     A non-disclosure agreement between a participant and a bank.
 
     * `x_dgfAssetFamiliarization` - **Asset Familiarization**
@@ -76,7 +78,7 @@ Schema
     The document title. 
     
 :description:
-    string, multilingual
+    string, multilingual, optional
     
     |ocdsDescription|
     A short description of the document. In the event the document is not accessible online, the description field can be used to describe arrangements for obtaining a copy of the document.
@@ -88,19 +90,19 @@ Schema
     The format of the document taken from the `IANA Media Types code list <http://www.iana.org/assignments/media-types/>`_, with the addition of one extra value for 'offline/print', used when this document entry is being used to describe the offline publication of a document. 
     
 :url:
-    string, auto-generated
+    string, auto-generated, read-only
     
     |ocdsDescription|
     Direct link to the document or attachment. 
     
 :datePublished:
-    string, :ref:`date`, auto-generated
+    :ref:`date`, auto-generated, read-only
     
     |ocdsDescription|
     The date on which the document was first published. 
     
 :dateModified:
-    string, :ref:`date`, auto-generated
+    :ref:`date`, auto-generated, read-only
     
     |ocdsDescription|
     Date that the document was last modified
@@ -122,7 +124,7 @@ Schema
 :relatedItem:
     string, optional
 
-    Id of related :ref:`Lot` or :ref:`item`.
+    Internal id of related :ref:`Lot` or :ref:`item`.
 
 :index:
     integer, optional
@@ -134,4 +136,3 @@ Schema
     string, optional
 
     Required for `x_dgfAssetFamiliarization` document.
-

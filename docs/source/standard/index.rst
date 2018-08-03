@@ -17,5 +17,4 @@ areas that were not covered by it.
    item
    lotHolder
    documents
-   
-   
+ 
