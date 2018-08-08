@@ -22,10 +22,13 @@ Schema
     The primary identifier for this entity. 
     
 :additionalIdentifiers:
-    List of :ref:`identifier` objects
+    Array of :ref:`identifier` objects
     
 :address:
     :ref:`address`, optional
     
 :contactPoint:
     :ref:`contactPoint`, optional
+
+:additionalContactPoints:
+    Array of :ref:`contactPoint`, optional

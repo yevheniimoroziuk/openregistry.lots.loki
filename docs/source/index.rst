@@ -33,6 +33,7 @@ Contents:
    performance
    dates
    errors
+   acceleration
 
 * :ref:`Authentication <openprocurementapi:authentication>`
 * :ref:`Responses <openprocurementapi:errors>`
