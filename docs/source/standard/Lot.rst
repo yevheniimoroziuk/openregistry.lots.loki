@@ -104,10 +104,10 @@ Schema
 | :`dissolved`:           |  Dissolution lot                                  |
 +-------------------------+---------------------------------------------------+
 
-:assets:
-    uuid, required
+:relatedProcesses:
+    Array of :ref:`relatedProcesses`
     
-    Internal identifier of the related asset. Id of the one asset only can be noted.
+    Block containing information about the relation to objects beyond the lot.
     
 :decisions:
     Array of :ref:`Decisions`, required
