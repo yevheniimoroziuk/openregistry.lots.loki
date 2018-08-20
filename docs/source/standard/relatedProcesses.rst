@@ -17,7 +17,7 @@ Schema
     Internal identifier for this related process.
 
 :type:
-    string, auto-generated, read-only
+    string, required
 
     Type of this related process. The only value is `asset`. 
 
