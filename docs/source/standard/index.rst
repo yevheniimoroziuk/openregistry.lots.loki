@@ -12,6 +12,7 @@ areas that were not covered by it.
    :maxdepth: 1
 
    Lot
+   relatedProcesses
    auction
    organization
    item
