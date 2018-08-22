@@ -75,7 +75,8 @@ test_lot_auctions_data = {
 test_loki_lot_data = {
     "title": u"Тестовий лот",
     "description": u"Щось там тестове",
-    "lotType": "loki"
+    "lotType": "loki",
+    "assets": []
 }
 test_decision_data = {
     'decisionID': 'someDecisionID',
@@ -109,9 +110,4 @@ test_loki_item_data.update(
 test_lot_contract_data = {
     'contractID': 'contractID',
     'relatedProcessID': '1' * 32
-}
-
-test_related_process_data = {
-    'relatedProcessID': '1' * 32,
-    'type': 'asset'
 }

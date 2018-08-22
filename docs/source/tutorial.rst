@@ -53,11 +53,6 @@ Now let's add extra auction conditions. Note that the information is being added
 .. literalinclude:: tutorial/compose_lot_patch_2.http
    :language: javascript
 
-Now let's add relatedProcesses:
-
-.. literalinclude:: tutorial/add_related_process_1.http
-   :language: javascript
-
 To enable further manipulations with the lot, its status should be manually switched to `verification`.
 
 .. literalinclude:: tutorial/lot-to-varification.http

@@ -15,8 +15,7 @@ from openregistry.lots.loki.tests.base import (
     add_lot_decision,
     add_auctions,
     check_patch_status_200,
-    create_single_lot,
-    add_lot_related_process
+    create_single_lot
 )
 
 
@@ -192,8 +191,7 @@ def patch_items_with_lot(self):
 
     # Move from 'draft' to 'pending' status
     check_patch_status_200(self, '/{}'.format(lot['id']), 'composing', access_header)
-    add_lot_decision(self, lot['id'], access_header)
-    lot = add_lot_related_process(self, lot['id'], access_header)
+    lot = add_lot_decision(self, lot['id'], access_header)
     add_auctions(self, lot, access_header)
     check_patch_status_200(self, '/{}'.format(lot['id']), 'verification', access_header)
 
