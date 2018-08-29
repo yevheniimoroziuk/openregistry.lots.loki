@@ -56,27 +56,32 @@ def from0to1(registry):
     docs = []
     for i in results:
         lot = i.doc
+        lot_id = lot['_id']
+
         model = registry.lotTypes.get(lot['lotType'])
 
         if model._internal_type != 'loki':
             return
 
-        migrate_assets_to_related_processes(lot, registry)
+        if lot.get('relatedProcesses'):
+            return
+
         if model:
             try:
+                migrate_assets_to_related_processes(lot, registry)
                 lot = model(lot)
                 lot.__parent__ = root
                 lot.validate()
                 lot = lot.to_primitive()
             except:  # noqa E722
                 LOGGER.error(
-                    "Failed migration of lot {} to schema 1.".format(lot.id),
-                    extra={'MESSAGE_ID': 'migrate_data_failed', 'LOT_ID': lot.id}
+                    "Failed migration of lot {} to schema 1.".format(lot_id),
+                    extra={'MESSAGE_ID': 'migrate_data_failed', 'LOT_ID': lot_id}
                 )
             else:
                 LOGGER.info(
-                    "Migrated lot {} to schema 1.".format(lot.id),
-                    extra={'MESSAGE_ID': 'migrate_data', 'LOT_ID': lot.id}
+                    "Migrated lot {} to schema 1.".format(lot_id),
+                    extra={'MESSAGE_ID': 'migrate_data', 'LOT_ID': lot_id}
                 )
                 lot['dateModified'] = get_now().isoformat()
                 docs.append(lot)
@@ -95,7 +100,7 @@ def migrate_assets_to_related_processes(lot, registry):
                 'relatedProcessID': asset_id,
                 'type': 'asset'
             }
-        if lot['status'] not in ['draft', 'composing', 'verification']:
+        if lot['status'] not in ['draft', 'composing', 'verification', 'invalid']:
             asset = registry.db.get(asset_id)
             related_process['identifier'] = asset['assetID']
 
