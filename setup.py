@@ -7,6 +7,9 @@ entry_points = {
     'openregistry.lots.core.plugins': [
         'lots.loki = openregistry.lots.loki.includeme:includeme'
     ],
+    'openregistry.lots.loki.plugins': [
+        'loki.migration = openregistry.lots.loki.migration:migrate_data'
+    ],
     'openregistry.tests': [
         'lots.loki = openregistry.lots.loki.tests.main:suite'
     ]

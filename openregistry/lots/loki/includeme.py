@@ -29,6 +29,11 @@ def includeme(config, plugin_config=None):
         config.add_lotType(Lot, lt)
     LOGGER.info("Included openregistry.lots.loki plugin", extra={'MESSAGE_ID': 'included_plugin'})
 
+
+    # migrate data
+    if plugin_config.get('migration') and not os.environ.get('MIGRATION_SKIP'):
+        get_evenly_plugins(config.registry, {"loki.migration": None}, 'openregistry.lots.loki.plugins')
+
     # add accreditation level
     if not plugin_config.get('accreditation'):
         config.registry.accreditation['lot'][Lot._internal_type] = DEFAULT_LEVEL_OF_ACCREDITATION
