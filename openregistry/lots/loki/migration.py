@@ -74,6 +74,10 @@ def from0to1(registry):
                     extra={'MESSAGE_ID': 'migrate_data_failed', 'LOT_ID': lot.id}
                 )
             else:
+                LOGGER.info(
+                    "Migrated lot {} to schema 1.".format(lot.id),
+                    extra={'MESSAGE_ID': 'migrate_data', 'LOT_ID': lot.id}
+                )
                 lot['dateModified'] = get_now().isoformat()
                 docs.append(lot)
         if len(docs) >= 2 ** 7:  # pragma: no cover
