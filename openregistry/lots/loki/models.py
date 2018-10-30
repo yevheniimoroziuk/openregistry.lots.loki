@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from uuid import uuid4
 from pyramid.security import Allow
-from schematics.types import StringType, IntType, MD5Type, FloatType
+from schematics.types import StringType, IntType, FloatType
 from schematics.exceptions import ValidationError
 from schematics.types.compound import ModelType, ListType
 from schematics.types.serializable import serializable
@@ -24,7 +24,8 @@ from openregistry.lots.core.models import (
     Period,
     Value,
     BankAccount,
-    AuctionParameters
+    AuctionParameters,
+    RelatedProcess,
 )
 
 from openregistry.lots.core.validation import (
@@ -57,7 +58,6 @@ from openregistry.lots.loki.roles import (
     decision_roles,
     auction_period_roles,
     contracts_roles,
-    related_process_roles
 )
 
 
@@ -191,25 +191,6 @@ class Contract(Model):
         return role
 
 
-class RelatedProcess(Model):
-    id = StringType(required=True, min_length=1, default=lambda: uuid4().hex)
-    type = StringType(default='asset', choices=['asset'])
-    relatedProcessID = MD5Type(required=True)
-    identifier = StringType()
-
-    class Options:
-        roles = related_process_roles
-
-    def get_role(self):
-        root = self.__parent__.__parent__
-        request = root.request
-        if request.authenticated_role == 'concierge':
-            role = 'concierge'
-        else:
-            role = 'edit'
-        return role
-
-
 @implementer(ILokiLot)
 class Lot(BaseLot):
     class Options:
@@ -269,12 +250,18 @@ class Lot(BaseLot):
             (Allow, '{}_{}'.format(self.owner, self.owner_token), 'upload_lot_items'),
             (Allow, '{}_{}'.format(self.owner, self.owner_token), 'upload_lot_auctions'),
             (Allow, '{}_{}'.format(self.owner, self.owner_token), 'upload_lot_decisions'),
-            (Allow, '{}_{}'.format(self.owner, self.owner_token), 'edit_lot_related_processes'),
             (Allow, 'g:concierge', 'upload_lot_auctions'),
-            (Allow, 'g:concierge', 'edit_lot_related_processes'),
             (Allow, 'g:convoy', 'upload_lot_auctions'),
             (Allow, 'g:convoy', 'upload_lot_contracts'),
             (Allow, 'g:caravan', 'upload_lot_contracts'),
             (Allow, '{}_{}'.format(self.owner, self.owner_token), 'upload_lot_auction_documents'),
+
+            (Allow, '{}_{}'.format(self.owner, self.owner_token), 'create_related_process'),
+            (Allow, '{}_{}'.format(self.owner, self.owner_token), 'edit_related_process'),
+            (Allow, '{}_{}'.format(self.owner, self.owner_token), 'delete_related_process'),
+            (Allow, 'g:concierge', 'edit_related_process'),
+            (Allow, 'g:convoy', 'create_related_process'),
+            (Allow, 'g:convoy', 'edit_related_process'),
+            (Allow, 'g:convoy', 'delete_related_process'),
         ]
         return acl
