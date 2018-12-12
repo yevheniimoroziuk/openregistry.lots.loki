@@ -38,7 +38,7 @@ def includeme(config, plugin_config=None):
 
     # migrate data
     if plugin_config.get('migration') is True:
-        runner = LokiMigrationsRunner(config.registry, Root)
+        runner = LokiMigrationsRunner(config.registry.db)
         runner.migrate(MIGRATION_STEPS)
 
     # add accreditation level
