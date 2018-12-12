@@ -4,7 +4,7 @@ import logging
 from pyramid.interfaces import IRequest
 
 from openregistry.lots.core.interfaces import IContentConfigurator, ILotManager
-from openregistry.lots.core.traversal import Root, factory
+from openregistry.lots.core.traversal import factory
 from openregistry.lots.core.utils import add_related_processes_views
 
 from openregistry.lots.loki.models import Lot, ILokiLot
