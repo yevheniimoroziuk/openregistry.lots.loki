@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = '0.3.4'
+VERSION = '0.3.5'
 
 entry_points = {
     'openregistry.lots.core.plugins': [
@@ -28,7 +28,7 @@ docs_requires = requires + [
 ]
 
 setup(name='openregistry.lots.loki',
-      version=version,
+      version=VERSION,
       description="",
       long_description=(
           open("README.rst").read() +
