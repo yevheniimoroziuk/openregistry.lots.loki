@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-VERSION = '0.3.5'
+VERSION = '0.3.6'
 
 entry_points = {
     'openregistry.lots.core.plugins': [
