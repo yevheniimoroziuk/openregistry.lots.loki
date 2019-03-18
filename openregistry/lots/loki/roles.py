@@ -65,7 +65,7 @@ lot_create_role = (whitelist(
     'decisions', 'relatedProcesses')
 )
 lot_edit_role = (blacklist(
-    'owner_token', 'owner', '_attachments', 'contracts',
+    'owner_token', 'owner', '_attachments', 'contracts', 'lotType',
     'revisions', 'date', 'dateModified', 'documents', 'auctions', 'relatedProcesses',
     'lotID', 'mode', 'doc_id', 'rectificationPeriod', 'decisions') + lots_embedded_role)
 view_role = (blacklist('owner_token', '_attachments', 'revisions') + lots_embedded_role)
@@ -86,6 +86,12 @@ contracts_roles = {
     'caravan': blacklist('id', 'type'),
     'convoy': blacklist('id', 'type'),
 }
+
+concierge_edit_role = whitelist(
+    'status', 'decisions', 'title', 'title_ru', 'title_en',
+    'lotCustodian', 'description', 'description_ru', 'description_en',
+    'lotHolder', 'items'
+)
 
 
 lot_roles = {
@@ -140,7 +146,7 @@ lot_roles = {
     'edit.sold': whitelist(),
     'invalid': view_role,
     'edit.invalid': whitelist(),
-    'concierge': whitelist('status', 'decisions', 'title', 'lotCustodian', 'description', 'lotHolder', 'items'),
+    'concierge': concierge_edit_role,
     'chronograph': whitelist(),
     'caravan': whitelist(),
     'convoy': whitelist()
