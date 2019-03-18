@@ -79,11 +79,6 @@ Schema
 
   Bid guarantee. `Lots.auctions.guarantee` for 2nd and 3rd auctions within the privatization cycle will be calculated auctomatically.
 
-:registrationFee:
-  :ref:`Guarantee`, required
-
-  Bid registration fee. `Lots.auctions.registrationFee` for 2nd and 3rd auctions within the privatization cycle will be calculated auctomatically.
-
 :minimalStep:
   :ref:`value`, required
 
@@ -126,8 +121,6 @@ Schema
 +---------------+------------------------------------------------------------+
 | `unsuccessful`| The process has been unsuccessful.                         |
 +---------------+------------------------------------------------------------+
-
-  * `unsuccessful` - the process has been unsuccessful.
 
 :contracts:
   Array of :ref:`contracts`, auto-generated, read-only
