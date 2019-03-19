@@ -7,14 +7,14 @@ Content-Type: application/json
 X-Content-Type-Options: nosniff
 {
   "next_page": {
-    "path": "/api/2.5/lots?offset=2019-02-04T16%3A38%3A17.878755%2B02%3A00", 
-    "uri": "http://lb.api-sandbox.registry.ea.openprocurement.net/api/2.5/lots?offset=2019-02-04T16%3A38%3A17.878755%2B02%3A00", 
-    "offset": "2019-02-04T16:38:17.878755+02:00"
+    "path": "/api/2.5/lots?offset=2019-03-19T15%3A23%3A06.588340%2B02%3A00", 
+    "uri": "http://lb.api-sandbox.registry.ea.openprocurement.net/api/2.5/lots?offset=2019-03-19T15%3A23%3A06.588340%2B02%3A00", 
+    "offset": "2019-03-19T15:23:06.588340+02:00"
   }, 
   "data": [
     {
-      "id": "962fa6efd16d4d55acd4b1f88bb7cec9", 
-      "dateModified": "2019-02-04T16:38:17.878755+02:00"
+      "id": "9c54261550f74c99b25b7a8ab16aa97a", 
+      "dateModified": "2019-03-19T15:23:06.588340+02:00"
     }
   ]
 }

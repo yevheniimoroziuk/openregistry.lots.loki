@@ -58,6 +58,7 @@ auction_common = {
     }
 }
 auction_english_data = deepcopy(auction_common)
+auction_english_data.pop('registrationFee')
 
 auction_second_english_data = {}
 auction_second_english_data['tenderingDuration'] = 'P25DT12H'
