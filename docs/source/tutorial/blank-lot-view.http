@@ -1,4 +1,4 @@
-GET /api/2.5/lots/962fa6efd16d4d55acd4b1f88bb7cec9 HTTP/1.0
+GET /api/2.5/lots/9c54261550f74c99b25b7a8ab16aa97a HTTP/1.0
 Authorization: Basic YnJva2VyOg==
 Host: lb.api-sandbox.registry.ea.openprocurement.net
 
@@ -8,16 +8,16 @@ X-Content-Type-Options: nosniff
 {
   "data": {
     "status": "draft", 
-    "lotID": "UA-LR-DGF-2019-02-04-000002", 
+    "lotID": "UA-LR-DGF-2019-03-19-000002", 
     "contracts": [
       {
         "status": "scheduled", 
         "type": "yoke", 
-        "id": "1f33640dca2f43b48787d5bceacb577a"
+        "id": "eb92ac079d3945c9ae2d6a8c31877c3f"
       }
     ], 
     "lotType": "loki", 
-    "dateModified": "2019-02-04T16:38:17.596837+02:00", 
+    "dateModified": "2019-03-19T15:23:06.324966+02:00", 
     "owner": "broker", 
     "documents": [
       {
@@ -25,10 +25,10 @@ X-Content-Type-Options: nosniff
         "title": "Перелік та реквізити авторизованих електронних майданчиків", 
         "url": "https://prozorro.sale/info/elektronni-majdanchiki-ets-prozorroprodazhi-cbd2", 
         "documentOf": "lot", 
-        "datePublished": "2019-02-04T16:38:17.586506+02:00", 
+        "datePublished": "2019-03-19T15:23:06.314674+02:00", 
         "documentType": "x_PlatformLegalDetails", 
-        "dateModified": "2019-02-04T16:38:17.586543+02:00", 
-        "id": "fa6b62b6f5e2400d963dd502d2d83623"
+        "dateModified": "2019-03-19T15:23:06.314696+02:00", 
+        "id": "b5506c8a9353481f8e6fcc964242ea79"
       }
     ], 
     "auctions": [
@@ -36,53 +36,41 @@ X-Content-Type-Options: nosniff
         "status": "scheduled", 
         "tenderAttempts": 1, 
         "procurementMethodType": "sellout.english", 
-        "id": "11f0bee4cf814e36b91ede32155fce67", 
         "auctionParameters": {
           "type": "english"
         }, 
-        "registrationFee": {
-          "currency": "UAH", 
-          "amount": 834.6
-        }
+        "id": "cb14fea47f324446b083099e026b1de4"
       }, 
       {
         "status": "scheduled", 
         "tenderAttempts": 2, 
         "procurementMethodType": "sellout.english", 
-        "id": "ec32cd417be24997af164a661733756d", 
         "auctionParameters": {
           "type": "english"
         }, 
-        "registrationFee": {
-          "currency": "UAH", 
-          "amount": 834.6
-        }
+        "id": "5bbdebcd2d9748aa89220f01f17a18f3"
       }, 
       {
         "status": "scheduled", 
         "tenderAttempts": 3, 
         "procurementMethodType": "sellout.insider", 
-        "id": "fe87453d392845819b75c11d66cc414d", 
         "auctionParameters": {
           "type": "insider", 
           "dutchSteps": 99
         }, 
-        "registrationFee": {
-          "currency": "UAH", 
-          "amount": 834.6
-        }
+        "id": "b2998f0368c340609fa56fa0a12fdcfa"
       }
     ], 
-    "date": "2019-02-04T16:38:17.594789+02:00", 
+    "date": "2019-03-19T15:23:06.323072+02:00", 
     "decisions": [
       {
-        "decisionDate": "2019-02-04T16:38:17.514327+02:00", 
+        "decisionDate": "2019-03-19T15:23:06.251270+02:00", 
         "decisionID": "initialDecisionID", 
-        "id": "5d1a237b9525459d9262153c5ae5cb5f", 
+        "id": "88efebe2abf542319f0a79b3645f5d9e", 
         "decisionOf": "lot"
       }
     ], 
-    "id": "962fa6efd16d4d55acd4b1f88bb7cec9"
+    "id": "9c54261550f74c99b25b7a8ab16aa97a"
   }
 }
 

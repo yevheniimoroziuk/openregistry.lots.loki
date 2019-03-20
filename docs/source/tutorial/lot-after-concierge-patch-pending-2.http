@@ -1,4 +1,4 @@
-GET /api/2.5/lots/cee33af034594b0cab94046740c95c6b HTTP/1.0
+GET /api/2.5/lots/9a2c80c59e5b425795e92e80f7ad1e24 HTTP/1.0
 Authorization: Basic Y29uY2llcmdlOg==
 Host: lb.api-sandbox.registry.ea.openprocurement.net
 
@@ -9,17 +9,17 @@ X-Content-Type-Options: nosniff
   "data": {
     "status": "pending", 
     "rectificationPeriod": {
-      "startDate": "2019-02-04T16:38:19.591458+02:00", 
-      "endDate": "2019-02-06T16:38:19.591458+02:00"
+      "startDate": "2019-03-19T15:23:08.321095+02:00", 
+      "endDate": "2019-03-21T15:23:08.321095+02:00"
     }, 
-    "lotID": "UA-LR-DGF-2019-02-04-000002", 
+    "lotID": "UA-LR-DGF-2019-03-19-000002", 
     "description": "Нежитлове приміщення для збереження насіння", 
     "title": "Нежитлове приміщення", 
     "contracts": [
       {
         "status": "scheduled", 
         "type": "yoke", 
-        "id": "7840d66d09db455aadbcfe961ffa22a4"
+        "id": "37a7d847bcc14d60b57b1e7fb8b750cb"
       }
     ], 
     "items": [
@@ -60,20 +60,20 @@ X-Content-Type-Options: nosniff
     }, 
     "decisions": [
       {
-        "decisionDate": "2019-02-04T16:38:19.078303+02:00", 
+        "decisionDate": "2019-03-19T15:23:07.792309+02:00", 
         "decisionID": "initialDecisionID", 
-        "id": "97fb062d1fc04f6dae473a42caf7880b", 
+        "id": "65575976294e4c1988c42127a320ff35", 
         "decisionOf": "lot"
       }, 
       {
-        "relatedItem": "35e8b82cc8dd4f5aa8d3036333587f6e", 
-        "decisionDate": "2019-02-04T16:38:19.381718+02:00", 
+        "relatedItem": "f54fde9c6c8146cc8bc1520c6429aacf", 
+        "decisionDate": "2019-03-19T15:23:08.111917+02:00", 
         "decisionID": "11111-4-5", 
-        "id": "01218fffebf7420297e6eea9a784799e", 
+        "id": "b40e68f7f5214475acf850840f18f502", 
         "decisionOf": "asset"
       }
     ], 
-    "dateModified": "2019-02-04T16:38:19.607017+02:00", 
+    "dateModified": "2019-03-19T15:23:08.341359+02:00", 
     "owner": "broker", 
     "lotCustodian": {
       "contactPoint": {
@@ -89,7 +89,7 @@ X-Content-Type-Options: nosniff
         "countryName": "Україна"
       }
     }, 
-    "next_check": "2019-02-06T16:38:19.591458+02:00", 
+    "next_check": "2019-03-21T15:23:08.321095+02:00", 
     "auctions": [
       {
         "status": "scheduled", 
@@ -109,23 +109,19 @@ X-Content-Type-Options: nosniff
           "valueAddedTaxIncluded": true
         }, 
         "auctionPeriod": {
-          "startDate": "2019-02-08T16:43:16.610865+02:00"
+          "startDate": "2019-03-25T15:28:05.257425+02:00"
         }, 
-        "registrationFee": {
-          "currency": "UAH", 
-          "amount": 700.87
-        }, 
+        "tenderAttempts": 1, 
         "procurementMethodType": "sellout.english", 
         "value": {
           "currency": "UAH", 
           "amount": 3000.87, 
           "valueAddedTaxIncluded": true
         }, 
-        "id": "f75a4ee302e248ce8011d5eb89cab577", 
         "auctionParameters": {
           "type": "english"
         }, 
-        "tenderAttempts": 1, 
+        "id": "9d4ba7a1ceff4accafa24f39cd90592f", 
         "guarantee": {
           "currency": "UAH", 
           "amount": 700.87
@@ -148,10 +144,7 @@ X-Content-Type-Options: nosniff
           "amount": 150.44, 
           "valueAddedTaxIncluded": true
         }, 
-        "registrationFee": {
-          "currency": "UAH", 
-          "amount": 700.87
-        }, 
+        "tenderAttempts": 2, 
         "procurementMethodType": "sellout.english", 
         "value": {
           "currency": "UAH", 
@@ -159,11 +152,10 @@ X-Content-Type-Options: nosniff
           "valueAddedTaxIncluded": true
         }, 
         "tenderingDuration": "P25DT12H", 
-        "id": "89fe0464391a4b7191ac69cfd57ec7b7", 
         "auctionParameters": {
           "type": "english"
         }, 
-        "tenderAttempts": 2, 
+        "id": "a4a8871e8960495d903da34e90bf39b6", 
         "guarantee": {
           "currency": "UAH", 
           "amount": 350.44
@@ -186,10 +178,7 @@ X-Content-Type-Options: nosniff
           "amount": 0, 
           "valueAddedTaxIncluded": true
         }, 
-        "registrationFee": {
-          "currency": "UAH", 
-          "amount": 700.87
-        }, 
+        "tenderAttempts": 3, 
         "procurementMethodType": "sellout.insider", 
         "value": {
           "currency": "UAH", 
@@ -197,40 +186,39 @@ X-Content-Type-Options: nosniff
           "valueAddedTaxIncluded": true
         }, 
         "tenderingDuration": "P25DT12H", 
-        "id": "f8ea1544ac9440c99728cea6f6470e85", 
         "auctionParameters": {
           "type": "insider", 
           "dutchSteps": 99
         }, 
-        "tenderAttempts": 3, 
+        "id": "fe12a7f7b2bd419ca413e358c56df4b9", 
         "guarantee": {
           "currency": "UAH", 
           "amount": 350.44
         }
       }
     ], 
-    "date": "2019-02-04T16:38:19.606782+02:00", 
+    "date": "2019-03-19T15:23:08.340830+02:00", 
     "documents": [
       {
         "description": "Перелік та реквізити авторизованих електронних майданчиків (найменування установи банку, її адреса та номери рахунків, відкритих для внесення гарантійного внеску, реєстраційного внеску)", 
         "title": "Перелік та реквізити авторизованих електронних майданчиків", 
         "url": "https://prozorro.sale/info/elektronni-majdanchiki-ets-prozorroprodazhi-cbd2", 
         "documentOf": "lot", 
-        "datePublished": "2019-02-04T16:38:19.083999+02:00", 
+        "datePublished": "2019-03-19T15:23:07.798300+02:00", 
         "documentType": "x_PlatformLegalDetails", 
-        "dateModified": "2019-02-04T16:38:19.084020+02:00", 
-        "id": "5740aeb9d2634f1baea9348de36a587a"
+        "dateModified": "2019-03-19T15:23:07.798339+02:00", 
+        "id": "38bbdb5c200043fe98b3cf7d10a98a8e"
       }
     ], 
     "relatedProcesses": [
       {
         "identifier": "UA-AR-P-2018-08-17-000002-1", 
         "type": "asset", 
-        "id": "0757f335629d494a88469b86de4946f7", 
-        "relatedProcessID": "f6b145270b8a4400bc89985051848187"
+        "id": "1ba3d1b7fdf744899b26b938faea79b4", 
+        "relatedProcessID": "f0fc1f1d4fd24bce9370f5f3fd9e16a5"
       }
     ], 
-    "id": "cee33af034594b0cab94046740c95c6b"
+    "id": "9a2c80c59e5b425795e92e80f7ad1e24"
   }
 }
 
