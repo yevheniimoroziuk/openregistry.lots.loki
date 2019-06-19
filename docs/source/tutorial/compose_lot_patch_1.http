@@ -1,9 +1,9 @@
-PATCH /api/2.5/lots/962fa6efd16d4d55acd4b1f88bb7cec9/auctions/11f0bee4cf814e36b91ede32155fce67 HTTP/1.0
+PATCH /api/2.5/lots/9c54261550f74c99b25b7a8ab16aa97a/auctions/cb14fea47f324446b083099e026b1de4 HTTP/1.0
 Authorization: Basic YnJva2VyOg==
-Content-Length: 507
+Content-Length: 449
 Content-Type: application/json
 Host: lb.api-sandbox.registry.ea.openprocurement.net
-X-Access-Token: f3e126c1e7734b1b8887cfbf17478baa
+X-Access-Token: 53ce42a01cb745819303b64031afbb2b
 DATA:
 {
   "data": {
@@ -22,10 +22,7 @@ DATA:
       "amount": 300.87, 
       "valueAddedTaxIncluded": true
     }, 
-    "auctionPeriod": {
-      "startDate": "2019-02-08T16:43:16.610865+02:00"
-    }, 
-    "registrationFee": {
+    "guarantee": {
       "currency": "UAH", 
       "amount": 700.87
     }, 
@@ -34,9 +31,8 @@ DATA:
       "amount": 3000.87, 
       "valueAddedTaxIncluded": true
     }, 
-    "guarantee": {
-      "currency": "UAH", 
-      "amount": 700.87
+    "auctionPeriod": {
+      "startDate": "2019-03-25T15:28:05.257425+02:00"
     }
   }
 }
@@ -63,23 +59,19 @@ X-Content-Type-Options: nosniff
       "valueAddedTaxIncluded": true
     }, 
     "auctionPeriod": {
-      "startDate": "2019-02-08T16:43:16.610865+02:00"
+      "startDate": "2019-03-25T15:28:05.257425+02:00"
     }, 
-    "registrationFee": {
-      "currency": "UAH", 
-      "amount": 700.87
-    }, 
+    "tenderAttempts": 1, 
     "procurementMethodType": "sellout.english", 
     "value": {
       "currency": "UAH", 
       "amount": 3000.87, 
       "valueAddedTaxIncluded": true
     }, 
-    "id": "11f0bee4cf814e36b91ede32155fce67", 
     "auctionParameters": {
       "type": "english"
     }, 
-    "tenderAttempts": 1, 
+    "id": "cb14fea47f324446b083099e026b1de4", 
     "guarantee": {
       "currency": "UAH", 
       "amount": 700.87

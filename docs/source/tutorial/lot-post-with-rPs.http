@@ -8,7 +8,7 @@ DATA:
   "data": {
     "decisions": [
       {
-        "decisionDate": "2019-02-04T16:38:17.514327+02:00", 
+        "decisionDate": "2019-03-19T15:23:06.251270+02:00", 
         "decisionID": "initialDecisionID"
       }
     ], 
@@ -16,7 +16,7 @@ DATA:
     "relatedProcesses": [
       {
         "type": "asset", 
-        "relatedProcessID": "ea369adce3f04fa8acc8fcd1afa953c4"
+        "relatedProcessID": "72540e20491643c2a51141f419324344"
       }
     ], 
     "description": "Щось там тестове", 
@@ -26,33 +26,33 @@ DATA:
 
 Response: 201 Created
 Content-Type: application/json
-Location: http://lb.api-sandbox.registry.ea.openprocurement.net/api/2.5/lots/082937c0a9a943e6a66002f38d8ab164
+Location: http://lb.api-sandbox.registry.ea.openprocurement.net/api/2.5/lots/75d059c9f53e4454b9b4f592b30ff566
 X-Content-Type-Options: nosniff
 {
   "access": {
-    "transfer": "91e654db1f7d494c85e264a5f30d94b9", 
-    "token": "c4cfb45bcafc4e79a3b534602a96e697"
+    "transfer": "003c8dea9ada4b869786f7bd09d81387", 
+    "token": "95d8faca662844a48591e490390ef831"
   }, 
   "data": {
     "status": "draft", 
-    "lotID": "UA-LR-DGF-2019-02-04-000001", 
+    "lotID": "UA-LR-DGF-2019-03-19-000001", 
     "contracts": [
       {
         "status": "scheduled", 
         "type": "yoke", 
-        "id": "35ae4e36b10147e6a6ca4b0e314f654b"
+        "id": "f09354784c6848aaaffbd6ff38c87ef8"
       }
     ], 
     "decisions": [
       {
-        "decisionDate": "2019-02-04T16:38:17.514327+02:00", 
+        "decisionDate": "2019-03-19T15:23:06.251270+02:00", 
         "decisionID": "initialDecisionID", 
-        "id": "bfeb1c6300c842798e53866e615d3f06", 
+        "id": "8a3dde028de144789c7f928df0cc32d2", 
         "decisionOf": "lot"
       }
     ], 
     "lotType": "loki", 
-    "dateModified": "2019-02-04T16:38:17.554481+02:00", 
+    "dateModified": "2019-03-19T15:23:06.291288+02:00", 
     "owner": "broker", 
     "documents": [
       {
@@ -60,10 +60,10 @@ X-Content-Type-Options: nosniff
         "title": "Перелік та реквізити авторизованих електронних майданчиків", 
         "url": "https://prozorro.sale/info/elektronni-majdanchiki-ets-prozorroprodazhi-cbd2", 
         "documentOf": "lot", 
-        "datePublished": "2019-02-04T16:38:17.542498+02:00", 
+        "datePublished": "2019-03-19T15:23:06.281066+02:00", 
         "documentType": "x_PlatformLegalDetails", 
-        "dateModified": "2019-02-04T16:38:17.542517+02:00", 
-        "id": "6e14c66ae6774154a65580093cad49be"
+        "dateModified": "2019-03-19T15:23:06.281086+02:00", 
+        "id": "f71092daf0f841d0a683a123e2456e21"
       }
     ], 
     "auctions": [
@@ -71,52 +71,40 @@ X-Content-Type-Options: nosniff
         "status": "scheduled", 
         "tenderAttempts": 1, 
         "procurementMethodType": "sellout.english", 
-        "id": "8912e301d220436297bfee78d1c98f50", 
         "auctionParameters": {
           "type": "english"
         }, 
-        "registrationFee": {
-          "currency": "UAH", 
-          "amount": 834.6
-        }
+        "id": "a3aabb7301d64fef85a118762a7e7a26"
       }, 
       {
         "status": "scheduled", 
         "tenderAttempts": 2, 
         "procurementMethodType": "sellout.english", 
-        "id": "599d9e97d8e64c60aa8412e59815bda0", 
         "auctionParameters": {
           "type": "english"
         }, 
-        "registrationFee": {
-          "currency": "UAH", 
-          "amount": 834.6
-        }
+        "id": "ebd89717fe8c4856b2d4f322326b53af"
       }, 
       {
         "status": "scheduled", 
         "tenderAttempts": 3, 
         "procurementMethodType": "sellout.insider", 
-        "id": "71ccc567557a4837a1a43565db8653d9", 
         "auctionParameters": {
           "type": "insider", 
           "dutchSteps": 99
         }, 
-        "registrationFee": {
-          "currency": "UAH", 
-          "amount": 834.6
-        }
+        "id": "ed2964cad53246e6a5ffeb3609015607"
       }
     ], 
-    "date": "2019-02-04T16:38:17.552130+02:00", 
+    "date": "2019-03-19T15:23:06.289301+02:00", 
     "relatedProcesses": [
       {
         "type": "asset", 
-        "id": "be09ce96c69a45a9bc419b0ba180392b", 
-        "relatedProcessID": "ea369adce3f04fa8acc8fcd1afa953c4"
+        "id": "2a94e1ee21fd45ef9188529643c9ca23", 
+        "relatedProcessID": "72540e20491643c2a51141f419324344"
       }
     ], 
-    "id": "082937c0a9a943e6a66002f38d8ab164"
+    "id": "75d059c9f53e4454b9b4f592b30ff566"
   }
 }
 
